@@ -1,0 +1,100 @@
+package $$SERIALIZER_PACKAGE;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.UUID;
+
+import up.jerboa.core.JerboaDart;
+import up.jerboa.core.JerboaEmbeddingInfo;
+import up.jerboa.core.JerboaGMap;
+import up.jerboa.core.JerboaOrbit;
+import up.jerboa.core.util.Pair;
+import up.jerboa.exception.JerboaException;
+import up.jerboa.exception.JerboaRuntimeException;
+import up.jerboa.util.serialization.EmbeddingSerializationKind;
+import up.jerboa.util.serialization.jba.JBAEmbeddingSerialization;
+
+import $$MODELER_PACKAGE.$$MODELER_NAME;
+
+// Embeddings includes
+$$EBD_INCLUDE
+//////////////////////
+
+public class $$SERIALIZER_NAME implements JBAEmbeddingSerialization {
+
+	private $$MODELER_NAME modeler;
+
+	public $$SERIALIZER_NAME($$MODELER_NAME modeler) {
+		this.modeler = modeler;
+	}
+
+	@Override
+	public EmbeddingSerializationKind kind() {
+		return EmbeddingSerializationKind.SAVEANDLOAD;
+	}
+
+	@Override
+	public boolean manageDimension(int dim) {
+		return (dim == $$MODELER_DIMENSION);
+	}
+
+
+	@Override
+	public JerboaEmbeddingInfo searchCompatibleEmbedding(String name, JerboaOrbit orbit, String type) {
+		return modeler.getEmbedding(name);
+	}
+
+	@Override
+	public void completeProcess(JerboaGMap gmap, List<JerboaDart> created) throws JerboaException {
+		// WARNING : function triggered after dart creation
+	}
+
+	@Override
+	public CharSequence serialize(JerboaEmbeddingInfo ebdinf, Object ebd) {
+		/** TODO: replace by your own embeddings **/
+	    if(ebd==null || ebdinf == null) return "null";
+	    $$EBD_SERIALIZE
+	    else{
+			throw new JerboaRuntimeException("Unknown embedding in serialization! - " + ebdinf.getName() + " with value " + ebd);
+	    }
+	}
+
+	@Override
+	public Object unserialize(JerboaEmbeddingInfo ebdinf, String valueSerialized) { 
+		/** TODO: replace by your own embeddings **/
+	    if(valueSerialized=="null") return null;
+	    $$EBD_UNSERIALIZE
+	    else{
+			throw new JerboaRuntimeException("Unknown embedding in serialization!");
+	    }
+
+		/*
+		StringTokenizer token = new StringTokenizer(valueSerialized);
+		switch (info.getName()) {
+		case "point": {
+			double x = Double.parseDouble(token.nextToken());
+			double y = Double.parseDouble(token.nextToken());
+			double z = Double.parseDouble(token.nextToken());
+
+			return new Point3(x, y, z);
+		}
+		default:
+			throw new JerboaRuntimeException("Unknown embedding in serialization!");
+		}*/
+	}
+
+	
+	@Override
+	public List<Pair<String, String>> properties() {
+		ArrayList<Pair<String,String>> props =new ArrayList<>();
+		//props.add(new Pair<String, String>("a", "my property"));
+		return props;
+	}
+	
+	@Override
+	public void setproperty(String name, String value) {
+		System.out.println("I FOUND PROPERTY ["+name+"] WITH VALUE ["+value+"]");
+	}
+}

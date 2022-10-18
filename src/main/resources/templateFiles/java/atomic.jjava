@@ -1,0 +1,93 @@
+/**
+$$RULE_HEADER
+**/
+package $$RULE_PATH;
+
+
+import java.util.List;
+import java.util.ArrayList;
+import up.jerboa.core.rule.*;
+import up.jerboa.core.util.*;
+import up.jerboa.core.*;
+import up.jerboa.exception.JerboaException;
+
+import $$MODELER_PACKAGE.$$MODELER_NAME;
+
+// Embeddings includes
+$$EBD_INCLUDE
+//////////////////////
+
+public class $$RULE_NAME extends JerboaRuleGenerated {
+
+    private transient JerboaRowPattern curleftPattern;
+
+    /** BEGIN PARAMETERS **/
+$$RULE_PARAMETERS
+    /** END PARAMETERS **/
+
+    /** BEGIN CLASS CONTENT (From Header tab) **/
+$$RULE_CLASS_CONTENT
+    /** END CLASS CONTENT **/
+
+    public $$RULE_NAME($$MODELER_NAME modeler) throws JerboaException {
+        super(modeler, "$$RULE_NAME", "$$RULE_CATEGORY");
+
+$$RULE_CONSTRUCTOR_CONTENT
+
+        // ------- SPECIFIED FEATURE
+        computeEfficientTopoStructure();
+        computeSpreadOperation();
+        // ------- USER DECLARATION 
+
+$$RULE_CONSTRUCTOR_PARAMETER_DEFAULT_VALUE
+    }
+
+    public int reverseAssoc(int i) {
+        $$RULE_REV_ASSOC
+        return -1;
+    }
+
+    public int attachedNode(int i) {
+        $$RULE_ATTACHED_NODE
+        return -1;
+    }
+
+    @Override
+    public JerboaRuleResult applyRule(JerboaGMap gmap, JerboaInputHooks _hooks) throws JerboaException {
+        //preprocess(gmap, _hooks);
+        JerboaRuleResult res = super.applyRule(gmap, _hooks);
+        //postprocess(gmap,res);
+        return res;
+    }
+    public JerboaRuleResult applyRule(JerboaGMap gmap$$RULE_PARAM_ARGS) throws JerboaException {
+        JerboaInputHooksGeneric _hookList = new JerboaInputHooksGeneric();
+        $$RULE_PARAM_APPLY_CONTENT
+        return applyRule(gmap, _hookList);
+	}
+
+/** BEGIN EBD CLASSES **/
+
+$$RULE_EBD_EXPR_CLASSES
+
+/** END EBD CLASSES **/
+    
+// PROCESSES
+
+$$RULE_PRE_PROCESS
+
+$$RULE_MID_PROCESS
+
+$$RULE_POST_PROCESS
+
+////////////
+
+
+    // Facility for accessing to the dart
+    private JerboaDart n0() {
+        return curleftPattern.getNode(0);
+    }
+
+// Embeddings parameter getter/setter
+$$RULE_PARAMS_GETTER_SETTER
+
+} // end rule Class

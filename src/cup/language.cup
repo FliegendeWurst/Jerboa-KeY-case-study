@@ -1,0 +1,711 @@
+import java_cup.runtime.*;
+
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.up.xlim.sic.ig.jerboa.jme.script.language.tree.syntax.tools.*;
+import fr.up.xlim.sic.ig.jerboa.jme.script.language.tree.syntax.expr.*;
+import fr.up.xlim.sic.ig.jerboa.jme.script.language.tree.syntax.instr.*;
+//import script.*;
+
+import fr.up.xlim.sic.ig.jerboa.jme.script.language.verification.JSError;
+import fr.up.xlim.sic.ig.jerboa.jme.script.language.verification.JSErrorEnumType;
+import java.util.ArrayList;
+
+parser code {: 
+
+	private ArrayList<JSError> errorList = new ArrayList<>();
+
+	public ArrayList<JSError> getErrorList(){
+		return errorList;
+	}
+
+    public void report_error(String message, Object info) { 
+    	System.err.print("Error : " +message);
+    	System.err.print(" => line "+((MyLexer)getScanner()).getLine()); 
+        System.err.println(" column "+((MyLexer)getScanner()).getColumn());
+//        report_fatal_error(message, info); 
+        errorList.add(new JSError("Reported error : '"+message+"' " +info, ((MyLexer)getScanner()).getLine(),
+        		((MyLexer)getScanner()).getColumn(), JSErrorEnumType.CRITICAL));
+    } 
+
+    public void report_fatal_error(String message, Object info) { 
+        System.err.println("--- Fatal Error ---"); 
+        System.err.print(" => line "+((MyLexer)getScanner()).getLine()); 
+        System.err.print(" column "+((MyLexer)getScanner()).getColumn());
+//        System.exit(0);
+        errorList.add(new JSError("Reported error '"+message+"' " +info, ((MyLexer)getScanner()).getLine(),
+        		((MyLexer)getScanner()).getColumn(), JSErrorEnumType.CRITICAL));
+    }
+    
+    public void syntax_error(Symbol cur_token) {
+        System.err.println("#> Syntax error at line " + ((MyLexer)getScanner()).getLine()+ " and column " 
+        			+ ((MyLexer)getScanner()).getColumn() +  " -> " + cur_token);
+        errorList.add(new JSError("Syntaxe error -> #" + cur_token+"#", ((MyLexer)getScanner()).getLine(),
+        		((MyLexer)getScanner()).getColumn() , JSErrorEnumType.CRITICAL));
+    }
+    
+    public int line(){return ((MyLexer)getScanner()).getLine();}
+    public int column(){return ((MyLexer)getScanner()).getColumn();}
+    
+:};
+
+terminal 			GMAP, RULE, COLLECT, ALPHA, DIMENSION, MODELER, HEADER, 
+					LEFTPATTERN, RIGHTPATTERN,
+					EBD, LIST, TRY, CATCH, FINALLY, THROW, LANG;
+
+terminal 			BREAK, IF, ELSE, WHILE, DO, LPAR, RPAR, LBRACE, RBRACE, SEMICOLON,
+					RETURN, FOR, FOREACH, STEP, IN, DOT, COMMA, UNDER, RBRACKET,
+					LBRACKET, NEW, DELETE, COLON,STATICOP, PRINT,AMPERSAND, VOID,
+					CONTINUE;
+
+terminal 			LT, GT, EQ, DIFF, NULL, TRUE, FALSE, INTERROGATION;
+
+terminal 			PIPE, AFFECT, SHARP, ASSIGN, UMINUS, NOT;
+
+
+/* les tokens de marques */
+terminal 			MARK, UNMARK, ISMARKED, ISNOTMARKED, DOLLAR;
+
+
+
+//terminal LANGHEADERLOC, LANGMETHODLOC, LANGRULELOC;
+
+terminal JSOperatorKind AND, OR, PLUS, MINUS, MULT, DIV, COMP, DEC, INC, MOD, XOR;
+			
+terminal String 	INT, FLOAT, DOUBLE, IDENT, STRING, CHAR, PLAINCODE, LANGDEF;
+
+
+/* NON terminaux */
+
+non terminal String ruleName, identifiant;
+non terminal JSSequence all_instr, script_instr_list;//, ruleParameter_instr_List, embedding_instr_List;
+non terminal JSInstruction instr, assignement, test_condition, loop,loop_while,loop_for,loop_foreach,
+				script_instr,expr_instr,expr_without_semicolon,
+				do_while;
+non terminal JSExpression affectable_value,const_value, const_number, assignable;
+non terminal JSInteger const_integer;
+non terminal JSApplyRule rule_application;
+non terminal JSDeclare declaration;
+non terminal JSBlock block;
+non terminal JSOrbit orbit;
+non terminal JSRule rule;
+non terminal JSExpression condition, expr_var, expr_no_previous, func_call, 
+	collects, collect_nodes, collect_ebds,expr_topo,expr_calc, constructor_basic, constructor,
+	sharp_argument, static_class_attribute;
+non terminal JSAssocParam assoc_rule_param;
+
+non terminal JSCast cast_expr;
+
+non terminal JSDeclareFunction func_declar;
+non terminal Collection<JSDeclare> func_declar_arg;
+non terminal List<JSExpression> arg_list;
+non terminal List<JSCatch> catch_expr;
+non terminal JSTry try_catch;
+non terminal JSChoice rule_alternativ;
+
+
+non terminal Collection<JSRuleArg> rule_arg_list;
+non terminal Collection<JSType> var_type_list;
+non terminal JSRuleArg rule_arg;
+non terminal JSType var_type, var_type_specific, var_type_common, var_type_templated, var_type_noIdent;
+non terminal JSOperatorKind binary_bool_op;
+
+non terminal JSIsMarked is_marked;
+non terminal JSIsNotMarked is_not_marked;
+non terminal JSExpression test_mark;
+
+non terminal JSExpression expr_arg;
+non terminal JSAtLang specific_lang;
+non terminal JSHeader header_lang;
+
+non terminal JSMark do_mark;
+non terminal JSUnMark undo_mark;
+
+non terminal Collection<JSExpression> orbit_dim_list;
+non terminal JSExpression orbit_dim;
+
+////
+non terminal LT_par, GT_par;
+////
+
+
+precedence left 	ELSE, FINALLY, CATCH; //BINOP, BBINOP;
+//precedence left 	GT,GE,LT,LE,DIFF;
+precedence left 	SEMICOLON;
+precedence right	LBRACKET;
+precedence left		RBRACKET;
+precedence left 	RPAR;
+precedence right	LPAR;
+precedence left 	OR;
+precedence left 	AND;
+precedence left 	COMP;
+precedence right 	LT;
+precedence left 	GT;
+precedence right 	MOD; //TODO : vérifier l ordre pour le mod
+precedence left 	STATICOP;
+precedence left 	PLUS, MINUS;
+precedence left 	MULT, DIV, XOR;
+precedence right 	SHARP;
+precedence left 	DOT, ALPHA;
+precedence left 	DEC, INC,COLON;
+precedence right 	NOT;
+precedence right 	UMINUS, AMPERSAND;
+
+start with all_instr;
+
+
+all_instr	::=   	all_instr:a instr:b 		{: a.add(b); RESULT = a; a.setLine(b.getLine()); a.setColumn(b.getColumn()); :}
+				|	instr:b 					{: JSSequence r = new JSSequence(b.getLine(), b.getColumn()); r.add(b); RESULT = r; :}
+;
+
+
+script_instr_list	::=	script_instr_list:a script_instr:b 	{: a.add(b); RESULT = a; a.setLine(a.getLine()); a.setColumn(a.getColumn());:}
+					|	script_instr:b 						{: JSSequence r = new JSSequence(line(), column()); r.add(b); RESULT = r; :}
+;
+
+										/**  ### INSTRUCTION ### **/
+
+
+
+instr	::= 	script_instr:i	{: RESULT = i;  :}	
+			| 	func_declar:fd 	{: RESULT = fd; :}
+
+;
+
+script_instr	::= rule_application:d SEMICOLON					{: RESULT = new JSExprInstruction(d); :}
+				| 	rule_alternativ:d SEMICOLON						{: RESULT = new JSExprInstruction(d); :}
+				|	assoc_rule_param:a SEMICOLON					{: RESULT = a; :}
+				|	expr_instr:i									{: RESULT = i; :}
+;
+
+expr_instr	::=		test_condition:tc								{: RESULT = tc; :}
+				|	loop:l											{: RESULT = l;  :}
+				|	assoc_rule_param:arp							{: RESULT = arp; :}
+				|	try_catch:tc									{: RESULT = tc; :}
+				|   specific_lang:sl								{: RESULT = sl; :}
+				|	header_lang:sl									{: RESULT = sl; :}
+				|	expr_without_semicolon:ews SEMICOLON			{: RESULT = ews; :}
+				|   expr_no_previous:enp SEMICOLON					{: RESULT = new JSExprInstruction(enp); :}
+;
+
+expr_without_semicolon ::= 	assignement:a 							{: RESULT = a;  :}
+						| 	declaration:d 							{: RESULT = d;  :}
+						|	PRINT LPAR arg_list:args RPAR 			{: RESULT = new JSPrint(args,line(),column()); :}
+						|	expr_no_previous:var 					{: RESULT = new JSExprInstruction(var); :}
+						|	DELETE IDENT:i							{: RESULT = new JSDelete(new JSVariable(i, line(), column()), line(), column()); :}
+						|	BREAK 									{: RESULT = new JSBreak(line(),column()); :}
+						|	RETURN affectable_value:r 				{: RESULT = new JSReturn(r, r.getLine(), r.getColumn()); :}
+						| 	undo_mark:um							{: RESULT = um; :}
+						|	do_mark:m								{: RESULT = m; :}
+						|	CONTINUE								{: RESULT = new JSContinue(line(),column()); :}
+						|	THROW	expr_no_previous:e				{: RESULT = new JSThrow(e); :}
+
+;
+
+test_condition ::=  IF condition:c block:b 					{: RESULT = new JSIf(c, b, null,line(),column()); :}
+
+				|	IF condition:c block:b 	ELSE block:e	{: RESULT = new JSIf(c, b, e,line(),column()); :}
+
+				//|	IF condition:c error:er ELSE			{: report_error("wrong test with else ",er); RESULT = new JSIf(c,null,null,line(),column());:}
+
+				//|	IF error:er 							{: report_error("wrong test ",er); RESULT = new JSIf(null,b,null,line(),column());:}
+
+				|	IF error:er block:b		ELSE block:e	{:report_error("wrong test ",er); RESULT = new JSIf(null,b,null,line(),column());:}
+;
+
+loop		::=		loop_while:w	{: RESULT = w;  :}
+				|	loop_for:f		{: RESULT = f;  :}
+				| 	loop_foreach:fe	{: RESULT = fe; :}
+				| 	do_while:dw		{: RESULT = dw; :}
+;
+
+loop_while	::= 	WHILE LPAR condition:c RPAR block:b				{: RESULT = new JSWhile(c,b,line(),column()); :}
+				| 	WHILE error:er									{: report_error("incorect while loop ",er); 
+																		RESULT = new JSWhile(null,null,line(),column()); :}
+;
+
+do_while	::= 	DO block:b WHILE LPAR condition:c RPAR SEMICOLON	{: RESULT = new JSDoWhile(c,b,line(),column()); :}
+				| 	DO error:er		{: report_error("incorect dowhile loop ",er); 
+										RESULT = new JSDoWhile(null,null,line(),column()); :}
+;
+
+loop_for	::=		FOR IDENT:i IN expr_calc:beg DOT DOT expr_calc:end block:b
+							{: RESULT = new JSFor(new JSType("int",line(),column()), i, beg, end, new JSExprInstruction(new JSInteger(1,line(),column())),b,line(),column()); :}
+				|	FOR IDENT:i IN expr_calc:beg DOT DOT expr_calc:end STEP const_number:step block:b
+							{: RESULT = new JSFor(new JSType("int",line(),column()), i, beg, end, new JSExprInstruction(step),b,line(),column()); :}
+				|	FOR LPAR var_type:t IDENT:i AFFECT expr_calc:beg SEMICOLON condition:c SEMICOLON assignement:as RPAR block:b
+				// Ici je suppose que la condition de fin est un assignement comme : "i=i+3" ou "i++"
+							{: RESULT = new JSForLoop(new JSDeclare(t, i, beg,line(),column()), c,  as, b, line(), column()); :}
+				|	FOR error:e
+							{:report_error("wrong for loop" ,e); RESULT = new JSFor(null,null,null,null,null,null,line(),column());:}
+;
+
+loop_foreach ::=	FOREACH LPAR var_type:type IDENT:var COLON expr_calc:v RPAR block:b
+						{: RESULT = new JSForEach(type,var, v, b,line(),column()); :}
+				| 	FOREACH LPAR var_type:type IDENT:var COLON collects:collect RPAR block:b
+						{: RESULT = new JSForEach(type,var, collect,b,line(),column()); :}	
+				|	FOR	 	LPAR var_type:type IDENT:var COLON expr_calc:v RPAR block:b
+						{: RESULT = new JSForEach(type,var, v, b,line(),column()); :}
+				| 	FOR 	LPAR var_type:type IDENT:var COLON collects:collect RPAR block:b
+						{: RESULT = new JSForEach(type,var, collect,b,line(),column()); :}
+				|	FOREACH error:er		
+						{:report_error("wrong foreach ",er); RESULT = new JSForEach(null,null,null,null,line(),column());:}
+;
+
+block 		::=   	LBRACE  RBRACE							{: RESULT = new JSBlock(new JSNOP(line(),column()), true, line(),column()); :}
+				|	LBRACE 	all_instr:i RBRACE 				{: RESULT = new JSBlock(i, true, i.getLine(),i.getColumn()); :}
+				|	instr:i 			 					{: RESULT = new JSBlock(i, false,i.getLine(),i.getColumn()); 
+				//JSSequence seq = new JSSequence(i.getLine(), i.getColumn()); seq.add(i); 
+				//			RESULT = new JSBlock(seq, false,i.getLine(),i.getColumn()); 
+							:}
+				|	LBRACE all_instr:i error:er 			{:report_error("missing } ",er); RESULT = null;:}
+;
+
+func_declar	::=		var_type:type 	identifiant:name LPAR func_declar_arg:arg RPAR block:b 
+						{: RESULT = new JSDeclareFunction(type,name, arg, b, line(), column()); :}
+						
+				| 	var_type:type 	identifiant:name LPAR RPAR block:b 
+						{: RESULT = new JSDeclareFunction(type,name, new ArrayList<JSDeclare>(), b, line(), column()); :}
+						
+				| 	VOID 			identifiant:name LPAR func_declar_arg:arg RPAR block:b 
+						{: RESULT = new JSDeclareFunction(null,name, arg, b, line(), column()); :}
+					
+				| 	VOID 			identifiant:name LPAR RPAR block:b 
+						{: RESULT = new JSDeclareFunction(null,name, new ArrayList<JSDeclare>(), b, line(), column()); :}
+						
+				|	var_type:type  	identifiant:name LPAR  error:er	
+						{:report_error("wrong func declare ",er); RESULT = new JSDeclareFunction(null,name, null, null, line(), column());:}
+;
+
+func_declar_arg	::=		func_declar_arg:l COMMA var_type:t IDENT:n	{: l.add(new JSDeclare(t, n, null,line(),column())); RESULT = l; :}
+					|	var_type:t IDENT:n							{: ArrayList<JSDeclare> l = new ArrayList<JSDeclare>(); l.add(new JSDeclare(t, n, null,line(),column())); RESULT = l; :}	
+;
+
+try_catch	::=		TRY block:b catch_expr:c FINALLY block:fb 	{: RESULT = new JSTry(b,c,fb ,line(), column()); :}
+				|	TRY block:b catch_expr:c 					{: RESULT = new JSTry(b,c,null,line(), column()); :}
+;
+
+catch_expr	::=		CATCH LPAR var_type:type IDENT:name RPAR block:b					
+						{: ArrayList<JSCatch> l = new ArrayList<JSCatch>(); l.add(new JSCatch(b,type, name,line(),column())); RESULT =l; :}
+				|	CATCH LPAR RPAR block:b													
+						{: ArrayList<JSCatch> l = new ArrayList<JSCatch>(); l.add(new JSCatch(null,null, "",line(),column())); RESULT =l; :}
+						
+						// TODO: verifier la ligne
+				|	CATCH LPAR var_type:type IDENT:name RPAR block:b  catch_expr:ce	
+						{: ce.add(new JSCatch(b, type,  name,line(),column())); RESULT = ce; :}
+;
+
+rule_application ::= rule:r  LPAR RPAR
+						{: RESULT = new JSApplyRule(r, new ArrayList<JSRuleArg>(),line(),column() ); :}
+				|	rule:r LPAR rule_arg_list:hl RPAR
+						{: RESULT = new JSApplyRule(r, hl,line(),column() ); :}						
+				|	rule:r LPAR error:er RPAR
+						{:report_error("wrong rule call with hook specification ",er);  
+							RESULT = new JSApplyRule(r, new ArrayList<JSRuleArg>() ,line(),column()); :}
+;
+
+rule_alternativ  ::=	rule_application:r1 PIPE rule_application:r2	{: ArrayList<JSApplyRule> l = new ArrayList<JSApplyRule>(); 
+																			l.add(r1); l.add(r2); RESULT = new JSChoice(l,line(),column()); :}
+					|	rule_alternativ:alt PIPE rule_application:r1	{: alt.addChoice(r1); RESULT = alt; :}
+;
+
+
+identifiant	::= 	IDENT:i 				{: RESULT = i; :}
+;
+
+func_call	::= 	identifiant:t LPAR arg_list:args RPAR 		{: RESULT = new JSCall(t,args,line(),column()); :}
+				|	identifiant:t LPAR RPAR 					{: RESULT = new JSCall(t,new ArrayList<JSExpression>(),line(),column()); :}
+				|	identifiant:t LPAR error:er					{: report_error("wrong function call " ,er); 
+																			RESULT = new JSCall(t,new ArrayList<JSExpression>(),line(),column());:}
+;
+
+
+collects ::=	collect_nodes:c {: RESULT = c; :}
+			| 	collect_ebds:c  {: RESULT = c; :}
+;
+
+collect_nodes ::=	COLLECT orbit:orbin expr_calc:node orbit:sorb							// @collect<0,1,2>n0<0,1>
+						{: RESULT = new JSCollect(orbin, sorb, node,line(),column()); :}
+				|	orbit:orbin UNDER orbit:sorb LPAR expr_calc:node RPAR					// <0,1,2>_<0,1>(n0)
+						{: RESULT = new JSCollect(orbin, sorb, node,line(),column()); :}
+
+				|	LT  orbit_dim_list:orb PIPE orbit_dim_list:sorb GT LPAR expr_calc:node RPAR	// <0,1,2|0,1>(n0)
+						{: RESULT = new JSCollect(new JSOrbit(orb,line(),column()), new JSOrbit(sorb,line(),column()), node,line(),column()); :}
+				|	LT  orbit_dim_list:orb GT LPAR expr_calc:node RPAR						// <0,1,2>(n0) --> id que // <0,1,2>_<>(n0)
+						{: RESULT = new JSCollect(new JSOrbit(orb,line(),column()), new JSOrbit(new ArrayList<JSExpression>(),line(),column()), node,line(),column()); :}
+// TODO: permettre les orbites vide ! <1,2 |>
+;
+
+collect_ebds  ::=	COLLECT orbit:orbin UNDER identifiant:ebdName expr_calc:node orbit:sorb	
+						{: RESULT = new JSCollectEbd(orbin, ebdName, node,line(),column()); :}
+				|	orbit:orbin UNDER identifiant:ebdName LPAR expr_calc:node RPAR	
+						{: RESULT = new JSCollectEbd(orbin, ebdName, node,line(),column()); :}
+;
+
+
+
+
+									/** ### Expression quelconques ### **/
+
+orbit_dim_list ::= 	orbit_dim_list:l COMMA orbit_dim:i		{: l.add(i); RESULT = l; :}
+				|	orbit_dim_list:l SEMICOLON orbit_dim:i	{: l.add(i); RESULT = l; :}
+				|	orbit_dim_list:l orbit_dim:i			{: l.add(i); RESULT = l; :}
+				|	orbit_dim:i								{: ArrayList<JSExpression> r = new ArrayList<JSExpression>(); r.add(i); RESULT = r; :}
+				|	error:er								{: report_error("integer expected",er); RESULT = new ArrayList<JSExpression>(); :}
+;
+orbit_dim 	::= INT:i 		{: RESULT = new JSInteger(Integer.parseInt(i),line(),column()); :}
+			|	identifiant:i 	{: RESULT = new JSVariable(i,line(),column()); :}
+;
+
+//integer_list ::= 	integer_list:l COMMA INT:i		{: l.add(new JSInteger(Integer.parseInt(i),line(),column())); RESULT = l; :}
+//				|	integer_list:l SEMICOLON INT:i	{: l.add(new JSInteger(Integer.parseInt(i),line(),column())); RESULT = l; :}
+//				|	integer_list:l INT:i			{: l.add(new JSInteger(Integer.parseInt(i),line(),column())); RESULT = l; :}
+//				|	INT:i							{: ArrayList<JSInteger> r = new ArrayList<JSInteger>(); r.add(new JSInteger(Integer.parseInt(i),line(),column())); RESULT = r; :}
+//				|	error:er						{: report_error("integer expected",er); RESULT = new ArrayList<JSInteger>(); :}
+//;
+
+ruleName 	::=		identifiant:i 	{: RESULT = i; :}
+				|	STRING:s	{: RESULT = s; :}
+;
+
+orbit 		::=		LT orbit_dim_list:il GT 	{: RESULT = new JSOrbit(il,line(),column()); :}
+				|	LT GT 						{: RESULT = new JSOrbit(new ArrayList<JSExpression>() ,line(),column()); :}
+				|	LT error:er GT 				{: report_error("wrong orbit specification " ,er); 
+													RESULT =  new JSOrbit(new ArrayList<JSExpression>(),line(),column());:}
+;
+
+assignement ::= 	assignable:i AFFECT affectable_value:v		{: RESULT = new JSAssignment(i, v, line(),column()); :}
+				|	assignable:i INC:op 						{: RESULT = new JSExprInstruction(new JSOperator(line(),column(),op, i,null)); :}
+				|	assignable:i DEC:op 						{: RESULT = new JSExprInstruction(new JSOperator(line(),column(),op, i,null)); :}
+				// TODO: faire l'assignement de case de tableau : tab[i] = 3;
+;
+
+declaration ::= 	var_type:t IDENT:n								{: RESULT = new JSDeclare(t, n, null,line(),column()); :}
+				| 	var_type:t IDENT:n AFFECT affectable_value:v	{: RESULT = new JSDeclare(t, n, v,line(),column()); :}
+				|	var_type:t IDENT:n LPAR RPAR					{: RESULT = new JSDeclare(t, n, new JSConstructor(t,new ArrayList<JSExpression>(), line(), column()), line(), column()); :}
+				|	var_type:t IDENT:n LPAR arg_list:args RPAR		{: RESULT = new JSDeclare(t, n, new JSConstructor(t,args, line(), column()), line(), column()); :}
+				|	var_type:t error:er AFFECT affectable_value:v	{: report_error("wrong identifier",er); 
+																		RESULT = new JSDeclare(t, null, v,line(),column()); :}
+				|	var_type:t error:er 	{: report_error("wrong assignement for type " + t, er); 
+																		RESULT = new JSDeclare(t, null, null,line(),column()); :}
+// changer le type pour mettre une liste de noeud en dur
+;
+
+assignable	::=		IDENT:i {: RESULT = new JSVariable(i,line(),column()); :}
+				|	assignable:v LBRACKET expr_calc:index RBRACKET 
+						{: RESULT = new JSIndex(v,index,line(),column()); :}
+;
+
+affectable_value ::=	condition:c				{: RESULT = c; :}
+					//|	collects:v				{: RESULT = v; :}
+					|	rule_application:r		{: RESULT = r; :}
+					|	rule_alternativ:r		{: RESULT = r; :}
+					|	orbit:o					{: RESULT = o; :}			
+;
+
+constructor_basic ::=  	EBD LT IDENT:i GT LPAR RPAR					{: RESULT = new JSConstructor(new JSKeywordEbd(i,EBDRequest.TYPE,line(),column()),new ArrayList<JSExpression>(), line(), column()); :}
+					|	EBD LT IDENT:i GT LPAR arg_list:args RPAR	{: RESULT = new JSConstructor(new JSKeywordEbd(i,EBDRequest.TYPE,line(),column()),args, line(), column()); :}
+					|	IDENT:i LPAR arg_list:args RPAR				{: RESULT = new JSConstructor(new JSType(i,line(),column()), args, line(), column()); :}
+					|	IDENT:i LPAR RPAR							{: RESULT = new JSConstructor(new JSType(i,line(),column()), new ArrayList<JSExpression>(), line(), column()); :}
+;
+
+constructor		 ::=	NEW constructor_basic:cb 	{: RESULT = new JSNew(cb, line(), column()); :}
+					|	NEW var_type_noIdent:t LPAR arg_list:args RPAR	{: RESULT = new JSNew(new JSConstructor(t, args, line(), column()), line(), column()); :}
+					|	NEW var_type_noIdent:t LPAR RPAR				{: RESULT = new JSNew(new JSConstructor(t, new ArrayList<JSExpression>(), line(), column()), line(), column()); :}
+					|	constructor_basic:cb		{: RESULT = cb; :}
+;
+
+/** TODO: revoir les hooks, pour récupérer le hook du résultat d'application de règle **/
+rule_arg_list 	::=		rule_arg_list:a COMMA rule_arg:arg 	{: a.add(arg); RESULT = a; :}
+					| 	rule_arg:h 		{: ArrayList<JSRuleArg> r = new ArrayList<>(); r.add(h); RESULT = r; :}
+;
+
+/** /!\ ici on a pas obligé de soit spécifier tout les hook soit aucun, on peu mélanger ici : à modifier ? **/
+rule_arg	::= 	IDENT:name ASSIGN expr_arg:arg		{: RESULT = new JSRuleArg(arg,name,line(),column()); :}
+				|	condition:arg						{: RESULT = new JSRuleArg(arg,null,line(),column()); :}
+;
+assoc_rule_param ::=	rule:r DOT IDENT:paramName AFFECT condition:value
+								{: RESULT = new JSAssocParam(r,value,paramName,line(),column()); :}
+;
+
+
+condition	 ::= 	TRUE										{: RESULT = new JSBoolean(true,line(),column()); :}
+				|	FALSE										{: RESULT = new JSBoolean(false,line(),column()); :}
+				|	expr_calc:t									{: RESULT = t; :}
+				|	LPAR condition:c RPAR						{: RESULT = c; :}
+//				|	expr_calc:l binary_comp_op:c  expr_calc:r	{: RESULT = new JSOperator(line(),column(),c, l,r); :}
+				
+				|	expr_calc:l COMP:c  expr_calc:r 	{: RESULT = new JSOperator(line(),column(),c, l,r); :}
+				|	expr_calc:l LT 		expr_calc:r		{: RESULT = new JSOperator(line(),column(),JSOperatorKind.LT, l,r); :}
+				|	expr_calc:l GT		expr_calc:r		{: RESULT = new JSOperator(line(),column(),JSOperatorKind.GT, l,r); :}
+				|	expr_calc:l DIFF	expr_calc:r		{: RESULT = new JSOperator(line(),column(),JSOperatorKind.DIFF, l,r); :}
+				|	expr_calc:l EQ		expr_calc:r		{: RESULT = new JSOperator(line(),column(),JSOperatorKind.EQUAL, l,r); :}
+				
+				
+				|	NOT condition:c								{: RESULT = new JSNot(c,line(),column()); :}
+				|	condition:l binary_bool_op:bo condition:r	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	test_mark:testMark							{: RESULT = testMark; :}
+;
+
+
+rule 		 ::= 	RULE LT ruleName:rule GT 	{: RESULT  = new JSRule(rule,line(),column()); :}
+				| 	RULE 					 	{: RESULT  = new JSRule(null,line(),column()); :}
+				| 	RULE LT error:er GT 		{: report_error("wrong rule call with rule name ",er);  
+													RESULT = new JSRule("@error",line(),column()); :}
+;
+
+expr_arg	 ::=	condition:e					{: RESULT = e; :}
+				|	orbit:arg					{: RESULT = arg; :}
+				//|	collects:col				{: RESULT = col; :}
+;
+
+// fait pour avoir une expression d'indice qui ne cré pas de situation ambigue
+sharp_argument ::= 	INT:i 					{: RESULT = new JSInteger(Integer.parseInt(i),line(),column()); :}
+				|	identifiant:v 			{: RESULT = new JSVariable(v,line(),column()); :}
+				|	LPAR expr_calc:e RPAR 	{: RESULT = e; :}
+;
+
+
+expr_topo	 ::=	MODELER						{: RESULT = new JSKeywordModeler(line(),column()); :}
+				| 	DIMENSION					{: RESULT = new JSKeywordDimension(line(),column()); :}
+				| 	rule:r 						{: RESULT = r; :}
+				|	GMAP 						{: RESULT = new JSKeywordGmap(line(),column()); :}
+				|	GMAP SHARP SHARP 			{: RESULT = new JSGMapSize(line(),column()); :}
+				|	GMAP SHARP sharp_argument:c {: RESULT = new JSIndex(new JSKeywordGmap(line(),column()),c,line(),column()); :}
+				|	LEFTPATTERN					{: RESULT = new JSKeywordLeftFilter(line(),column()); :}				
+				//|	LEFTPATTERN	DOT IDENT:hookName SHARP sharp_argument:sa				
+				//								{: RESULT = new JSIndexInLeftPattern(new JSVariable(hookName,line(),column()),sa,line(),column()); :}				
+				|	LEFTPATTERN	SHARP sharp_argument:hookName SHARP sharp_argument:sa				
+												{: RESULT = new JSIndexInLeftPattern(hookName,sa,line(),column()); :}
+				|	LEFTPATTERN	SHARP sharp_argument:hookName LBRACKET sharp_argument:sa RBRACKET				
+												{: RESULT = new JSIndexInLeftPattern(hookName,sa,line(),column()); :}	
+				|	LEFTPATTERN	LBRACKET sharp_argument:hookName COMMA sharp_argument:sa RBRACKET				
+												{: RESULT = new JSIndexInLeftPattern(hookName,sa,line(),column()); :}												
+				//|	LEFTPATTERN	SHARP IDENT:hookName 			
+				//								{: RESULT = new JSIndexInLeftPattern(new JSVariable(hookName,line(),column()),null,line(),column()); :}
+				//|	LEFTPATTERN	DOT func_call:fc				
+				//								{: RESULT = new JSIndex(new JSKeywordLeftFilter(line(),column()),fc,line(),column()); :}				
+				|	RIGHTPATTERN				{: RESULT = new JSKeywordRightFilter(line(),column()); :}
+//				|	expr_topo:v SHARP LPAR expr_calc:c RPAR
+//								{: RESULT = new JSIndex(v,c,line(),column()); :}
+//				|	expr_topo:v SHARP const_integer:c
+//								{: RESULT = new JSIndex(v,c,line(),column()); :}
+//				|	expr_topo:v SHARP IDENT:i
+//								{: RESULT = new JSIndex(v,new JSVariable(i,line(),column()),line(),column()); :}
+//				|	expr_topo:v LBRACKET expr_calc:index RBRACKET 
+//								{: RESULT = new JSIndex(v,index,line(),column()); :}
+;
+
+
+static_class_attribute ::= 		var_type_common:t STATICOP 	static_class_attribute:sca		
+									{: RESULT = new JSInScopeStatic(t,sca,line(),column()); :}
+							| 	var_type_specific:t  STATICOP 	static_class_attribute:sca	
+									{: RESULT = new JSInScopeStatic(t,sca,line(),column()); :}
+							| 	expr_var:ev {: RESULT = ev; :}
+;
+
+expr_no_previous ::= 	expr_topo:v								{: RESULT = v; :}
+					| 	expr_no_previous:v DOT expr_var:v2		{: RESULT = new JSInScope(v,v2,line(),column()); :}
+					| 	constructor:c							{: RESULT = c; :}
+					| 	rule:r DOT func_call:f					{: RESULT = new JSInScope(r,f,line(),column()); :}
+					| 	static_class_attribute:v				{: RESULT = v; :}
+					| 	LPAR expr_calc:v RPAR DOT expr_var:v2	{: RESULT = new JSInScope(v,v2,line(),column()); :}
+					|	collects:v								{: RESULT = v; :} 
+					|	expr_no_previous:v SHARP sharp_argument:i  {: RESULT = new JSIndex(v,i,line(),column()); :}
+;
+
+expr_var	 ::= 	identifiant:i						{: RESULT = new JSVariable(i,line(),column()); :}
+				| 	func_call:f							{: RESULT = f; :}
+//				|	expr_var:v SHARP LPAR expr_calc:c RPAR
+//														{: RESULT = new JSIndex(v,c,line(),column()); :}
+//				|	expr_var:v SHARP const_integer:c
+//														{: RESULT = new JSIndex(v,c,line(),column()); :}
+//				|	expr_var:v SHARP IDENT:i
+//														{: RESULT = new JSIndex(v,new JSVariable(i,line(),column()),line(),column()); :}
+//				| 	expr_var:v ALPHA INT:i				{: RESULT = new JSAlpha(v,new JSInteger(Integer.parseInt(i),line(),column()),line(),column()); :} 
+//				|	expr_var:v LBRACKET expr_calc:index RBRACKET 
+//														{: RESULT = new JSIndex(v,index,line(),column()); :}
+;
+
+expr_calc	::=   	expr_no_previous:v						{: RESULT = v; :}
+				| 	const_value:v							{: RESULT = v; :}
+				|	LPAR expr_calc:c RPAR 			 		{: RESULT = c; :}
+				| 	expr_calc:v DOT expr_var:v2				{: RESULT = new JSInScope(v,v2,line(),column()); :} 
+				|	expr_calc:l MOD:bo		expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	expr_calc:l MULT:bo		expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	expr_calc:l XOR:bo		expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	expr_calc:l DIV:bo		expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	expr_calc:l PLUS:bo		expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|	expr_calc:l MINUS:bo	expr_calc:r  	{: RESULT = new JSOperator(line(),column(),bo, l,r); :}
+				|				MINUS:bo expr_calc:r 		{: RESULT = new JSOperator(line(),column(),bo, null,r); :}
+					%prec UMINUS
+				|				PLUS:bo expr_calc:r 		{: RESULT = new JSOperator(line(),column(),bo, null,r); :}
+					%prec UMINUS
+				|				MULT expr_calc:e		{: RESULT = new JSIndirection(e,line(),column()); :}
+					%prec AMPERSAND
+				|				MULT LPAR expr_no_previous:e RPAR	{: RESULT = new JSIndirection(e,line(),column()); :}
+					%prec AMPERSAND
+				|				AMPERSAND expr_no_previous:e		{: RESULT = new JSUnreference(e,line(),column()); :}
+					%prec AMPERSAND
+				|				AMPERSAND LPAR expr_no_previous:e RPAR	{: RESULT = new JSUnreference(e,line(),column()); :}
+					%prec AMPERSAND
+				|	expr_calc:v SHARP sharp_argument:i  {: RESULT = new JSIndex(v,i,line(),column()); :}
+				| 	expr_calc:v ALPHA sharp_argument:i	{: RESULT = new JSAlpha(v,i,line(),column()); :} 
+				|	expr_calc:v LBRACKET expr_calc:index RBRACKET 
+														{: RESULT = new JSIndex(v,index,line(),column()); :}
+				|	cast_expr:c							{: RESULT = c; :}
+;
+
+
+cast_expr	::= 	LPAR LPAR IDENT:type RPAR expr_calc:c RPAR 	{: RESULT = new JSCast(new JSType(type, line(), column()),c,line(),column()); :}
+;
+
+const_value ::=   	const_number:n 						{: RESULT = n; :}
+				| 	CHAR:c 								{: RESULT = new JSVariable(c,line(),column()); :}
+				| 	STRING:s 							{: RESULT = new JSString(s,line(),column()); :}
+				| 	NULL 								{: RESULT = new JSNull(line(),column()); :}
+				|	EBD LT IDENT:i GT DOT IDENT:ident	{: 
+					EBDRequest r =EBDRequest.TYPE;
+					if(ident.compareToIgnoreCase("name")==0){
+						r = EBDRequest.NAME;
+						RESULT = new JSKeywordEbd(i,r,line(),column());
+					}else if(ident.compareToIgnoreCase("id")==0){
+						r = EBDRequest.IDT;
+						RESULT = new JSKeywordEbd(i,r,line(),column());
+					}else if(ident.compareToIgnoreCase("orbit")==0){
+						r = EBDRequest.ORBITE;
+						RESULT = new JSKeywordEbd(i,r,line(),column());
+					}else{
+						RESULT = new JSInScope(new JSKeywordEbd(i,r,line(),column()),new JSVariable(ident,line(),column()),line(),column());
+					}
+					:}
+//				|	RULE LT IDENT:i GT DOT IDENT:ident	{: 
+//						EBDRequest r =EBDRequest.TYPE;
+//						if(ident.compareToIgnoreCase("name")==0)
+//							r = EBDRequest.NAME;
+//						else if(ident.compareToIgnoreCase("id")==0)
+//							r = EBDRequest.IDT;
+//						else if(ident.compareToIgnoreCase("orbit")==0)
+//							r = EBDRequest.ORBITE;
+//						RESULT = new JSKeywordEbd(i,r,line(),column()); :}
+				// TODO: les argument de règle peuvent se confondre avec les paramètres de règles défini par l'utilisateur ... à voir
+;
+
+const_number ::=	const_integer:n		{: RESULT = n; :}
+				| 	FLOAT:n 			{: RESULT = new JSFloat(Float.parseFloat(n),line(),column()); :}
+				| 	DOUBLE:n 			{: RESULT = new JSDouble(Double.parseDouble(n),line(),column()); :}
+;
+
+const_integer ::=	INT:n 				{: RESULT = new JSInteger(Integer.parseInt(n),line(),column()); :}
+;
+
+
+arg_list	::=		arg_list:a COMMA expr_arg:e		{: a.add(e); RESULT = a; :}
+				|	expr_arg: e						{: ArrayList<JSExpression> r = new ArrayList<>(); r.add(e); RESULT = r; :}
+;
+
+LT_par ::= LT %prec UMINUS;
+GT_par ::= GT %prec DEC;
+
+var_type_common ::= 	IDENT:i 						{: RESULT = new JSType(i,line(),column()); :}
+//					| 	var_type_templated:i 			{: RESULT = i; :}
+;
+
+var_type_specific ::= 	EBD LT IDENT:i GT 	 			{: RESULT = new JSKeywordEbd(i,EBDRequest.TYPE,line(),column()); :}
+					|	EBD LT IDENT:i GT DOT STRING:g	{: 
+						/* TODO: Val : il faudrait pas mettre ça la, le nom, orbite, type ne sont pas des types!!! */
+						if(g.compareToIgnoreCase("type")==0)
+							RESULT = new JSKeywordEbd(i,EBDRequest.TYPE,line(),column()); 
+						else if(g.compareToIgnoreCase("name")==0 || g.compareToIgnoreCase("nom")==0)
+							RESULT = new JSKeywordEbd(i,EBDRequest.NAME,line(),column()); 
+						else if(g.compareToIgnoreCase("id")==0 || g.compareToIgnoreCase("ident")==0)
+							RESULT = new JSKeywordEbd(i,EBDRequest.IDT,line(),column());
+						else if(g.compareToIgnoreCase("orbit")==0 ||g.compareToIgnoreCase("orbite")==0 )
+							RESULT = new JSKeywordEbd(i,EBDRequest.ORBITE,line(),column());
+						else{
+							report_error("wrong attribute for embedding. Corrected as default : \"type\"",g);
+							RESULT = new JSKeywordEbd(i,EBDRequest.TYPE,line(),column());  
+						}
+					:}
+					|	EBD  	 						{: RESULT = new JSKeywordEbd(null,EBDRequest.TYPE,line(),column()); :}
+					|	LIST LT var_type:t GT 			{: RESULT = new JSList(t,line(),column()); :}
+;
+
+
+var_type_templated ::= 	IDENT:i LT var_type_list:l GT  	{: RESULT = new JSTypeTemplate(new JSType(i,line(),column()),l,line(),column()); :}
+				 	| 	IDENT:i LT  GT  				{: RESULT = new JSTypeTemplate(new JSType(i,line(),column()),new ArrayList<JSType>(),line(),column()); :}
+;
+
+var_type 	::= 	var_type_common:i	 			{: RESULT = i; :}
+				| 	var_type_specific:i 			{: RESULT = i; :}
+				| 	var_type_templated:i 			{: RESULT = i; :}
+				|	var_type:i STATICOP var_type:t 	{: RESULT = new JSPackagedType(i,t,line(),column()); :}
+;
+
+var_type_noIdent ::= 	var_type_specific:i 			{: RESULT = i; :}
+					| 	var_type_templated:i 			{: RESULT = i; :}
+					| 	var_type:i STATICOP var_type:t 	{: RESULT = new JSPackagedType(i,t,line(),column()); :}
+;
+
+var_type_list ::= 	var_type_list:a COMMA var_type:t	{: a.add(t); RESULT = a; :}
+				|	var_type:t							{: ArrayList<JSType> r = new ArrayList<>(); r.add(t); RESULT = r; :}
+;
+
+binary_bool_op	::= OR:o	{: RESULT = o; :}
+				|	AND:o	{: RESULT = o; :}
+;
+
+specific_lang	::=  	LANG  LPAR LANGDEF:l RPAR PLAINCODE:c 	{: RESULT = new JSAtLang(l,c,line(),column()); :}
+					| 	LANG PLAINCODE:c 						{: RESULT = new JSAtLang(null,c,line(),column()); :}
+;
+
+
+header_lang	::=   HEADER  LPAR LANGDEF:l RPAR PLAINCODE:c 		{: RESULT = new JSHeader(l,c,line(),column()); :}
+				| HEADER PLAINCODE:c 							{: RESULT = new JSHeader(null,c,line(),column()); :}
+;
+
+
+//   __  __    _    ____   ___  _   _ _____ ____  
+//  |  \/  |  / \  |  _ \ / _ \| | | | ____/ ___| 
+//  | |\/| | / _ \ | |_) | | | | | | |  _| \___ \ 
+//  | |  | |/ ___ \|  _ <| |_| | |_| | |___ ___) |
+//  |_|  |_/_/   \_\_| \_\\__\_\\___/|_____|____/ 
+//                                             
+
+// Val : Ici je fais le choix de forcer le passage en dur des marques :
+// 			C'est a dire qu'elle ne peuvent pas être stockée dans des listes.
+//			Il faut absoluement passer par le nom d une variable de type JSG_TypeMark
+do_mark 	::= 	MARK 	LPAR expr_calc:dartOrList 	COMMA IDENT:mark RPAR 
+								{: RESULT = new JSMark(dartOrList,new JSVariable(mark,line(),column()),line(),column()); :}
+				//| 	MARK 	LPAR collect_nodes:collect 	COMMA IDENT:mark RPAR
+				//				{: RESULT = new JSMark(collect,new JSVariable(mark,line(),column()),line(),column()); :}
+;
+undo_mark	::= 	UNMARK 	LPAR expr_calc:dartOrList 	COMMA IDENT:mark RPAR 
+								{: RESULT = new JSUnMark(dartOrList,new JSVariable(mark,line(),column()),line(),column()); :}
+				//| 	UNMARK 	LPAR collect_nodes:collect 	COMMA IDENT:mark RPAR
+				//				{: RESULT = new JSUnMark(collect,new JSVariable(mark,line(),column()),line(),column()); :}
+;
+
+is_marked	::= 	ISMARKED	LPAR expr_calc:dartOrList 	COMMA IDENT:mark RPAR 	
+								{: RESULT = new JSIsMarked(dartOrList,new JSVariable(mark,line(),column()),line(),column()); :}
+				//| 	ISMARKED 	LPAR collect_nodes:collect 	COMMA IDENT:mark RPAR 	
+				//				{: RESULT = new JSIsMarked(collect,new JSVariable(mark,line(),column()),line(),column()); :}
+								// '-> peut etre pas trop utile/optimisé ? en tout cas pour l'instant
+				|	expr_calc:node DOLLAR IDENT:mark							
+								{: RESULT = new JSIsMarked(node,new JSVariable(mark,line(),column()),line(),column()); :}
+;
+
+is_not_marked ::= 	ISNOTMARKED	LPAR expr_calc:dartOrList 	COMMA IDENT:mark RPAR  	
+								{: RESULT = new JSIsNotMarked(dartOrList,new JSVariable(mark,line(),column()),line(),column()); :}
+				//| 	ISNOTMARKED	LPAR collect_nodes:collect 	COMMA IDENT:mark RPAR 
+				//				{: RESULT = new JSIsNotMarked(collect,new JSVariable(mark,line(),column()),line(),column()); :}
+								// '-> peut etre pas trop utile/optimisé ? en tout cas pour l'instant
+;
+
+test_mark 	::= 	is_marked:im 		{: RESULT = im; :}
+				|	is_not_marked:inm 	{: RESULT = inm; :}
+;
+
+

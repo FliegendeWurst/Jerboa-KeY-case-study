@@ -1,0 +1,87 @@
+package $$BRIDGE_PACKAGE;
+
+import java.awt.Dimension;
+import java.io.File;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import fr.up.xlim.sic.ig.jerboa.trigger.tools.JerboaMonitorInfo;
+import fr.up.xlim.sic.ig.jerboa.trigger.tools.JerboaProgressBar;
+import fr.up.xlim.sic.ig.jerboa.trigger.tools.JerboaTask;
+import fr.up.xlim.sic.ig.jerboa.viewer.GMapViewer;
+import up.jerboa.exception.JerboaException;
+import $$MODELER_PACKAGE.$$MODELER_NAME;
+import $$BRIDGE_PACKAGE.$$BRIDGE_NAME;
+
+/**
+$$MAIN_HEADER
+**/
+public class $$MODELER_NAMELauncher {
+
+	public static JFrame currentFrame;
+	
+	public static GMapViewer current;
+	
+	public static boolean DEBUG = false;
+	
+	
+	public static void main(String[] args) throws JerboaException {
+		final JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		currentFrame = frame;
+		$$MODELER_NAME modeler = new $$MODELER_NAME();
+		$$BRIDGE_NAME bridge = new $$BRIDGE_NAME(modeler);
+		current = new GMapViewer(frame, modeler, bridge);
+		bridge.setViewer(current);
+		
+		if(!DEBUG) {
+			frame.getContentPane().add(current);
+			frame.setSize(800, 600);
+			frame.pack();
+
+			frame.setPreferredSize(new Dimension(800, 600));
+
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			frame.pack();
+			frame.setVisible(true);
+		}
+		
+
+		new JerboaProgressBar(frame, "Jerboa loading files...", "Load file...",
+				new JerboaTask() {
+
+			@Override
+			public void run(final JerboaMonitorInfo worker) {
+
+				for (String path : args) {
+					File file = new File(path);
+					System.out.println("ARG: "+path);
+					worker.setMessage("Loading file: "+file.getName()+"...");
+					
+					if (file.exists()) {
+						bridge.load(file, worker);
+					}
+					else
+						System.out.println("\tNOT EXIST!");
+				}
+
+			}
+		}
+				);
+			
+			
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				frame.invalidate();
+				frame.repaint(1000);
+				current.updateIHM();
+			}
+		});
+		
+	}
+
+}

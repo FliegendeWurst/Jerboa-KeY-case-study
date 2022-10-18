@@ -1,0 +1,15 @@
+/bin/
+.idea/
+target/
+build/
+dist/
+.vs/
+.metadata/
+
+.project
+.classpath
+*.jardesc
+build.properties
+build.xml
+settings.xml
+*.log
