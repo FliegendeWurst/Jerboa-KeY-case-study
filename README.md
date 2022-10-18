@@ -3,7 +3,7 @@
 ## Build the code :
 
 ```console
-mvn clean package -P release
+mvn clean package -P release -s settings.xml
 ```
 
 ## Run the code :
