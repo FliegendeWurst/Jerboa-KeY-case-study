@@ -13,7 +13,7 @@
     <description>Jerboa, a rule based modeler</description>
     <developers>
         <developer>
-            <name>Hakim </name>
+            <name>Hakim</name>
             <email>hakim.ferrier.belhaouari@univ-poitiers.fr</email>
             <organization>University of Poitiers (XLim)</organization>
             <organizationUrl>https://www.xlim.fr/</organizationUrl>
@@ -34,6 +34,8 @@
         <sha1/>
         <dir.src>${project.basedir}/src/main</dir.src>
         <dir.java>${dir.src}/java</dir.java>
+        <jflex.version>1.8.2</jflex.version>
+        <cup.version>11b-20160615-1</cup.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,17 +47,23 @@
         <dependency>
             <groupId>com.github.vbmacher</groupId>
             <artifactId>java-cup</artifactId>
-            <version>11b</version>
+            <version>${cup.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.vbmacher</groupId>
             <artifactId>java-cup-runtime</artifactId>
-            <version>11b</version>
+            <version>${cup.version}</version>
         </dependency>
         <dependency>
             <groupId>de.jflex</groupId>
             <artifactId>jflex</artifactId>
-            <version>1.8.2</version>
+            <version>${jflex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jflex</groupId>
+            <artifactId>jflex-maven-plugin</artifactId>
+            <version>${jflex.version}</version>
+            <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>com.miglayout</groupId>
@@ -123,7 +131,7 @@
                     <plugin>
                         <groupId>com.github.vbmacher</groupId>
                         <artifactId>cup-maven-plugin</artifactId>
-                        <version>11b-20160615-1</version>
+                        <version>${cup.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -137,14 +145,14 @@
                             <className>MyParser</className>
                             <progress>true</progress>
                             <symbolsInterface>true</symbolsInterface>
-                            <outputDirectory>${dir.java}/fr/up/xlim/sic/ig/jerboa/jme/script/language/generated</outputDirectory>
-                            <cupDefinition>${project.basedir}src/cup/language.cup</cupDefinition>
+                            <outputDirectory>${dir.java}</outputDirectory>
+                            <cupDefinition>${project.basedir}/src/cup/language.cup</cupDefinition>
                         </configuration>
                     </plugin>
                     <plugin>
                         <groupId>de.jflex</groupId>
                         <artifactId>jflex-maven-plugin</artifactId>
-                        <version>${project.version}</version>
+                        <version>${jflex.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -152,9 +160,9 @@
                                 </goals>
                                 <configuration>
                                     <backup>false</backup>
-                                    <outputDirectory>${dir.java}/fr/up/xlim/sic/ig/jerboa/jme/script/language/generated</outputDirectory>
+                                    <outputDirectory>${dir.java}</outputDirectory>
                                     <lexDefinitions>
-                                        <lexDefinition>${dir.src}/cup/language.jflex</lexDefinition>
+                                        <lexDefinition>${project.basedir}/src/cup/language.jflex</lexDefinition>
                                     </lexDefinitions>
                                 </configuration>
                             </execution>
