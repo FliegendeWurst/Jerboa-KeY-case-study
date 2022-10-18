@@ -52,7 +52,7 @@ jerboa_modeler_viewer_tag_tests:
 jerboa_modeler_viewer_dev:
   stage: deploy
   script:
-    - mvn -s ci_settings.xml -f pom.xml deploy -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA
+    - mvn -s ci_settings.xml -f pom.xml deploy -P release -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA
   except:
     - tags
     - master
@@ -61,7 +61,7 @@ jerboa_modeler_viewer_dev:
 jerboa_modeler_viewer_main:
   stage: deploy
   script:
-    - mvn -s ci_settings.xml -f pom.xml deploy -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA
+    - mvn -s ci_settings.xml -f pom.xml deploy -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA
   only:
     - master
     - main
@@ -69,6 +69,6 @@ jerboa_modeler_viewer_main:
 jerboa_modeler_viewer_release:
   stage: deploy
   script:
-    - mvn -s ci_settings.xml -f pom.xml deploy -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
+    - mvn -s ci_settings.xml -f pom.xml deploy -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
   only:
     - tags
