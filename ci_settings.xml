@@ -22,45 +22,5 @@
         </httpHeaders>
       </configuration>
     </server>
-    <server>
-      <id>repo-jerboa-viewer-transmitter</id>
-      <configuration>
-        <httpHeaders>
-          <property>
-            <name>Job-Token</name>
-            <value>${env.CI_JOB_TOKEN}</value>
-          </property>
-        </httpHeaders>
-      </configuration>
-    </server>
-    <server>
-      <id>repo-jerboa-modeler-viewer</id>
-      <configuration>
-        <httpHeaders>
-          <property>
-            <name>Job-Token</name>
-            <value>${env.CI_JOB_TOKEN}</value>
-          </property>
-        </httpHeaders>
-      </configuration>
-    </server>
   </servers>
-  <proxies>
-    <proxy>
-      <id>xlim-proxy-https</id>
-      <active>true</active>
-      <protocol>${env.HTTPS_PROXY_PROTOCOL}</protocol>
-      <host>${env.HTTPS_PROXY_HOST}</host>
-      <port>${env.HTTPS_PROXY_PORT}</port>
-      <!-- <nonProxyHosts>${env.NO_PROXY}</nonProxyHosts>-->
-    </proxy>
-    <proxy>
-      <id>xlim-proxy-http</id>
-      <active>true</active>
-      <protocol>${env.HTTP_PROXY_PROTOCOL}</protocol>
-      <host>${env.HTTP_PROXY}</host>
-      <port>${env.HTTP_PROXY_PORT}</port>
-      <!-- <nonProxyHosts>${env.NO_PROXY}</nonProxyHosts>-->
-    </proxy>
-  </proxies>
 </settings>
