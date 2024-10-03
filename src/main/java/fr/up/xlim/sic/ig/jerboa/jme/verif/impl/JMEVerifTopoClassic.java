@@ -47,14 +47,12 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * 
 	 * On realise pour le graphe gauche et le graphe droit, un parcours des noeuds et, pour chaque noeud, on 
 	 * verifie les valeurs des dimensions dans l'orbite. On realise ensuite un parcours des arcs et, pour
-	 * chaque arc, on verifie la valeur de sa dimension
-	 * 
-	 * A noter qu'une erreur de dimension sur un arc sera reportee sur les deux noeuds.
+	 * chaque arc, on verifie la valeur de sa dimension.
 	 * 
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifDimension(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDimension(JMERule rule, ArrayList<JMEError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		
 		// Graphe Gauche
@@ -108,7 +106,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifDuplicateNode(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDuplicateNode(JMERule rule, ArrayList<JMEError> errors) {
 		
 		// Graphe Gauche
 		JMEGraph left = rule.getLeft();
@@ -150,19 +148,15 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	}
 	
 	/**
-	 * Verifie que tous les noeuds du graphe gauche sont relies Ã  un unique hook et que chaque hook possede une orbite
-	 * pleine, c'est-a-dire qu'aucune dimension n'est vide.
-	 * 
-	 * On realise tout d'abord un parcours des hooks pour verifier que -1 n'est pas dans leur orbite.
-	 * 
-	 * Pour verifier que chaque noeud est relie a un unique hook, on construit sa composante connexe puis,
-	 * a l'aide d'un stream, on compte le nombre de hook dans la composante connexe et on en deduit les eventuelles
-	 * erreurs.
-
+	 * Verifie que
+	 * - tous les noeuds du graphe gauche sont relies a un hook
+	 * - que chaque hook possede une orbite pleine, c'est-a-dire qu'aucune dimension n'est vide.
+	 * - qu'auncun hook n'est relié à un second hook 
+	 *
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifHooks(JMERule rule, ArrayList<JMEError> errors){
+	void verifHooks(JMERule rule, ArrayList<JMEError> errors){
 		List<JMENode> hooks = rule.getHooks();
 		JMEGraph left = rule.getLeft();
 		
@@ -188,13 +182,10 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 				if(hooks.contains(node))
 					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
 							"Hook '"+node.getName()+"' is connected to another hook."));
-				else
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
-							"Node '"+node.getName()+"' is connected to "+countHook+" hooks"));
 			}
 			else if(countHook == 0) {
 				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
-						"Node '"+node.getName()+"' must be connected to exactly one hook"));
+						"Node '"+node.getName()+"' must be connected to a hook"));
 			}
 		}
 	}
@@ -211,7 +202,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifNodeNumberOrbits(JMERule rule, ArrayList<JMEError> errors){
+	void verifNodeNumberOrbits(JMERule rule, ArrayList<JMEError> errors){
 		int length;
 		JMENode node = null;
 		String graph = "";
@@ -269,7 +260,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifDuplicateDimension(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDuplicateDimension(JMERule rule, ArrayList<JMEError> errors) {
 		
 		// Graphe Gauche
 		for (JMENode node : rule.getLeft().getNodes()){
@@ -332,7 +323,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifIncidentArc(JMERule rule, ArrayList<JMEError> errors) {
+	void verifIncidentArc(JMERule rule, ArrayList<JMEError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		JMEGraph left = rule.getLeft();
 		JMEGraph right = rule.getRight();
@@ -459,7 +450,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @return 1 si le noeud possede un cycle ijij, 0 s'il n'en possede pas et -1 s'il est impossible 
 	 * 		de determiner si le noeud possede un cycle (i et j dans l'orbite avec un graphe gauche vide)
 	 */
-	private int hasCycle(JMENode node, int i, int j){
+	int hasCycle(JMENode node, int i, int j){
 		/*
 		 * Dans un premier temps, on dÃ©termine les arÃªtes i et j sont implicites ou explicites (distinction
 		 * arc, boucle)
@@ -615,7 +606,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	private void verifCycle(JMERule rule, ArrayList<JMEError> errors) {
+	void verifCycle(JMERule rule, ArrayList<JMEError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		JMEGraph left = rule.getLeft();
 		JMEGraph right = rule.getRight();
