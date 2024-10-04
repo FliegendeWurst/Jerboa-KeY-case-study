@@ -36,7 +36,6 @@ public class JMEVerifTopoClassicTest {
 
 	@Before
     public void setUp() {
-		
 		verifier = new JMEVerifTopoClassic();
 		
 		JMEModeler modeler = new JMEModeler("test", "module", 2);
@@ -117,10 +116,16 @@ public class JMEVerifTopoClassicTest {
         rightRule1.creatArc(n10Right, n11Right, 2);
         rightRule1.creatArc(n11Right, n5Right, 0);
         
-        errorList = new ArrayList<JMEError>();
-        
+        errorList = new ArrayList<JMEError>(); 
     }
 
+	
+	/**
+	 * {@verifDimension} checks the dimensions in the nodes and the arcs.
+	 * For nodes, dimension should be between -1 and the dimension of the modeler
+	 * For arcs, dimensions should be between 0 and the dimension of the modeler
+	 */
+	
 	@Test
 	public void testVerifDimensionValid() {
 		// Arrange
@@ -265,6 +270,12 @@ public class JMEVerifTopoClassicTest {
 	    assertEquals(initialErrorCount, errorList.size());
 	}
 	
+	
+	/**
+	 * {@verifDuplicateNode} checks the absence of duplicate nodes
+	 * in both parts of the rule.
+	 */
+	
 	@Test
 	public void testVerifDuplicateNodeDuplicateInLeftGraph() {
 	    // Arrange: add a duplicate node to the left graph
@@ -321,6 +332,12 @@ public class JMEVerifTopoClassicTest {
 	    assertEquals(initialErrorCount + 4, errorList.size());
 	}
 	
+	
+	/**
+	 * {@verifHooks} checks that there is exactly one hook per connected
+	 * component and that hooks have a full orbit.
+	 */
+	
 	@Test
 	public void testVerifHooksValid(){
 		// Arrange
@@ -376,13 +393,367 @@ public class JMEVerifTopoClassicTest {
 	}
 	
 	
+	/**
+	 * {@verifNodeOrbitSizes} checks that all nodes have the same
+	 * orbit size.
+	 */
 	
 	@Test
-	public void testVerifNodeNumberOrbits(){
+	public void testVerifNodeOrbitSizesValid(){
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifNodeOrbitSizes(rule1, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount, errorList.size());
+	}
+	
+	@Test
+	public void testVerifNodeOrbitSizesTooSmallLeft(){
+		// Arrange
+	    int initialErrorCount = errorList.size();
+		JMEGraph leftRule1 = rule1.getLeft();
+		leftRule1.getMatchNode("n1").setOrbit(new JerboaOrbit(-1));
+
+	    // Act
+	    verifier.verifNodeOrbitSizes(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifNodeOrbitSizesTooLargeLeft(){
+		// Arrange
+	    int initialErrorCount = errorList.size();
+		JMEGraph leftRule1 = rule1.getLeft();
+		leftRule1.getMatchNode("n1").setOrbit(new JerboaOrbit(0,1,2));
+
+	    // Act
+	    verifier.verifNodeOrbitSizes(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifNodeOrbitSizesTooSmallRight(){
+		// Arrange
+	    int initialErrorCount = errorList.size();
+		JMEGraph rightRule1 = rule1.getRight();
+		rightRule1.getMatchNode("n10").setOrbit(new JerboaOrbit(0));
+
+	    // Act
+	    verifier.verifNodeOrbitSizes(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifNodeOrbitSizesTooLargeRight(){
+		// Arrange
+	    int initialErrorCount = errorList.size();
+		JMEGraph rightRule1 = rule1.getRight();
+		rightRule1.getMatchNode("n7").setOrbit(new JerboaOrbit(0,1,-1));
+
+	    // Act
+	    verifier.verifNodeOrbitSizes(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+
+	/**
+	 * {@verifDuplicateDimension} checks that no node have a duplicated
+	 * dimension in its orbit and arcs.
+	 */
+	
+	@Test
+	public void testVerifDuplicateDimensionValid() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionLeftOrbit() {
+		// Arrange : add a left node with duplicate dimension in orbit
+	    int initialErrorCount = errorList.size();
+	    JMENode hookNode = new JMENode(rule1.getLeft(), "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(0,0));
+	    rule1.getLeft().addNode(hookNode);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionLeftLoops() {
+		// Arrange : add a left node with two loops of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(1,2));
+	    leftRule1.addNode(hookNode);
+	    leftRule1.creatLoop(hookNode, 0);
+	    leftRule1.creatLoop(hookNode, 0);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionLeftLoopAndOrbit() {
+		// Arrange : add a left node with a loop of a dimension present in the orbit
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(hookNode);
+	    leftRule1.creatLoop(hookNode, 0);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionLeftLoopAndArc() {
+		// Arrange : add a left node with a loop and an arc of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(hookNode);
+	    JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(otherNode);
+	    leftRule1.creatLoop(hookNode, 1);
+	    leftRule1.creatArc(hookNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionLeftArcAndArcSameNode() {
+		// Arrange : add two left nodes with parallel arcs of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(hookNode);
+	    JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(otherNode);
+	    leftRule1.creatArc(hookNode, otherNode, 1);
+	    leftRule1.creatArc(hookNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert: one error for each node
+	    assertEquals(initialErrorCount+2, errorList.size());
 	}
 
 	@Test
-	public void testVerifDuplicateDimension() {
+	public void testVerifDuplicateDimensionLeftArcAndArcDifferrentNode() {
+		// Arrange : add three left nodes with a path of arcs of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(hookNode);
+	    JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(otherNode);
+	    JMENode thirdNode = new JMENode(leftRule1, "third", 0, 0, JMENodeKind.SIMPLE);
+	    thirdNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(thirdNode);
+	    leftRule1.creatArc(hookNode, otherNode, 1);
+	    leftRule1.creatArc(hookNode, thirdNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+
+	@Test
+	public void testVerifDuplicateDimensionLeftArcAndOrbit() {
+		// Arrange : add a left node with an arc of a dimension present in the orbit
+	    int initialErrorCount = errorList.size();
+	    JMEGraph leftRule1 = rule1.getLeft();
+		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+	    hookNode.setOrbit(new JerboaOrbit(1,2));
+	    leftRule1.addNode(hookNode);
+	    JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    leftRule1.addNode(otherNode);
+	    leftRule1.creatArc(hookNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert: one error for each node
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+
+	@Test
+	public void testVerifDuplicateDimensionRightOrbit() {
+		// Arrange : add a right node with duplicate dimension in orbit
+	    int initialErrorCount = errorList.size();
+	    JMENode newNode = new JMENode(rule1.getRight(), "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(0,0));
+	    rule1.getRight().addNode(newNode);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionRightLoops() {
+		// Arrange : add a right node with two loops of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(1,2));
+	    rightRule1.addNode(newNode);
+	    rightRule1.creatLoop(newNode, 0);
+	    rightRule1.creatLoop(newNode, 0);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionRightLoopAndOrbit() {
+		// Arrange : add a right node with a loop of a dimension present in the orbit
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(newNode);
+	    rightRule1.creatLoop(newNode, 0);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionRightLoopAndArc() {
+		// Arrange : add a right node with a loop and an arc of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(newNode);
+	    JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(otherNode);
+	    rightRule1.creatLoop(newNode, 1);
+	    rightRule1.creatArc(newNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionRightArcAndArcSameNode() {
+		// Arrange : add two right nodes with parallel arcs of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(newNode);
+	    JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(otherNode);
+	    rightRule1.creatArc(newNode, otherNode, 1);
+	    rightRule1.creatArc(newNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert: one error for each node
+	    assertEquals(initialErrorCount+2, errorList.size());
+	}
+
+	@Test
+	public void testVerifDuplicateDimensionRightArcAndArcDifferrentNode() {
+		// Arrange : add three right nodes with a path of arcs of the same dimension
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(newNode);
+	    JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(otherNode);
+	    JMENode thirdNode = new JMENode(rightRule1, "third", 0, 0, JMENodeKind.SIMPLE);
+	    thirdNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(thirdNode);
+	    rightRule1.creatArc(newNode, otherNode, 1);
+	    rightRule1.creatArc(newNode, thirdNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifDuplicateDimensionRightArcAndOrbit() {
+		// Arrange : add a right node with an arc of a dimension present in the orbit
+	    int initialErrorCount = errorList.size();
+	    JMEGraph rightRule1 = rule1.getRight();
+		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+	    newNode.setOrbit(new JerboaOrbit(1,2));
+	    rightRule1.addNode(newNode);
+	    JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+	    otherNode.setOrbit(new JerboaOrbit(0,2));
+	    rightRule1.addNode(otherNode);
+	    rightRule1.creatArc(newNode, otherNode, 1);
+	    
+	    // Act
+	    verifier.verifDuplicateDimension(rule1, errorList);
+
+	    // Assert: one error for each node
+	    assertEquals(initialErrorCount+1, errorList.size());
 	}
 	
 	@Test

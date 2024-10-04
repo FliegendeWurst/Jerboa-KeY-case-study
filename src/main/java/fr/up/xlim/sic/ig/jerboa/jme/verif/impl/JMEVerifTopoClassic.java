@@ -30,7 +30,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			try { verifDimension(rule, errors); } catch(Throwable t) { }
 			try { verifDuplicateNode(rule, errors);  } catch(Throwable t) { }
 			try { verifHooks(rule, errors); } catch(Throwable t) { }
-			try { verifNodeNumberOrbits(rule, errors); } catch(Throwable t) { }
+			try { verifNodeOrbitSizes(rule, errors); } catch(Throwable t) { }
 			try { verifDuplicateDimension(rule, errors); } catch(Throwable t) { }
 			//try { verifIncidentArc(rule,errors); } catch(Throwable t) { }
 			try { verifCycle(rule, errors); } catch(Throwable t) { }
@@ -202,7 +202,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifNodeNumberOrbits(JMERule rule, ArrayList<JMEError> errors){
+	void verifNodeOrbitSizes(JMERule rule, ArrayList<JMEError> errors){
 		int length;
 		JMENode node = null;
 		String graph = "";
