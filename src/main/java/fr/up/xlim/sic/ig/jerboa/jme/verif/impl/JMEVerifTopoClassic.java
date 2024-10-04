@@ -32,11 +32,10 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			try { verifHooks(rule, errors); } catch(Throwable t) { }
 			try { verifNodeOrbitSizes(rule, errors); } catch(Throwable t) { }
 			try { verifDuplicateDimension(rule, errors); } catch(Throwable t) { }
-			//try { verifIncidentArc(rule,errors); } catch(Throwable t) { }
+			try { verifIncidentArc(rule,errors); } catch(Throwable t) { }
 			try { verifCycle(rule, errors); } catch(Throwable t) { }
 		}
 		return errors;
-
 	}
 
 	
@@ -191,9 +190,9 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	}
 	
 	/**
-	 * Verifie que les orbites sont tous de mÃªme taille. Un Hook est pris pour rÃ©fÃ©rence, si possible.
+	 * Verifie que les orbites sont tous de meme taille. Un Hook est pris pour reference, si possible.
 	 * 
-	 * On commence par chercher un noeud de rÃ©fÃ©rence (si possible un hook dans le graphe gauche, sinon un noeud
+	 * On commence par chercher un noeud de reference (si possible un hook dans le graphe gauche, sinon un noeud
 	 * quelconque dans le graphe droit.
 	 * 
 	 * Pour chaque noeud dans chacun des graphes, on compare ensuite la longueur de l'orbite a la longueur de l'orbite
@@ -301,7 +300,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	}
 	
 	/**
-	 * Verifie la contrainte d'arc incident sur la rÃ¨gle :
+	 * Verifie la contrainte d'arc incident sur la regle :
 	 * 		un noeud supprime du graphe gauche doit posseder toutes les dimensions (dans son orbite ou dans ses arcs)
 	 * 		un noeud conserve dans par la regle doit posseder les memes dimensions dans le graphe gauche que dans le
 	 * 			grape droit
@@ -421,7 +420,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			}
 		} for (JMENode rightNode : right.getNodes()){
 			JMENode leftNode = left.getMatchNode(rightNode);
-			// Noeud ajoute : on vÃ©rifie qu'il possede toutes les dimensions
+			// Noeud ajoute : on verifie qu'il possede toutes les dimensions
 			if (leftNode == null){
 				List<JMEArc> incidents = right.getIncidentArcsFromNode(rightNode);
 				for (int i = 0; i<= modDim; i++){
@@ -452,17 +451,17 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 */
 	int hasCycle(JMENode node, int i, int j){
 		/*
-		 * Dans un premier temps, on dÃ©termine les arÃªtes i et j sont implicites ou explicites (distinction
+		 * Dans un premier temps, on determine les aretes i et j sont implicites ou explicites (distinction
 		 * arc, boucle)
 		 * En fonction, on associe un attribut qui permet de retrouver la configuration.
-		 * On traite sÃ©parement les diffÃ©rentes configurations :
+		 * On traite separement les differentes configurations :
 		 * 		- orbite/boucle et boucle/boucle => cycle
 		 * 		- arc/orbite => on regarde la position dans l'orbite du noeud adjacent
 		 * 		- arc/boucle => on regarde les boucles du noeud adjacent
 		 * 		- orbite/orbite =>
 		 * 					dans le graphe gauche : cycle
 		 * 					dans le graphe droit : on compare avec un noeud du graphe gauche
-		 * 		- arc/arc => on regarde si on peut construire un cycle Ã  l'aide d'un troisiÃ¨me noeud
+		 * 		- arc/arc => on regarde si on peut construire un cycle Ã  l'aide d'un troisieme noeud
 		 * 
 		 * 	|-----------------------------------------------------------------------------------------------------------|
 		 * 	|											| Dimension j													|
@@ -571,7 +570,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 						node_cycle = (arc.getSource() == node_i) ? arc.getDestination() : arc.getSource();		
 				}
 				
-				// Si on ne l'a pas trouvÃ©, on s'arrete
+				// Si on ne l'a pas trouve, on s'arrete
 				if (node_cycle == null)
 					break;
 				
@@ -591,9 +590,9 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 		return 0;
 	}
 
-	/** Verifie la contrainte de cycle sur la rÃ¨gle.
+	/** Verifie la contrainte de cycle sur la regle.
 	 * 
-	 * On considÃ¨re des cycles ijij avec i+2 <= j.
+	 * On considere des cycles ijij avec i+2 <= j.
 	 * 
 	 * Dans le cas d'un noeud conserve par la regle,
 	 * 		un cycle present doit etre conserve ;

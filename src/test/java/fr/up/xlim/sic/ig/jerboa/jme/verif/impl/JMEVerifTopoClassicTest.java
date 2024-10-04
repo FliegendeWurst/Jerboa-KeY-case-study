@@ -2,6 +2,7 @@ package fr.up.xlim.sic.ig.jerboa.jme.verif.impl;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.Verifier;
 
@@ -27,101 +28,41 @@ import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorSeverity;
 import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorType;
 import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEVerifIterator;
 import up.jerboa.core.JerboaOrbit;
+import up.jerboa.core.rule.JerboaRuleNode;
 
 public class JMEVerifTopoClassicTest {		
 	
-	private JMEVerifTopoClassic verifier;
+	private static TestHelper helper;
+	private static JMEVerifTopoClassic verifier;
+	
 	private ArrayList<JMEError> errorList;
 	private JMERuleAtomic rule1;
+	private JMERuleAtomic dooSabin;
+	private JMERuleAtomic removeEdge;
+	private JMERuleAtomic deleteIsolatedPrism;
+	private JMERuleAtomic errorIACondition;
+
+	@BeforeClass
+    public static void setUpClass() {
+		helper = new TestHelper("test", "module", 2);
+		verifier = helper.getVerifier();
+    }
 
 	@Before
     public void setUp() {
-		verifier = new JMEVerifTopoClassic();
+		errorList = helper.newErrorList();
+		rule1 = helper.createRule1();
+		dooSabin = helper.createDooSabin();
+		removeEdge = helper.createRemoveEdge();
+		deleteIsolatedPrism = helper.createDeleteIsolatedPrism();
 		
-		JMEModeler modeler = new JMEModeler("test", "module", 2);
-		
-		JerboaOrbit orbit02 = new JerboaOrbit(0,2);
-		JerboaOrbit emptyOrbit = new JerboaOrbit(-1,-1);
-		
-		// Rule 1		
-        rule1 = new JMERuleAtomic(modeler, "Missing alpha 1");
-        
-        // Left
-        JMEGraph leftRule1 = rule1.getLeft();
-        
-        // Nodes
-        JMENode n0Left = new JMENode(leftRule1, "n0", 0, 0, JMENodeKind.SIMPLE);
-        leftRule1.addNode(n0Left);
-        JMENode n1Left = new JMENode(leftRule1, "n1", 0, 0, JMENodeKind.SIMPLE);
-        leftRule1.addNode(n1Left);
-        JMENode n2Left = new JMENode(leftRule1, "n2", 0, 0, JMENodeKind.SIMPLE);
-        leftRule1.addNode(n2Left);
-        JMENode n3Left = new JMENode(leftRule1, "n3", 0, 0, JMENodeKind.SIMPLE);
-        leftRule1.addNode(n3Left);
-        JMENode n4Left = new JMENode(leftRule1, "n4", 0, 0, JMENodeKind.SIMPLE);
-        leftRule1.addNode(n4Left);
-        JMENode n5Left = new JMENode(leftRule1, "n5", 0, 0, JMENodeKind.HOOK);
-        leftRule1.addNode(n5Left);
-
-        // Orbits
-        n0Left.setOrbit(orbit02);
-        n1Left.setOrbit(emptyOrbit);
-        n2Left.setOrbit(emptyOrbit);
-        n3Left.setOrbit(emptyOrbit);        
-        n4Left.setOrbit(emptyOrbit);
-        n5Left.setOrbit(orbit02);
-
-        // Arcs
-        leftRule1.creatArc(n0Left, n1Left, 1);
-        leftRule1.creatArc(n1Left, n2Left, 2);
-        leftRule1.creatArc(n2Left, n3Left, 0);
-        leftRule1.creatArc(n3Left, n4Left, 2);
-        leftRule1.creatArc(n1Left, n4Left, 0);
-        leftRule1.creatArc(n4Left, n5Left, 1);
-        
-        // Right
-        JMEGraph rightRule1 = rule1.getRight();
-
-        // Nodes
-        JMENode n0Right = new JMENode(rightRule1, "n0", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n0Right);
-        JMENode n5Right = new JMENode(rightRule1, "n5", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n5Right);
-        JMENode n6Right = new JMENode(rightRule1, "n6", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n6Right);
-        JMENode n7Right = new JMENode(rightRule1, "n7", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n7Right);
-        JMENode n8Right = new JMENode(rightRule1, "n8", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n8Right);
-        JMENode n9Right = new JMENode(rightRule1, "n9", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n9Right);
-        JMENode n10Right = new JMENode(rightRule1, "n10", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n10Right);
-        JMENode n11Right = new JMENode(rightRule1, "n11", 0, 0, JMENodeKind.SIMPLE);
-        rightRule1.addNode(n11Right);
-        
-        // Orbits
-        for (JMENode node : rightRule1.getNodes()) {
-        	node.setOrbit(emptyOrbit);
-        }
-
-        // Arcs
-        rightRule1.creatArc(n0Right, n6Right, 2);
-        rightRule1.creatArc(n6Right, n7Right, 0);
-        rightRule1.creatArc(n7Right, n8Right, 2);
-        rightRule1.creatArc(n8Right, n0Right, 0);
-        rightRule1.creatArc(n0Right, n5Right, 1);
-        rightRule1.creatArc(n5Right, n9Right, 2);
-        rightRule1.creatArc(n9Right, n10Right, 0);
-        rightRule1.creatArc(n10Right, n11Right, 2);
-        rightRule1.creatArc(n11Right, n5Right, 0);
-        
-        errorList = new ArrayList<JMEError>(); 
+		// Incorrect rule for incident arcs constraint
+		errorIACondition = helper.createErrorIACondition();
     }
 
 	
 	/**
-	 * {@verifDimension} checks the dimensions in the nodes and the arcs.
+	 * @verifDimension checks the dimensions in the nodes and the arcs.
 	 * For nodes, dimension should be between -1 and the dimension of the modeler
 	 * For arcs, dimensions should be between 0 and the dimension of the modeler
 	 */
@@ -272,7 +213,7 @@ public class JMEVerifTopoClassicTest {
 	
 	
 	/**
-	 * {@verifDuplicateNode} checks the absence of duplicate nodes
+	 * @verifDuplicateNode checks the absence of duplicate nodes
 	 * in both parts of the rule.
 	 */
 	
@@ -334,7 +275,7 @@ public class JMEVerifTopoClassicTest {
 	
 	
 	/**
-	 * {@verifHooks} checks that there is exactly one hook per connected
+	 * @verifHooks checks that there is exactly one hook per connected
 	 * component and that hooks have a full orbit.
 	 */
 	
@@ -394,7 +335,7 @@ public class JMEVerifTopoClassicTest {
 	
 	
 	/**
-	 * {@verifNodeOrbitSizes} checks that all nodes have the same
+	 * @verifNodeOrbitSizes checks that all nodes have the same
 	 * orbit size.
 	 */
 	
@@ -467,7 +408,7 @@ public class JMEVerifTopoClassicTest {
 	}
 
 	/**
-	 * {@verifDuplicateDimension} checks that no node have a duplicated
+	 * @verifDuplicateDimension checks that no node have a duplicated
 	 * dimension in its orbit and arcs.
 	 */
 	
@@ -756,9 +697,284 @@ public class JMEVerifTopoClassicTest {
 	    assertEquals(initialErrorCount+1, errorList.size());
 	}
 	
+
+	/**
+	 * @verifIncidentArc checks the incident arcs condition.
+	 * In this context an incident arc is both an implicit arc
+	 * (from the orbit) or an explicit arc (from the graph).
+	 * 
+	 * - A deleted node (from the left graph) must have all incident arcs.
+	 * - A node preserved by the rule must have the same incident arcs.
+	 * - A create node (in the right graph) must have all incident arcs.
+	 * 
+	 * Here we just check for the existence of the dimensions, possible duplicates
+	 * are checked by @verifDuplicateDimension.
+	 */
+	
 	@Test
-	public void testVerifIncidentArc() {
+	public void testVerifIncidentArcRule1() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifIncidentArc(rule1, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount+8, errorList.size());
 	}
+	
+	@Test
+	public void testVerifIncidentArcDooSabin() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcRemoveEdge() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifIncidentArc(removeEdge, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcDeleteIsolatedPrism() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifIncidentArc(deleteIsolatedPrism, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentErrorIACondition() {
+		// Arrange
+	    int initialErrorCount = errorList.size();
+
+	    // Act
+	    verifier.verifIncidentArc(errorIACondition, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(initialErrorCount+2, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedRightNodeMissingIncidentExplicitArc() {
+	    // Arrange: missing explicit incident arc on right preserved node
+		int initialErrorCount = errorList.size();
+	    JMEGraph rightDooSabin = dooSabin.getRight();
+		JMENode n0Right = rightDooSabin.getMatchNode("n0");
+	    JMENode n1Right = rightDooSabin.getMatchNode("n1");
+	    JMEArc incidentArc = n0Right.alphas().get(0);
+	    int dimensionIncidentArc = incidentArc.getDimension();
+	    rightDooSabin.removeArc(incidentArc);
+	    // restore arc on the other node
+	    rightDooSabin.creatLoop(n1Right, dimensionIncidentArc);
+	    
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedRightNodeMissingIncidentImplicitArc() {
+	    // Arrange: missing implicit incident arc on right preserved node
+		int initialErrorCount = errorList.size();
+	    JMEGraph rightDooSabin = dooSabin.getRight();
+	    JMENode n0Right = rightDooSabin.getMatchNode("n0");
+	    n0Right.setOrbit(new JerboaOrbit(0,-1,-1));
+	    
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedRightNodeMissingTwoIncidentImplicitArcs() {
+	    // Arrange: missing two implicit incident arcs on right preserved node
+		int initialErrorCount = errorList.size();
+	    JMEGraph rightDooSabin = dooSabin.getRight();
+	    JMENode n0Right = rightDooSabin.getMatchNode("n0");
+	    n0Right.setOrbit(new JerboaOrbit(-1,-1,-1));
+	    
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 2, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcCreatedNodeMissingIncidentExplicitArc() {
+	    // Arrange: missing explicit incident arcs on right added node
+		int initialErrorCount = errorList.size();
+	    JMEGraph rightDooSabin = dooSabin.getRight();
+		JMENode n0Right = rightDooSabin.getMatchNode("n0");
+	    JMEArc incidentArc = n0Right.alphas().get(0);
+	    int dimensionIncidentArc = incidentArc.getDimension();
+	    rightDooSabin.removeArc(incidentArc);
+	    // restore arc on the other node
+	    rightDooSabin.creatLoop(n0Right, dimensionIncidentArc);
+	    
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcCreatedNodeMissingIncidentImplicitArc() {
+	    // Arrange: missing implicit incident arcs on right added node
+		int initialErrorCount = errorList.size();
+	    JMEGraph rightDooSabin = dooSabin.getRight();
+	    JMENode n2Right = rightDooSabin.getMatchNode("n2");
+	    n2Right.setOrbit(new JerboaOrbit(-1,-1,-1));
+	    
+	    // Act
+	    verifier.verifIncidentArc(dooSabin, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedLeftNodeMissingIncidentExplicitArc() {
+	    // Arrange: missing explicit incident arc on left preserved node
+		int initialErrorCount = errorList.size();
+	    JMEGraph leftRemoveEdge = removeEdge.getLeft();
+	    JMENode n1Left = leftRemoveEdge.getMatchNode("n1");
+	    JMEArc incidentArc = n1Left.alphas().get(0);
+	    int dimensionIncidentArc = incidentArc.getDimension();
+	    leftRemoveEdge.removeArc(incidentArc);
+	    // restore arc on the other node
+	    leftRemoveEdge.creatLoop(n1Left, dimensionIncidentArc);
+	    
+	    // Act
+	    verifier.verifIncidentArc(removeEdge, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcDeletedHookMissingIncidentExplicitArc() {
+	    // Arrange: missing explicit incident arcs on left deleted node
+		int initialErrorCount = errorList.size();
+	    JMEGraph leftRemoveEdge = removeEdge.getLeft();
+		JMENode n0Left = leftRemoveEdge.getMatchNode("n0");
+	    JMEArc incidentArc = n0Left.alphas().get(0);
+	    int dimensionIncidentArc = incidentArc.getDimension();
+	    leftRemoveEdge.removeArc(incidentArc);
+	    // restore arc on the other node
+	    leftRemoveEdge.creatLoop(n0Left, dimensionIncidentArc);
+	    
+	    // Act
+	    verifier.verifIncidentArc(removeEdge, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcDeletedHookMissingIncidentImplicitArc() {
+	    // Arrange: missing implicit incident arcs on left deleted node
+		int initialErrorCount = errorList.size();
+	    JMEGraph leftRemoveEdge = removeEdge.getLeft();
+	    JMENode n1Left = leftRemoveEdge.getMatchNode("n1");
+	    n1Left.setOrbit(new JerboaOrbit(-1, 2));
+	    n1Left.setKind(JMENodeKind.HOOK);
+	    
+	    // Act
+	    verifier.verifIncidentArc(removeEdge, errorList);
+
+	    // Assert
+	    assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcDeletedNodeMissingIncidentExplicitArc() {
+		// Arrange: missing explicit incident arcs on left deleted node
+		int initialErrorCount = errorList.size();
+		JMEGraph leftDeleteIsolatedPrism = deleteIsolatedPrism.getLeft();
+		JMENode n5Left = leftDeleteIsolatedPrism.getMatchNode("n5");
+		JMEArc incidentArc = n5Left.alphas().get(0);
+		int dimensionIncidentArc = incidentArc.getDimension();
+		leftDeleteIsolatedPrism.removeArc(incidentArc);
+		// restore arc on the other node
+		leftDeleteIsolatedPrism.creatLoop(n5Left, dimensionIncidentArc);
+		// add hook
+		n5Left.setKind(JMENodeKind.HOOK);
+		
+		// Act
+		verifier.verifIncidentArc(deleteIsolatedPrism, errorList);
+
+		// Assert
+		assertEquals(initialErrorCount + 1, errorList.size());
+	}
+
+	@Test
+	public void testVerifIncidentArcDeletedNodeMissingIncidentImplicitArc() {
+		// Arrange: missing implicit incident arcs on left deleted node
+		int initialErrorCount = errorList.size();
+		JMEGraph leftDeleteIsolatedPrism = deleteIsolatedPrism.getLeft();
+		JMENode n5Left = leftDeleteIsolatedPrism.getMatchNode("n5");
+		n5Left.setOrbit(new JerboaOrbit(-1, 1));
+		
+		// Act
+		verifier.verifIncidentArc(deleteIsolatedPrism, errorList);
+
+		// Assert
+		assertEquals(initialErrorCount + 1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedLeftNodeMissingIncidentImplicitArc() {
+		// Arrange
+		verifier.verifIncidentArc(errorIACondition, errorList);
+	    int initialErrorCount = errorList.size();
+	    JMEGraph left = errorIACondition.getLeft();
+		JMENode node7 = left.getMatchNode("n7");
+		node7.setOrbit(new JerboaOrbit(-1));
+
+	    // Act
+		verifier.verifIncidentArc(errorIACondition, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(2*initialErrorCount+1, errorList.size());
+	}
+	
+	@Test
+	public void testVerifIncidentArcPreservedLeftNodeMissingIncidentImplicitArcDeletion() {
+		// Arrange
+		verifier.verifIncidentArc(errorIACondition, errorList);
+	    int initialErrorCount = errorList.size();
+	    errorIACondition.getLeft().getMatchNode("n7").setOrbit(new JerboaOrbit());
+
+	    // Act
+		verifier.verifIncidentArc(errorIACondition, errorList);
+
+	    // Assert: no errors should be added
+	    assertEquals(2*initialErrorCount+1, errorList.size());
+	}
+	
 	
 	@Test
 	public void testHasCycle(){
