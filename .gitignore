@@ -13,3 +13,4 @@ build.properties
 build.xml
 settings.xml
 *.log
+.settings
