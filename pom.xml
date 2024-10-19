@@ -10,7 +10,7 @@
         <url>https://www.xlim.fr/</url>
     </organization>
     <!-- <url>https://gitlab.com/jerboateam/jerboa-editor</url> -->
-    <url>https://gitlab.xlim.fr/jerboa/jerboa-modeler-edito</url>
+    <url>https://gitlab.xlim.fr/jerboa/jerboa-modeler-editor</url>
     <description>Jerboa, a rule based modeler editor</description>
     <developers>
         <developer>
