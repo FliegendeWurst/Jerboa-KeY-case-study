@@ -2,7 +2,7 @@ image: maven:3.6-jdk-11
 
 stages:
   - test_connectivity
-#  - test
+  - test
   - deploy
 
 
