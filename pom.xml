@@ -4,7 +4,7 @@
     <groupId>up.jerboa</groupId>
     <artifactId>jerboa-editor</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>${nameSuffix}${revision}${sha1}${changelist}</version>
+    <version>${revision}${sha1}${changelist}</version>
     <organization>
         <name>XLim</name>
         <url>https://www.xlim.fr/</url>
