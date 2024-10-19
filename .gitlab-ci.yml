@@ -41,7 +41,7 @@ jerboa_editor_dev:
 jerboa_editor_main:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA
+    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix=""
     - mvn -U -f pom.xml package -P commandline -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-"
   only:
     - master
