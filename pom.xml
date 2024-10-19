@@ -4,7 +4,7 @@
     <groupId>up.jerboa</groupId>
     <artifactId>jerboa-editor</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>${revision}${sha1}${changelist}</version>
+    <version>${nameSuffix}${revision}${sha1}${changelist}</version>
     <organization>
         <name>XLim</name>
         <url>https://www.xlim.fr/</url>
@@ -22,7 +22,10 @@
     <!-- <licenses><license><name>Apache License 2.0</name><url>https://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution></license></licenses>-->
     <issueManagement>
         <system>GitLab</system>
-        <url>https://gitlab.com/jerboateam/jerboa-editor/-/issues</url>
+        <!-- GITLAB.COM version 
+        <url>https://gitlab.com/jerboateam/jerboa-editor/-/issues</url> 
+        -->
+        <url>https://gitlab.xlim.fr/jerboa/jerboa-modeler-editor/-/issues</url>
     </issueManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
