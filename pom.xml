@@ -2,9 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <groupId>up.jerboa</groupId>
-    <artifactId>jerboa-editor${nameSuffix}</artifactId>
+    <artifactId>jerboa-editor</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>${revision}${sha1}${changelist}</version>
+    <version>${nameSuffix}${revision}${sha1}${changelist}</version>
     <organization>
         <name>XLim</name>
         <url>https://www.xlim.fr/</url>
