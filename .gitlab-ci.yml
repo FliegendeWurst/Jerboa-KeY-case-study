@@ -17,7 +17,7 @@ before_script:
   - export HTTPS_PROXY_HOST="$(echo $HTTPS_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $1}')"
   - export HTTPS_PROXY_PORT="$(echo $HTTPS_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $2}')"
   - export HTTPS_PROXY_PORT="${HTTPS_PROXY_PORT:-443}"
-
+  - export MAVEN_OPTS="-Dhttp.proxyHost=$HTTP_PROXY_HOST -Dhttp.proxyPort=$HTTP_PROXY_PORT -Dhttps.proxyHost=$HTTPS_PROXY_HOST -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
 
 
 check_connectivity:
@@ -29,7 +29,7 @@ check_connectivity:
 jerboa_editor_dev_tests:
   stage: test
   script:
-    - mvn -U -f pom.xml clean test -P test -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml clean test -P test
   allow_failure: true
   except:
     - tags
@@ -37,7 +37,7 @@ jerboa_editor_dev_tests:
 jerboa_editor_tag_tests:
   stage: test
   script:
-    - mvn -U -f pom.xml clean test -P test -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml clean test -P test 
   allow_failure: true # should be false !
   only:
     - tags
@@ -45,8 +45,8 @@ jerboa_editor_tag_tests:
 jerboa_editor_dev:
   stage: deploy
   script:
-    - mvn -e -U -f pom.xml package -P release -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -Djava.net.useSystemProxies=true
-    - mvn -e -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
+    - mvn -e -U -f pom.xml package -P release -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA
+    - mvn -e -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-"
   except:
     - tags
     - master
@@ -55,8 +55,8 @@ jerboa_editor_dev:
 jerboa_editor_main:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="" -Djava.net.useSystemProxies=true
-    - mvn -U -f pom.xml package -P commandline -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix=""
+    - mvn -U -f pom.xml package -P commandline -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-"
   only:
     - master
     - main
@@ -64,7 +64,7 @@ jerboa_editor_main:
 jerboa_editor_release:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -Djava.net.useSystemProxies=true
-    - mvn -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
+    - mvn -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-"
   only:
     - tags
