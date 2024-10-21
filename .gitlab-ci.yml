@@ -1,7 +1,6 @@
 image: maven:3.6-jdk-11
 
 stages:
-  - test_connectivity
   - test
   - deploy
 
@@ -19,12 +18,6 @@ before_script:
   - export HTTPS_PROXY_PORT="${HTTPS_PROXY_PORT:-443}"
   - export MAVEN_OPTS="-Dhttp.proxyHost=$HTTP_PROXY_HOST -Dhttp.proxyPort=$HTTP_PROXY_PORT -Dhttps.proxyHost=$HTTPS_PROXY_HOST -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
 
-
-check_connectivity:
-  stage: test_connectivity
-  script:
-    - echo "Vérification de la connexion à Maven Central..."
-    - curl -v https://repo.maven.apache.org/maven2/
 
 jerboa_editor_dev_tests:
   stage: test
@@ -64,7 +57,7 @@ jerboa_editor_main:
 jerboa_editor_release:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
-    - mvn -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-"
+    - mvn -s cd_settings.xml -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
+    - mvn -s cd_settings.xml -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-"
   only:
     - tags
