@@ -6,6 +6,20 @@ stages:
   - deploy
 
 
+before_script:
+  - export HTTP_PROXY_PROTOCOL="$(echo $HTTP_PROXY | awk -F':' '{print $1}')"
+  - export HTTP_PROXY_PROTOCOL="${HTTP_PROXY_PROTOCOL:-http}"
+  - export HTTP_PROXY_HOST="$(echo $HTTP_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $1}')"
+  - export HTTP_PROXY_PORT="$(echo $HTTP_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $2}')"
+  - export HTTP_PROXY_PORT="${HTTP_PROXY_PORT:-80}"
+  - export HTTPS_PROXY_PROTOCOL="$(echo $HTTPS_PROXY | awk -F':' '{print $1}')"
+  - export HTTPS_PROXY_PROTOCOL="${HTTPS_PROXY_PROTOCOL:-https}"
+  - export HTTPS_PROXY_HOST="$(echo $HTTPS_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $1}')"
+  - export HTTPS_PROXY_PORT="$(echo $HTTPS_PROXY | awk -F/ '{print $3}' | awk -F':' '{print $2}')"
+  - export HTTPS_PROXY_PORT="${HTTPS_PROXY_PORT:-443}"
+
+
+
 check_connectivity:
   stage: test_connectivity
   script:
