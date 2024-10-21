@@ -15,7 +15,7 @@ check_connectivity:
 jerboa_editor_dev_tests:
   stage: test
   script:
-    - mvn -U -f pom.xml clean test -P test
+    - mvn -U -f pom.xml clean test -P test -Djava.net.useSystemProxies=true
   allow_failure: true
   except:
     - tags
@@ -23,7 +23,7 @@ jerboa_editor_dev_tests:
 jerboa_editor_tag_tests:
   stage: test
   script:
-    - mvn -U -f pom.xml clean test -P test
+    - mvn -U -f pom.xml clean test -P test -Djava.net.useSystemProxies=true
   allow_failure: true # should be false !
   only:
     - tags
@@ -31,8 +31,8 @@ jerboa_editor_tag_tests:
 jerboa_editor_dev:
   stage: deploy
   script:
-    - mvn -e -U -f pom.xml package -P release -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA
-    - mvn -e -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-"
+    - mvn -e -U -f pom.xml package -P release -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -Djava.net.useSystemProxies=true
+    - mvn -e -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
   except:
     - tags
     - master
@@ -41,8 +41,8 @@ jerboa_editor_dev:
 jerboa_editor_main:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix=""
-    - mvn -U -f pom.xml package -P commandline -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-"
+    - mvn -U -f pom.xml package -P release -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="" -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml package -P commandline -DskipTests -Dsha1=-$CI_COMMIT_SHORT_SHA -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
   only:
     - master
     - main
@@ -50,7 +50,7 @@ jerboa_editor_main:
 jerboa_editor_release:
   stage: deploy
   script:
-    - mvn -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG
-    - mvn -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-"
+    - mvn -U -f pom.xml package -P release -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -Djava.net.useSystemProxies=true
+    - mvn -U -f pom.xml package -P commandline -DskipTests -Dchangelist= -Drevision=$CI_COMMIT_TAG -DnameSuffix="cli-" -Djava.net.useSystemProxies=true
   only:
     - tags
