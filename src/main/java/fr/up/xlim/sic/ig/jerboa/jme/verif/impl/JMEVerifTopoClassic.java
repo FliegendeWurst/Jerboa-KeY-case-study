@@ -8,33 +8,29 @@ import java.util.List;
 import java.util.Set;
 
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEArc;
-import fr.up.xlim.sic.ig.jerboa.jme.model.JMEElementWindowable;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEGraph;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMELoop;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENode;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMERule;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEError;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorSeverity;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorType;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEVerifIterator;
+import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleError;
+import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleErrorSeverity;
+import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleErrorType;
 import up.jerboa.core.JerboaOrbit;
 
 // Verifications topo
-public class JMEVerifTopoClassic implements JMEVerifIterator {		
+public class JMEVerifTopoClassic {		
 
-	@Override
-	public Collection<JMEError> check(JMEElementWindowable element) {
-		ArrayList<JMEError> errors = new ArrayList<>();
-		if(element instanceof JMERule) {
-			JMERule rule = (JMERule)element;
-			try { verifDimension(rule, errors); } catch(Throwable t) { }
-			try { verifDuplicateNode(rule, errors);  } catch(Throwable t) { }
-			try { verifHooks(rule, errors); } catch(Throwable t) { }
-			try { verifNodeOrbitSizes(rule, errors); } catch(Throwable t) { }
-			try { verifDuplicateDimension(rule, errors); } catch(Throwable t) { }
-			try { verifIncidentArc(rule,errors); } catch(Throwable t) { }
-			try { verifCycle(rule, errors); } catch(Throwable t) { }
-		}
+	public Collection<JMERuleError> check(JMERule rule) {
+		ArrayList<JMERuleError> errors = new ArrayList<>();
+		
+        try { verifDimension(rule, errors); } catch(Throwable t) { }
+        try { verifDuplicateNode(rule, errors);  } catch(Throwable t) { }
+        try { verifHooks(rule, errors); } catch(Throwable t) { }
+        try { verifNodeOrbitSizes(rule, errors); } catch(Throwable t) { }
+        try { verifDuplicateDimension(rule, errors); } catch(Throwable t) { }
+        try { verifIncidentArc(rule,errors); } catch(Throwable t) { }
+        try { verifCycle(rule, errors); } catch(Throwable t) { }
+        
 		return errors;
 	}
 
@@ -51,7 +47,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifDimension(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDimension(JMERule rule, ArrayList<JMERuleError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		
 		// Graphe Gauche
@@ -61,16 +57,14 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 		for (JMENode node : left.getNodes()) {
 			for(int i : node.getOrbit().tab()) {
 				if(i > modDim || i < -1)
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-							node.getName() + " has orbit variable with wrong dimension in the left graph: " + i));	
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));	
 			}
 		}
 		
 		// Arcs
 		for(JMEArc arc : left.getArcs()) {
 			if(arc.getDimension() > modDim || arc.getDimension() < 0) {
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, arc,
-						arc.toString() + " has wrong dimension in the left graph: " + arc.getDimension()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc));
 			}
 		}
 		
@@ -82,16 +76,14 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 		for (JMENode node : right.getNodes()) {
 			for(int i : node.getOrbit().tab()) {
 				if(i > modDim || i < -1)
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-							node.getName() + " has orbit variable with wrong dimension in the right graph: " + i));	
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));	
 			}
 		}	
 		
 		// Arc
 		for(JMEArc arc : right.getArcs()) {
 			if(arc.getDimension() > modDim || arc.getDimension() < 0) {
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, arc,
-						arc.toString() + " has wrong dimension in the right graph: " + arc.getDimension()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc));
 			}
 		}
 	}
@@ -105,7 +97,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifDuplicateNode(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDuplicateNode(JMERule rule, ArrayList<JMERuleError> errors) {
 		
 		// Graphe Gauche
 		JMEGraph left = rule.getLeft();
@@ -114,11 +106,9 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			
 			// Le nom est deja present, on ajoute des erreurs.
 			if (existingNamesLeft.containsKey(node.getName())) {
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-						"Duplicate nodes in the left graph: " + node.getName()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
 				JMENode otherNode = existingNamesLeft.get(node.getName());
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, otherNode,
-						"Duplicate nodes in the left graph: " + node.getName()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, otherNode));
 			}
 			
 			// Le nom n'est pas present, on l'ajoute dans la HashMap.
@@ -133,11 +123,9 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			
 			// Le nom est deja present, on ajoute des erreurs.
 			if (existingNamesRight.containsKey(node.getName())) {
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
-						"Duplicate nodes in the right graph: " + node.getName()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, node));
 				JMENode otherNode = existingNamesRight.get(node.getName());
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, otherNode,
-						"Duplicate nodes in the right graph: " + node.getName()));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, otherNode));
 			}
 			
 			// Le nom n'est pas present, on l'ajoute dans la HashMap.
@@ -155,15 +143,14 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifHooks(JMERule rule, ArrayList<JMEError> errors){
+	void verifHooks(JMERule rule, ArrayList<JMERuleError> errors){
 		List<JMENode> hooks = rule.getHooks();
 		JMEGraph left = rule.getLeft();
 		
 		// Verification d'orbite pleine pour les hooks
 		for(JMENode hook : hooks){
 			if(hook.getOrbit().contains(-1)){
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, hook,
-						"A hook '"+hook.getName()+"' must have a full orbit."));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, hook));
 			}
 		} 
 		
@@ -179,12 +166,10 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			int countHook = nodes.stream().mapToInt(f -> (hooks.contains(f)? 1 : 0)).sum();
 			if(countHook > 1) {
 				if(hooks.contains(node))
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
-							"Hook '"+node.getName()+"' is connected to another hook."));
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, node));
 			}
 			else if(countHook == 0) {
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, node,
-						"Node '"+node.getName()+"' must be connected to a hook"));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, node));
 			}
 		}
 	}
@@ -201,7 +186,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifNodeOrbitSizes(JMERule rule, ArrayList<JMEError> errors){
+	void verifNodeOrbitSizes(JMERule rule, ArrayList<JMERuleError> errors){
 		int length;
 		JMENode node = null;
 		String graph = "";
@@ -221,30 +206,22 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			
 			// Orbite trop petite
 			if(n.getOrbit().size() < length)
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, n,
-						"Node in left graph is missing dimensions in orbit: " + n.getName()
-						+ " (with respect to node: " + node.getName() + " in " + graph + " graph)"));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, n));
 			
 			// Orbite trop grande
 			else if(n.getOrbit().size() > length)
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, n,
-						"Node in left graph has too many dimensions in orbit: " + n.getName()
-						+ " (with respect to node: " + node.getName() + " in " + graph + " graph)"));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, n));
 		}
 		// Graphe droit
 		for (JMENode n : rule.getRight().getNodes()){
 			
 			// Orbite trop petite
 			if(n.getOrbit().size() < length)
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, n,
-						"Node in right graph is missing dimensions in orbit: " + n.getName()
-						+ " (with respect to node: " + node.getName() + " in " + graph + " graph)"));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, n));
 			
 			// Orbite trop grande
 			else if(n.getOrbit().size() > length)
-				errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, n,
-						"Node in right graph has too many dimensions in orbit: " + n.getName()
-						+ " (with respect to node: " + node.getName() + " in " + graph + " graph)"));
+				errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, n));
 		}
 		
 	}
@@ -259,7 +236,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifDuplicateDimension(JMERule rule, ArrayList<JMEError> errors) {
+	void verifDuplicateDimension(JMERule rule, ArrayList<JMERuleError> errors) {
 		
 		// Graphe Gauche
 		for (JMENode node : rule.getLeft().getNodes()){
@@ -268,15 +245,13 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			// Orbite
 			for(int i : node.getOrbit()){
 				if(!dims.add(i) && i != -1)
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-							node.getName() + " has multiple " + i + "-arc in left graph"));
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
 			}
 			
 			// Arcs
 			for(JMEArc a : rule.getLeft().getIncidentArcsFromNode(node)){
 				if(!dims.add(a.getDimension()))
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-							node.getName() + " has multiple " + a.getDimension() + "-arc in left graph"));
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
 			}
 			
 		// Graphe Droit
@@ -286,15 +261,13 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 			// Orbite
 			for(int i : node.getOrbit()){
 				if(!dims.add(i) && i != -1)
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-							node.getName() + " has multiple " + i + "-arc in right graph"));
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
 			}
 			
 			// Arcs
 			for(JMEArc a : rule.getRight().getIncidentArcsFromNode(node)){
 				if(!dims.add(a.getDimension()))
-					errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC, rule, node,
-						node.getName() + " has multiple " + a.getDimension() + "-arc in right graph"));
+					errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
 			}
 		}
 	}
@@ -322,7 +295,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifIncidentArc(JMERule rule, ArrayList<JMEError> errors) {
+	void verifIncidentArc(JMERule rule, ArrayList<JMERuleError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		JMEGraph left = rule.getLeft();
 		JMEGraph right = rule.getRight();
@@ -338,8 +311,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 						for (JMEArc a : incidents)
 							flag |= a.getDimension()==i;
 						if(!flag)
-							errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-									" Left node deleted without " + i + "-arc: " + leftNode.getName()));
+							errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 					}
 				}
 			}else {
@@ -361,8 +333,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 					for(JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)){
 						flag |= (dim == a.getDimension());
 					} if (!flag)
-						errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-								dim + "-arc deleted from left to right: " + leftNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 				}
 				
 				// Dimensions presentes dans les arcs
@@ -377,8 +348,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 					for(JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)){
 						flag |= (dim == a.getDimension());
 					} if (!flag)
-						errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-								dim + "-arc deleted from left to right: " + leftNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 				}
 				
 				// Right -> Left
@@ -398,8 +368,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 					for(JMEArc a : rule.getLeft().getIncidentArcsFromNode(leftNode)){
 						flag |= (dim == a.getDimension());
 					} if (!flag)
-						errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, rightNode,
-								dim + "-arc added from left to right: " + rightNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, rightNode));
 				}
 				
 				// Dimensions presentes dans les arcs
@@ -414,8 +383,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 					for(JMEArc a : rule.getLeft().getIncidentArcsFromNode(leftNode)){
 						flag |= (dim == a.getDimension());
 					} if (!flag)
-						errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, rightNode,
-								dim + "-arc added from left to right: " + rightNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, rightNode));
 				}
 			}
 		} for (JMENode rightNode : right.getNodes()){
@@ -430,13 +398,11 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 							if(a.getDimension()==i)
 								flag = true;
 						} if(!flag)
-							errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, rightNode,
-									" Right node added without " + i + "-arc: " + rightNode.getName()));
+							errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, rightNode));
 					}
 				}
 			}
 		}
-		
 	}
 	
 	/**
@@ -608,7 +574,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 	 * @param rule Regle a verifier.
 	 * @param errors Liste des erreurs deja presentes dans la regle. Cette liste est modifiee lors de la verification.
 	 */
-	void verifCycle(JMERule rule, ArrayList<JMEError> errors) {
+	void verifCycle(JMERule rule, ArrayList<JMERuleError> errors) {
 		int modDim = rule.getModeler().getDimension();
 		JMEGraph left = rule.getLeft();
 		JMEGraph right = rule.getRight();
@@ -623,8 +589,7 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 						
 						// Cycle dans le noeud du graphe gauche
 						if (hasCycle(leftNode,i,j)==1 && hasCycle(rightNode,i,j)==0)
-								errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule,rightNode,
-										i+""+j+""+i+""+j+ "-cycle not preserved from left to right: " + rightNode.getName()));
+								errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule,rightNode));
 						
 						// Pas de cycle
 						else if (hasCycle(leftNode,i,j) == 0){
@@ -633,33 +598,25 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 							int l_pos_i = leftNode.getOrbit().indexOf(i); // -1 si absent
 							int r_pos_i = rightNode.getOrbit().indexOf(i);
 							if (l_pos_i != r_pos_i)
-								errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-										"Left node has no " + i+""+j+""+i+""+j+"-cycle but arcs of dimension " + i +
-										" are modified on right node: " + leftNode.getName()));
+								errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 							
 							// Dimension j dans l'orbite
 							int l_pos_j = leftNode.getOrbit().indexOf(j);
 							int r_pos_j = rightNode.getOrbit().indexOf(j);
 							if (l_pos_j != r_pos_j)
-								errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-										"Left node has no " + i+""+j+""+i+""+j+"-cycle but arcs of dimension " + j +
-										" are modified on right node: " + leftNode.getName()));
+								errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 							
 							// Dimension i manquante dans l'orbite, on regarde les arcs
 							if (l_pos_i == -1){
 								if (explicitArcHasChanged(i, rule, leftNode)) {
-									errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-												"Left node has no " + i+""+j+""+i+""+j+"-cycle but arcs of dimension " + i +
-												" are modified on right node: " + leftNode.getName()));
+									errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));
 								}
 							} 
 							
 							// Dimension j manquante dans l'orbite, on regarde les arcs
 							if (l_pos_j == -1){
 								if (explicitArcHasChanged(j, rule, leftNode)) {
-									errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, leftNode,
-												"Left node has no " + i+""+j+""+i+""+j+"cycle but arcs of dimension " + j +
-												" are modified on right node:" + leftNode.getName()));	
+									errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, leftNode));	
 								}
 							}
 						}
@@ -669,11 +626,9 @@ public class JMEVerifTopoClassic implements JMEVerifIterator {
 				// Noeud ajoute dans le graphe droit
 				for (JMENode rightNode : right.getNodes()){
 					if (left.getNodes().isEmpty() && hasCycle(rightNode, i, j) == -1)
-						errors.add(new JMEError(JMEErrorSeverity.WARNING, JMEErrorType.TOPOLOGIC,rule, rightNode,
-								"No Left graph, right node may be added without " + i+""+j+""+i+""+j + " cycle: " + rightNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.WARNING, JMERuleErrorType.TOPOLOGIC,rule, rightNode));
 					if (left.getMatchNode(rightNode) == null && hasCycle(rightNode, i, j) == 0)
-						errors.add(new JMEError(JMEErrorSeverity.CRITIQUE, JMEErrorType.TOPOLOGIC,rule, rightNode,
-								"Right node added without " + i+""+j+""+i+""+j + " cycle: " + rightNode.getName()));
+						errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,rule, rightNode));
 				}
 			}
 		}

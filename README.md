@@ -1,20 +1,3 @@
-# jerboa-modeler-editor
+# jerboa-static-analyzer
 
-## Build the code :
-
-```console
-mvn clean package -P release -s settings.xml
-```
-
-## Run the code :
-
-```console
-java -jar ./target/jerboa-modeler-editor-{YOUR_VERSION}-SNAPSHOT-jar-with-dependencies.jar
-```
-
-## Re-gen cup code :
-
-
-```console
-mvn clean package -U -P cup
-```
+This is a fork of [Jerboa's modeler editor](https://gitlab.com/jerboateam/jerboa-editor) for doing formal verification of the implementation of the static rule analyzer.

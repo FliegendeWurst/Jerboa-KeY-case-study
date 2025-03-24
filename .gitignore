@@ -16,3 +16,4 @@ build.xml
 settings.xml
 *.log
 .settings
+target/

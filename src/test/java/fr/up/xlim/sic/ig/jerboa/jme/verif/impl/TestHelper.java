@@ -7,7 +7,7 @@ import fr.up.xlim.sic.ig.jerboa.jme.model.JMEModeler;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENode;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENodeKind;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMERuleAtomic;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEError;
+import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleError;
 import up.jerboa.core.JerboaOrbit;
 
 public class TestHelper {
@@ -34,8 +34,8 @@ public class TestHelper {
 		return modelerDim3;
 	}
 
-	public ArrayList<JMEError> newErrorList() {
-		return new ArrayList<JMEError>();
+	public ArrayList<JMERuleError> newErrorList() {
+		return new ArrayList<JMERuleError>();
 	}
 
 	public JMERuleAtomic createRule1() {
@@ -47,17 +47,17 @@ public class TestHelper {
 		JMEGraph leftRule1 = rule1.getLeft();
 
 		// Nodes
-		JMENode n0Left = new JMENode(leftRule1, "n0", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n0Left = new JMENode(leftRule1, "n0", JMENodeKind.SIMPLE);
 		leftRule1.addNode(n0Left);
-		JMENode n1Left = new JMENode(leftRule1, "n1", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n1Left = new JMENode(leftRule1, "n1", JMENodeKind.SIMPLE);
 		leftRule1.addNode(n1Left);
-		JMENode n2Left = new JMENode(leftRule1, "n2", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n2Left = new JMENode(leftRule1, "n2", JMENodeKind.SIMPLE);
 		leftRule1.addNode(n2Left);
-		JMENode n3Left = new JMENode(leftRule1, "n3", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n3Left = new JMENode(leftRule1, "n3", JMENodeKind.SIMPLE);
 		leftRule1.addNode(n3Left);
-		JMENode n4Left = new JMENode(leftRule1, "n4", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n4Left = new JMENode(leftRule1, "n4", JMENodeKind.SIMPLE);
 		leftRule1.addNode(n4Left);
-		JMENode n5Left = new JMENode(leftRule1, "n5", 0, 0, JMENodeKind.HOOK);
+		JMENode n5Left = new JMENode(leftRule1, "n5", JMENodeKind.HOOK);
 		leftRule1.addNode(n5Left);
 
 		// Orbits
@@ -80,21 +80,21 @@ public class TestHelper {
 		JMEGraph rightRule1 = rule1.getRight();
 
 		// Nodes
-		JMENode n0Right = new JMENode(rightRule1, "n0", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n0Right = new JMENode(rightRule1, "n0", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n0Right);
-		JMENode n5Right = new JMENode(rightRule1, "n5", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n5Right = new JMENode(rightRule1, "n5", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n5Right);
-		JMENode n6Right = new JMENode(rightRule1, "n6", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n6Right = new JMENode(rightRule1, "n6", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n6Right);
-		JMENode n7Right = new JMENode(rightRule1, "n7", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n7Right = new JMENode(rightRule1, "n7", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n7Right);
-		JMENode n8Right = new JMENode(rightRule1, "n8", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n8Right = new JMENode(rightRule1, "n8", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n8Right);
-		JMENode n9Right = new JMENode(rightRule1, "n9", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n9Right = new JMENode(rightRule1, "n9", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n9Right);
-		JMENode n10Right = new JMENode(rightRule1, "n10", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n10Right = new JMENode(rightRule1, "n10", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n10Right);
-		JMENode n11Right = new JMENode(rightRule1, "n11", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n11Right = new JMENode(rightRule1, "n11", JMENodeKind.SIMPLE);
 		rightRule1.addNode(n11Right);
 
 		// Orbits
@@ -122,16 +122,16 @@ public class TestHelper {
 
 		// Left
 		JMEGraph leftDooSabin = dooSabin.getLeft();
-		JMENode n0LeftDooSabin = new JMENode(leftDooSabin, "n0", 0, 0, JMENodeKind.HOOK);
+		JMENode n0LeftDooSabin = new JMENode(leftDooSabin, "n0", JMENodeKind.HOOK);
 		n0LeftDooSabin.setOrbit(new JerboaOrbit(0, 1, 2));
 		leftDooSabin.addNode(n0LeftDooSabin);
 
 		// Right
 		JMEGraph rightDooSabin = dooSabin.getRight();
-		JMENode rn0DooSabin = new JMENode(rightDooSabin, "n0", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn1DooSabin = new JMENode(rightDooSabin, "n1", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn2DooSabin = new JMENode(rightDooSabin, "n2", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn3DooSabin = new JMENode(rightDooSabin, "n3", 0, 0, JMENodeKind.SIMPLE);
+		JMENode rn0DooSabin = new JMENode(rightDooSabin, "n0", JMENodeKind.SIMPLE);
+		JMENode rn1DooSabin = new JMENode(rightDooSabin, "n1", JMENodeKind.SIMPLE);
+		JMENode rn2DooSabin = new JMENode(rightDooSabin, "n2", JMENodeKind.SIMPLE);
+		JMENode rn3DooSabin = new JMENode(rightDooSabin, "n3", JMENodeKind.SIMPLE);
 		rn0DooSabin.setOrbit(new JerboaOrbit(0, 1, -1));
 		rn1DooSabin.setOrbit(new JerboaOrbit(0, -1, -1));
 		rn2DooSabin.setOrbit(new JerboaOrbit(-1, -1, 0));
@@ -152,8 +152,8 @@ public class TestHelper {
 
 		// Left
 		JMEGraph leftRemoveEdge = removeEdge.getLeft();
-		JMENode ln0RemoveEdge = new JMENode(leftRemoveEdge, "n0", 0, 0, JMENodeKind.SIMPLE);
-		JMENode ln1RemoveEdge = new JMENode(leftRemoveEdge, "n1", 0, 0, JMENodeKind.HOOK);
+		JMENode ln0RemoveEdge = new JMENode(leftRemoveEdge, "n0", JMENodeKind.SIMPLE);
+		JMENode ln1RemoveEdge = new JMENode(leftRemoveEdge, "n1", JMENodeKind.HOOK);
 		ln0RemoveEdge.setOrbit(new JerboaOrbit(-1, -1));
 		ln1RemoveEdge.setOrbit(new JerboaOrbit(0, 2));
 		leftRemoveEdge.addNode(ln0RemoveEdge);
@@ -162,7 +162,7 @@ public class TestHelper {
 
 		// Right
 		JMEGraph rightRemoveEdge = removeEdge.getRight();
-		JMENode rn0RemoveEdge = new JMENode(rightRemoveEdge, "n0", 0, 0, JMENodeKind.SIMPLE);
+		JMENode rn0RemoveEdge = new JMENode(rightRemoveEdge, "n0", JMENodeKind.SIMPLE);
 		rn0RemoveEdge.setOrbit(new JerboaOrbit(-1, 1));
 		rightRemoveEdge.addNode(rn0RemoveEdge);
 
@@ -174,22 +174,22 @@ public class TestHelper {
 
 		// Left
 		JMEGraph leftDeleteIsolatedPrism = deleteIsolatedPrism.getLeft();
-		JMENode ln0DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n0", 0, 0, JMENodeKind.HOOK);
+		JMENode ln0DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n0", JMENodeKind.HOOK);
 		ln0DeleteIsolatedPrism.setOrbit(new JerboaOrbit(0, 1));
 		leftDeleteIsolatedPrism.addNode(ln0DeleteIsolatedPrism);
-		JMENode ln1DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n1", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln1DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n1", JMENodeKind.SIMPLE);
 		ln1DeleteIsolatedPrism.setOrbit(new JerboaOrbit(0, -1));
 		leftDeleteIsolatedPrism.addNode(ln1DeleteIsolatedPrism);
-		JMENode ln2DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n2", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln2DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n2", JMENodeKind.SIMPLE);
 		ln2DeleteIsolatedPrism.setOrbit(new JerboaOrbit(-1, 2));
 		leftDeleteIsolatedPrism.addNode(ln2DeleteIsolatedPrism);
-		JMENode ln3DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n3", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln3DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n3", JMENodeKind.SIMPLE);
 		ln3DeleteIsolatedPrism.setOrbit(new JerboaOrbit(-1, 2));
 		leftDeleteIsolatedPrism.addNode(ln3DeleteIsolatedPrism);
-		JMENode ln4DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n4", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln4DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n4", JMENodeKind.SIMPLE);
 		ln4DeleteIsolatedPrism.setOrbit(new JerboaOrbit(0, -1));
 		leftDeleteIsolatedPrism.addNode(ln4DeleteIsolatedPrism);
-		JMENode ln5DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n5", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln5DeleteIsolatedPrism = new JMENode(leftDeleteIsolatedPrism, "n5", JMENodeKind.SIMPLE);
 		ln5DeleteIsolatedPrism.setOrbit(new JerboaOrbit(0, 1));
 		leftDeleteIsolatedPrism.addNode(ln5DeleteIsolatedPrism);
 		leftDeleteIsolatedPrism.creatArc(ln0DeleteIsolatedPrism, ln1DeleteIsolatedPrism, 2);
@@ -208,10 +208,10 @@ public class TestHelper {
 
 		// Left
 		JMEGraph leftErrorIACondition = errorIACondition.getLeft();
-		JMENode ln0 = new JMENode(leftErrorIACondition, "n0", 0, 0, JMENodeKind.HOOK);
-		JMENode ln7 = new JMENode(leftErrorIACondition, "n7", 0, 0, JMENodeKind.SIMPLE);
-		JMENode ln1 = new JMENode(leftErrorIACondition, "n1", 0, 0, JMENodeKind.HOOK);
-		JMENode ln2 = new JMENode(leftErrorIACondition, "n2", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln0 = new JMENode(leftErrorIACondition, "n0", JMENodeKind.HOOK);
+		JMENode ln7 = new JMENode(leftErrorIACondition, "n7", JMENodeKind.SIMPLE);
+		JMENode ln1 = new JMENode(leftErrorIACondition, "n1", JMENodeKind.HOOK);
+		JMENode ln2 = new JMENode(leftErrorIACondition, "n2", JMENodeKind.SIMPLE);
 		leftErrorIACondition.addNode(ln0);
 		leftErrorIACondition.addNode(ln1);
 		leftErrorIACondition.addNode(ln2);
@@ -225,10 +225,10 @@ public class TestHelper {
 
 		// Right
 		JMEGraph righterrorIACondition = errorIACondition.getRight();
-		JMENode rn1 = new JMENode(righterrorIACondition, "n1", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn2 = new JMENode(righterrorIACondition, "n2", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn0 = new JMENode(righterrorIACondition, "n0", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn7 = new JMENode(righterrorIACondition, "n7", 0, 0, JMENodeKind.SIMPLE);
+		JMENode rn1 = new JMENode(righterrorIACondition, "n1", JMENodeKind.SIMPLE);
+		JMENode rn2 = new JMENode(righterrorIACondition, "n2", JMENodeKind.SIMPLE);
+		JMENode rn0 = new JMENode(righterrorIACondition, "n0", JMENodeKind.SIMPLE);
+		JMENode rn7 = new JMENode(righterrorIACondition, "n7", JMENodeKind.SIMPLE);
 		righterrorIACondition.addNode(rn0);
 		righterrorIACondition.addNode(rn1);
 		righterrorIACondition.addNode(rn2);
@@ -251,9 +251,9 @@ public class TestHelper {
 
 		// Left
 		JMEGraph leftErrorCycleCondition = errorCycleCondition.getLeft();
-		JMENode ln0 = new JMENode(leftErrorCycleCondition, "n0", 0, 0, JMENodeKind.HOOK);
-		JMENode ln1 = new JMENode(leftErrorCycleCondition, "n1", 0, 0, JMENodeKind.SIMPLE);
-		JMENode ln2 = new JMENode(leftErrorCycleCondition, "n2", 0, 0, JMENodeKind.SIMPLE);
+		JMENode ln0 = new JMENode(leftErrorCycleCondition, "n0", JMENodeKind.HOOK);
+		JMENode ln1 = new JMENode(leftErrorCycleCondition, "n1", JMENodeKind.SIMPLE);
+		JMENode ln2 = new JMENode(leftErrorCycleCondition, "n2", JMENodeKind.SIMPLE);
 		leftErrorCycleCondition.addNode(ln0);
 		leftErrorCycleCondition.addNode(ln1);
 		leftErrorCycleCondition.addNode(ln2);
@@ -266,9 +266,9 @@ public class TestHelper {
 
 		// Right
 		JMEGraph rightErrorCycleCondition = errorCycleCondition.getRight();
-		JMENode rn0 = new JMENode(rightErrorCycleCondition, "n0", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn1 = new JMENode(rightErrorCycleCondition, "n1", 0, 0, JMENodeKind.SIMPLE);
-		JMENode rn2 = new JMENode(rightErrorCycleCondition, "n2", 0, 0, JMENodeKind.SIMPLE);
+		JMENode rn0 = new JMENode(rightErrorCycleCondition, "n0", JMENodeKind.SIMPLE);
+		JMENode rn1 = new JMENode(rightErrorCycleCondition, "n1", JMENodeKind.SIMPLE);
+		JMENode rn2 = new JMENode(rightErrorCycleCondition, "n2", JMENodeKind.SIMPLE);
 		rightErrorCycleCondition.addNode(rn0);
 		rightErrorCycleCondition.addNode(rn1);
 		rightErrorCycleCondition.addNode(rn2);

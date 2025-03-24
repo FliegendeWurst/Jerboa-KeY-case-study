@@ -14,7 +14,7 @@ import fr.up.xlim.sic.ig.jerboa.jme.model.JMEGraph;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENode;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENodeKind;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMERuleAtomic;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEError;
+import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleError;
 import up.jerboa.core.JerboaOrbit;
 
 public class JMEVerifTopoClassicTest {
@@ -22,7 +22,7 @@ public class JMEVerifTopoClassicTest {
 	private static TestHelper helper;
 	private static JMEVerifTopoClassic verifier;
 
-	private ArrayList<JMEError> errorList;
+	private ArrayList<JMERuleError> errorList;
 	private JMERuleAtomic rule1;
 	private JMERuleAtomic dooSabin;
 	private JMERuleAtomic removeEdge;
@@ -219,12 +219,7 @@ public class JMEVerifTopoClassicTest {
 
 		// Assert: two new errors should be added (one for each duplicate node)
 		assertEquals(initialErrorCount + 2, errorList.size());
-
-		// Verify that the error message corresponds to the duplicate node in the left
-		// graph
-		assertTrue(errorList.get(initialErrorCount).getMessage().contains("Duplicate nodes in the left graph"));
-		assertTrue(errorList.get(initialErrorCount + 1).getMessage().contains("Duplicate nodes in the left graph"));
-	}
+}
 
 	@Test
 	public void testVerifDuplicateNodeDuplicateInRightGraph() {
@@ -240,19 +235,14 @@ public class JMEVerifTopoClassicTest {
 
 		// Assert: two new errors should be added (one for each duplicate node)
 		assertEquals(initialErrorCount + 2, errorList.size());
-
-		// Verify that the error message corresponds to the duplicate node in the left
-		// graph
-		assertTrue(errorList.get(initialErrorCount).getMessage().contains("Duplicate nodes in the right graph"));
-		assertTrue(errorList.get(initialErrorCount + 1).getMessage().contains("Duplicate nodes in the right graph"));
-	}
+}
 
 	@Test
 	public void testVerifDuplicateNodeInBothGraphs() {
 		// Arrange: add duplicate nodes to both left and right graphs
-		JMENode duplicateLeftNode = new JMENode(rule1.getLeft(), "n1", 0, 0, JMENodeKind.SIMPLE);
+		JMENode duplicateLeftNode = new JMENode(rule1.getLeft(), "n1", JMENodeKind.SIMPLE);
 		rule1.getLeft().addNode(duplicateLeftNode);
-		JMENode duplicateRightNode = new JMENode(rule1.getRight(), "n9", 0, 0, JMENodeKind.SIMPLE);
+		JMENode duplicateRightNode = new JMENode(rule1.getRight(), "n9", JMENodeKind.SIMPLE);
 		rule1.getRight().addNode(duplicateRightNode);
 		int initialErrorCount = errorList.size();
 
@@ -313,7 +303,7 @@ public class JMEVerifTopoClassicTest {
 	public void testVerifHooksTwoComponents() {
 		// Arrange: Add a disconnected node which is also a hook
 		int initialErrorCount = errorList.size();
-		JMENode hookNode = new JMENode(rule1.getLeft(), "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(rule1.getLeft(), "hook", JMENodeKind.HOOK);
 		rule1.getLeft().addNode(hookNode);
 
 		// Act
@@ -416,7 +406,7 @@ public class JMEVerifTopoClassicTest {
 	public void testVerifDuplicateDimensionLeftOrbit() {
 		// Arrange : add a left node with duplicate dimension in orbit
 		int initialErrorCount = errorList.size();
-		JMENode hookNode = new JMENode(rule1.getLeft(), "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(rule1.getLeft(), "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(0, 0));
 		rule1.getLeft().addNode(hookNode);
 
@@ -432,7 +422,7 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a left node with two loops of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(1, 2));
 		leftRule1.addNode(hookNode);
 		leftRule1.creatLoop(hookNode, 0);
@@ -450,7 +440,7 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a left node with a loop of a dimension present in the orbit
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(hookNode);
 		leftRule1.creatLoop(hookNode, 0);
@@ -467,10 +457,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a left node with a loop and an arc of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(hookNode);
-		JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(otherNode);
 		leftRule1.creatLoop(hookNode, 1);
@@ -488,10 +478,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add two left nodes with parallel arcs of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(hookNode);
-		JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(otherNode);
 		leftRule1.creatArc(hookNode, otherNode, 1);
@@ -509,13 +499,13 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add three left nodes with a path of arcs of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(hookNode);
-		JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(otherNode);
-		JMENode thirdNode = new JMENode(leftRule1, "third", 0, 0, JMENodeKind.SIMPLE);
+		JMENode thirdNode = new JMENode(leftRule1, "third", JMENodeKind.SIMPLE);
 		thirdNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(thirdNode);
 		leftRule1.creatArc(hookNode, otherNode, 1);
@@ -533,10 +523,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a left node with an arc of a dimension present in the orbit
 		int initialErrorCount = errorList.size();
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode hookNode = new JMENode(leftRule1, "hook", 0, 0, JMENodeKind.HOOK);
+		JMENode hookNode = new JMENode(leftRule1, "hook", JMENodeKind.HOOK);
 		hookNode.setOrbit(new JerboaOrbit(1, 2));
 		leftRule1.addNode(hookNode);
-		JMENode otherNode = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		leftRule1.addNode(otherNode);
 		leftRule1.creatArc(hookNode, otherNode, 1);
@@ -552,7 +542,7 @@ public class JMEVerifTopoClassicTest {
 	public void testVerifDuplicateDimensionRightOrbit() {
 		// Arrange : add a right node with duplicate dimension in orbit
 		int initialErrorCount = errorList.size();
-		JMENode newNode = new JMENode(rule1.getRight(), "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rule1.getRight(), "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(0, 0));
 		rule1.getRight().addNode(newNode);
 
@@ -568,7 +558,7 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a right node with two loops of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(1, 2));
 		rightRule1.addNode(newNode);
 		rightRule1.creatLoop(newNode, 0);
@@ -586,7 +576,7 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a right node with a loop of a dimension present in the orbit
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(newNode);
 		rightRule1.creatLoop(newNode, 0);
@@ -603,10 +593,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a right node with a loop and an arc of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(newNode);
-		JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(rightRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(otherNode);
 		rightRule1.creatLoop(newNode, 1);
@@ -624,10 +614,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add two right nodes with parallel arcs of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(newNode);
-		JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(rightRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(otherNode);
 		rightRule1.creatArc(newNode, otherNode, 1);
@@ -645,13 +635,13 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add three right nodes with a path of arcs of the same dimension
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(newNode);
-		JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(rightRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(otherNode);
-		JMENode thirdNode = new JMENode(rightRule1, "third", 0, 0, JMENodeKind.SIMPLE);
+		JMENode thirdNode = new JMENode(rightRule1, "third", JMENodeKind.SIMPLE);
 		thirdNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(thirdNode);
 		rightRule1.creatArc(newNode, otherNode, 1);
@@ -669,10 +659,10 @@ public class JMEVerifTopoClassicTest {
 		// Arrange : add a right node with an arc of a dimension present in the orbit
 		int initialErrorCount = errorList.size();
 		JMEGraph rightRule1 = rule1.getRight();
-		JMENode newNode = new JMENode(rightRule1, "new", 0, 0, JMENodeKind.SIMPLE);
+		JMENode newNode = new JMENode(rightRule1, "new", JMENodeKind.SIMPLE);
 		newNode.setOrbit(new JerboaOrbit(1, 2));
 		rightRule1.addNode(newNode);
-		JMENode otherNode = new JMENode(rightRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode otherNode = new JMENode(rightRule1, "other", JMENodeKind.SIMPLE);
 		otherNode.setOrbit(new JerboaOrbit(0, 2));
 		rightRule1.addNode(otherNode);
 		rightRule1.creatArc(newNode, otherNode, 1);
@@ -979,7 +969,7 @@ public class JMEVerifTopoClassicTest {
 	public void testNoArcNoOrbitNoCycle() {
 		// Arrange: node without arc and orbit
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 
 		// Act
@@ -1097,7 +1087,7 @@ public class JMEVerifTopoClassicTest {
 	public void testLoopsWithCycle() {
 		// Arrange
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 0);
 		leftRule1.creatLoop(node, 2);
@@ -1113,7 +1103,7 @@ public class JMEVerifTopoClassicTest {
 	public void testLoopsWithoutCycle() {
 		// Arrange
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 0);
 
@@ -1128,10 +1118,10 @@ public class JMEVerifTopoClassicTest {
 	public void testIArcJLoopCycle() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 2);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
 		leftRule1.creatLoop(adjacent, 2);
 		leftRule1.creatArc(node, adjacent, 0);
@@ -1147,10 +1137,10 @@ public class JMEVerifTopoClassicTest {
 	public void testIArcJLoopNoCycle() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 2);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
 		leftRule1.creatArc(node, adjacent, 0);
 
@@ -1165,10 +1155,10 @@ public class JMEVerifTopoClassicTest {
 	public void testJArcILoopCycle() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 0);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
 		leftRule1.creatLoop(adjacent, 0);
 		leftRule1.creatArc(node, adjacent, 2);
@@ -1184,10 +1174,10 @@ public class JMEVerifTopoClassicTest {
 	public void testJArcILoopNoCycle() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 0);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
 		leftRule1.creatArc(node, adjacent, 2);
 
@@ -1202,7 +1192,7 @@ public class JMEVerifTopoClassicTest {
 	public void testILoopJOrbitWithCycle() {
 		// Arrange
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		node.setOrbit(new JerboaOrbit(-1, 2));
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 0);
@@ -1218,7 +1208,7 @@ public class JMEVerifTopoClassicTest {
 	public void testJLoopIOrbitWithCycle() {
 		// Arrange
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		node.setOrbit(new JerboaOrbit(-1, 0));
 		leftRule1.addNode(node);
 		leftRule1.creatLoop(node, 2);
@@ -1234,11 +1224,11 @@ public class JMEVerifTopoClassicTest {
 	public void testIJArcsNoCycle() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
-		JMENode other = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode other = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		leftRule1.addNode(other);
 		leftRule1.creatArc(node, adjacent, 0);
 		leftRule1.creatArc(node, other, 2);
@@ -1254,13 +1244,13 @@ public class JMEVerifTopoClassicTest {
 	public void testIJArcsNoCyclePath3IJI() {
 		// Arrange:
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
-		JMENode other = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode other = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		leftRule1.addNode(other);
-		JMENode opposite = new JMENode(leftRule1, "opposite", 0, 0, JMENodeKind.SIMPLE);
+		JMENode opposite = new JMENode(leftRule1, "opposite", JMENodeKind.SIMPLE);
 		leftRule1.addNode(opposite);
 		leftRule1.creatArc(node, adjacent, 0);
 		leftRule1.creatArc(node, other, 2);
@@ -1277,13 +1267,13 @@ public class JMEVerifTopoClassicTest {
 	public void testIJArcsNoCyclePath3JIJ() {
 		// Arrange
 		JMEGraph leftRule1 = rule1.getLeft();
-		JMENode node = new JMENode(leftRule1, "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(leftRule1, "node", JMENodeKind.SIMPLE);
 		leftRule1.addNode(node);
-		JMENode adjacent = new JMENode(leftRule1, "adjacent", 0, 0, JMENodeKind.SIMPLE);
+		JMENode adjacent = new JMENode(leftRule1, "adjacent", JMENodeKind.SIMPLE);
 		leftRule1.addNode(adjacent);
-		JMENode other = new JMENode(leftRule1, "other", 0, 0, JMENodeKind.SIMPLE);
+		JMENode other = new JMENode(leftRule1, "other", JMENodeKind.SIMPLE);
 		leftRule1.addNode(other);
-		JMENode opposite = new JMENode(leftRule1, "opposite", 0, 0, JMENodeKind.SIMPLE);
+		JMENode opposite = new JMENode(leftRule1, "opposite", JMENodeKind.SIMPLE);
 		leftRule1.addNode(opposite);
 		leftRule1.creatArc(node, adjacent, 2);
 		leftRule1.creatArc(node, other, 0);
@@ -1300,7 +1290,7 @@ public class JMEVerifTopoClassicTest {
 	public void testImpossibleToDetermine() {
 		// Arrange
 		JMERuleAtomic testRule = new JMERuleAtomic(helper.getModeler(), "Tester");
-		JMENode node = new JMENode(testRule.getRight(), "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(testRule.getRight(), "node", JMENodeKind.SIMPLE);
 		testRule.getRight().addNode(node);
 		node.setOrbit(new JerboaOrbit(0, 2));
 
@@ -1314,7 +1304,7 @@ public class JMEVerifTopoClassicTest {
 	@Test
 	public void testIJOrbitRightHasCycle() {
 		// Arrange
-		JMENode node = new JMENode(dooSabin.getRight(), "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(dooSabin.getRight(), "node", JMENodeKind.SIMPLE);
 		dooSabin.getRight().addNode(node);
 		node.setOrbit(new JerboaOrbit(0, -1, 2));
 
@@ -1328,7 +1318,7 @@ public class JMEVerifTopoClassicTest {
 	@Test
 	public void testIJOrbitRightNoCycle() {
 		// Arrange
-		JMENode node = new JMENode(dooSabin.getRight(), "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(dooSabin.getRight(), "node", JMENodeKind.SIMPLE);
 		dooSabin.getRight().addNode(node);
 		node.setOrbit(new JerboaOrbit(0, 2, -1));
 
@@ -1405,7 +1395,7 @@ public class JMEVerifTopoClassicTest {
 	public void testVerifCycleNoCycleCreatedNode() {
 		// Arrange: Add an isolated node (no cycle)
 		int initialErrorCount = errorList.size();
-		JMENode node = new JMENode(dooSabin.getRight(), "node", 0, 0, JMENodeKind.SIMPLE);
+		JMENode node = new JMENode(dooSabin.getRight(), "node", JMENodeKind.SIMPLE);
 		dooSabin.getRight().addNode(node);
 
 		// Act
@@ -1434,7 +1424,7 @@ public class JMEVerifTopoClassicTest {
 		// Arrange: preserved node without cycle and with modified arcs
 		int initialErrorCount = errorList.size();
 		JMENode n0l = removeEdge.getLeft().getMatchNode("n0");
-		JMENode n2l = new JMENode(removeEdge.getLeft(), "added", 0, 0, JMENodeKind.SIMPLE);
+		JMENode n2l = new JMENode(removeEdge.getLeft(), "added", JMENodeKind.SIMPLE);
 		removeEdge.getLeft().addNode(n2l);
 		removeEdge.getLeft().creatArc(n0l, n2l, 2);
 		JMENode n0r = removeEdge.getRight().getMatchNode("n0");

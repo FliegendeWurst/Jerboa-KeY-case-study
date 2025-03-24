@@ -8,19 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.up.xlim.sic.ig.jerboa.jme.model.undo.UndoItem;
-import fr.up.xlim.sic.ig.jerboa.jme.model.undo.UndoItemField;
-import fr.up.xlim.sic.ig.jerboa.jme.model.undo.UndoManager;
-import fr.up.xlim.sic.ig.jerboa.jme.model.util.JMENodeShape;
-import fr.up.xlim.sic.ig.jerboa.jme.model.util.preferences.JMEPreferences;
-import fr.up.xlim.sic.ig.jerboa.jme.util.RuleGraphViewGrid;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEError;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorSeverity;
-import fr.up.xlim.sic.ig.jerboa.jme.verif.JMEErrorType;
-import fr.up.xlim.sic.ig.jerboa.jme.view.JMEElementView;
-import fr.up.xlim.sic.ig.jerboa.jme.view.JMEElementWindowableView;
-
-public abstract class JMERule extends JMEElementWindowable implements JMEElement, Cloneable, Comparable<JMERule> {
+public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
 
 	protected JMEModeler modeler;
 	protected String name;
@@ -35,16 +23,9 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 	protected String precondition;
 	protected String preprocess;
 	protected String postprocess;
-	protected Set<JMEElementView> views;
-	protected UndoManager manager;
 
-	protected ArrayList<JMEParamEbd> paramsebd;
 	protected ArrayList<JMEParamTopo> paramstopo;
 
-	protected JMENodeShape shape;
-	protected boolean magnetic;
-	protected RuleGraphViewGrid gridsize;
-	protected boolean showgrid;
 	protected String midprocess;
 
 	protected JMERule(JMEModeler modeler, String name) {
@@ -54,15 +35,7 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		this.comment = "";
 
 		modified = false;
-		views = new HashSet<>();
-		this.manager = new UndoManager();
 
-		this.shape = JMENodeShape.CIRCLE;
-		this.magnetic = false;
-		this.gridsize = RuleGraphViewGrid.MEDIUM;
-		this.showgrid = false;
-
-		paramsebd = new ArrayList<>();
 		paramstopo = new ArrayList<>();
 
 		this.header = "";
@@ -72,10 +45,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		postprocess = "";
 		midprocess = "";
 
-		isdocked = false;
-		isopened = false;
-		sizeX = 800;
-		sizeY = 600;
 
 		// attention a l'ordre
 		left = new JMEGraph(this, true);
@@ -89,16 +58,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		else
 			res = getCategory() + "." + getName();
 		return res;
-	}
-
-	/**
-	 * Cette fonction renvoie true lorsque la regle a ete verifiee avec succes et qu'aucune erreur critique reste sur la regle.
-	 * Dans un premier temps, seul les erreurs topologiques sont
-	 * @return
-	 */
-	public boolean check() {
-		// return !hasCriticalErrors();
-		return !hasTopoErrors();
 	}
 
 	@Override
@@ -124,28 +83,22 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 
 	public void setName(String newname) {
 		if (newname != null && !newname.equals(name)) {
-			manager.registerUndo(new UndoItemField(this, "name", name, newname, !modified));
 			modified = true;
 			name = newname;
-			update();
 		}
 	}
 
 	public void setComment(String newcomment) {
 		if (newcomment != null && !newcomment.equals(comment)) {
-			manager.registerUndo(new UndoItemField(this, "comment", comment, newcomment, !modified));
 			modified = true;
 			comment = newcomment;
-			update();
 		}
 	}
 
 	public void setPrecondition(String text) {
 		if (text != null && !text.equals(precondition)) {
-			manager.registerUndo(new UndoItemField(this, "precond", precondition, text, !modified));
 			precondition = text;
 			modified = true;
-			update();
 		}
 	}
 
@@ -155,10 +108,8 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 
 	public void setHeader(String text) {
 		if (text != null && !text.equals(header)) {
-			manager.registerUndo(new UndoItemField(this, "header", header, text, !modified));
 			header = text;
 			modified = true;
-			update();
 		}
 	}
 
@@ -191,117 +142,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 	}
 
 	@Override
-	public void addView(JMEElementView view) {
-		views.add(view);
-	}
-
-	@Override
-	public void removeView(JMEElementView view) {
-		views.remove(view);
-	}
-
-	@Override
-	public void update() {
-		ArrayList<JMEElementView> bviews = new ArrayList<>(views);
-		for (JMEElementView view : bviews) {
-			view.reload();
-		}
-
-		left.update();
-		right.update();
-
-		for (JMEParamTopo topo : paramstopo) {
-			topo.update();
-		}
-
-		synchronized (paramsebd) {
-			for (JMEParamEbd ebd : paramsebd) {
-				ebd.update();
-			}
-		}
-	}
-
-	@Override
-	public void undo(UndoItem item) {
-		UndoItemField fitem = (UndoItemField) item;
-		switch (fitem.field()) {
-		case "name":
-			name = (String) fitem.value();
-			break;
-		case "comment":
-			comment = (String) fitem.value();
-			break;
-		case "precond":
-			precondition = (String) fitem.value();
-			break;
-		case "addparamtopo": {
-			JMEParamTopo t = (JMEParamTopo) fitem.newValue();
-			paramstopo.remove(t);
-			break;
-		}
-		case "addparamebd": {
-			JMEParamEbd e = (JMEParamEbd) fitem.newValue();
-			paramsebd.remove(e);
-			break;
-		}
-		case "delparamtopo": {
-			JMEParamTopo t = (JMEParamTopo) fitem.value();
-			paramstopo.add(t);
-			break;
-		}
-		case "delparamebd": {
-			JMEParamEbd e = (JMEParamEbd) fitem.value();
-			paramsebd.add(e);
-			break;
-		}
-		}
-		if (fitem.getModifState())
-			modified = false;
-		manager.transfertRedo(fitem);
-		update();
-	}
-
-	@Override
-	public void redo(UndoItem item) {
-		UndoItemField fitem = (UndoItemField) item;
-		switch (fitem.field()) {
-		case "name":
-			name = (String) fitem.newValue();
-			break;
-		case "comment":
-			comment = (String) fitem.newValue();
-			break;
-		case "precond":
-			precondition = (String) fitem.newValue();
-			break;
-		case "addparamtopo": {
-			JMEParamTopo t = (JMEParamTopo) fitem.newValue();
-			paramstopo.add(t);
-			break;
-		}
-		case "addparamebd": {
-			JMEParamEbd e = (JMEParamEbd) fitem.newValue();
-			paramsebd.add(e);
-			break;
-		}
-		case "delparamtopo": {
-			JMEParamTopo t = (JMEParamTopo) fitem.value();
-			paramstopo.remove(t);
-			break;
-		}
-		case "delparamebd": {
-			JMEParamEbd e = (JMEParamEbd) fitem.value();
-			paramsebd.remove(e);
-			break;
-		}
-		}
-		if (fitem.getModifState())
-			modified = true;
-		manager.transfertUndo(fitem);
-		update();
-	}
-
-	@Override
 	public String toString() {
 		return getName();
 	}
@@ -314,7 +154,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		if (text != null && !text.equals(preprocess)) {
 			preprocess = text;
 			modified = true;
-			update();
 		}
 	}
 
@@ -326,7 +165,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		if (text != null && !text.equals(postprocess)) {
 			postprocess = text;
 			modified = true;
-			update();
 		}
 	}
 
@@ -342,74 +180,23 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		if (text != null && !text.equals(category)) {
 			this.category = text;
 			modified = true;
-			update();
 		}
 	}
 
-	public List<JMEParamEbd> getParamsEbd() {
-		return paramsebd;
-	}
 
 	public List<JMEParamTopo> getParamsTopo() {
 		return paramstopo;
 	}
 
 	public void delParamTopo(JMEParamTopo topo) {
-		if (topo != null && paramstopo.contains(topo)) {
-			UndoItemField field = new UndoItemField(this, "delparamtopo", topo, null);
-			manager.registerUndo(field);
-			topo.getNode().setKind(JMENodeKind.SIMPLE);
-			modified = true;
 			paramstopo.remove(topo);
-			update();
-		}
-	}
-
-	public void delParamEbd(JMEParamEbd ebd) {
-		if (ebd != null && paramsebd.contains(ebd)) {
-			UndoItemField field = new UndoItemField(this, "delparamebd", ebd, null);
-			manager.registerUndo(field);
-			modified = true;
-			paramsebd.remove(ebd);
-			update();
-		}
 	}
 
 	public void addParamTopo(JMEParamTopo topo) {
 		if (topo != null && !paramstopo.contains(topo)) {
-			UndoItemField field = new UndoItemField(this, "addparamtopo", null, topo);
-			manager.registerUndo(field);
 			modified = true;
 			paramstopo.add(topo);
-			update();
 		}
-	}
-
-	public void addParamEbd(JMEParamEbd ebd) {
-
-		if (ebd != null && !paramsebd.contains(ebd)) {
-			UndoItemField field = new UndoItemField(this, "addparamebd", null, ebd);
-			manager.registerUndo(field);
-			modified = true;
-			paramsebd.add(ebd);
-			update();
-		}
-
-	}
-
-	public JMEParamEbd addNewParamEbd() {
-		JMEParamEbd newebd = new JMEParamEbd(this, "", "", "", paramsebd.size());
-		synchronized (paramsebd) {
-			paramsebd.add(newebd);
-			modified = true;
-			update();
-		}
-		return newebd;
-	}
-
-	@Override
-	public UndoManager getUndoManager() {
-		return manager;
 	}
 
 	public void insertParamTopo(JMEParamTopo p, int order) {
@@ -421,8 +208,6 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 				oldorder++;
 			modified = true;
 			paramstopo.remove(oldorder);
-			// p.getNode().setKind(JMENodeKind.SIMPLE);
-			paramstopo.stream().forEach(f -> f.update());
 		}
 	}
 
@@ -475,87 +260,7 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 
 	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-	public static boolean isValidName(JMEPreferences pref, String text) {
-		Matcher matcher = PATTERN_MODULE.matcher(text);
-		if(matcher.matches()) {
-			boolean s = true;
-				String templates = matcher.group(4);
-				if(templates != null) {
-					String[] splited =  templates.split(",");
-					for (String subtype : splited) {
-						s = s && isValidName(pref,subtype.trim());
-					}
-				}
-			
-			return s;
-		}
-		return false;
-	}
-	
-	public JMENodeShape getShape() {
-		return shape;
-	}
 
-	public void setShape(JMENodeShape shape) {
-		this.shape = shape;
-	}
-
-	public boolean isMagnetic() {
-		return magnetic;
-	}
-
-	public void setMagnetic(boolean magnetic) {
-		this.magnetic = magnetic;
-	}
-
-	public RuleGraphViewGrid getGridsize() {
-		return gridsize;
-	}
-
-	public void setGridsize(RuleGraphViewGrid gridsize) {
-		// System.out.println("PRE GRIDSIZE: " + this.gridsize + " -> " + gridsize);
-		this.gridsize = gridsize;
-		// System.out.println("POST GRIDSIZE: " + this.gridsize);
-	}
-
-	public void setShowGrid(boolean selected) {
-		this.showgrid = selected;
-	}
-
-	public boolean isShowGrid() {
-		return showgrid;
-	}
-
-	@Override
-	public Collection<JMEError> getAllErrors() {
-		return getErrors();
-	}
-
-
-	@Override
-	public boolean isModified() {
-		return left.isModified() || right.isModified() || modified;
-	}
-
-	@Override
-	public void resetModification() {
-		modified = false;
-		left.resetModification();
-		right.resetModification();
-		for (JMEParamEbd jmeParamEbd : paramsebd) {
-			jmeParamEbd.resetModification();
-		}
-
-		for (JMEParamTopo jmeParamTopo : paramstopo) {
-			jmeParamTopo.resetModification();
-		}
-
-		for (JMEElementView view : views) {
-			if(view instanceof JMEElementWindowableView) {
-				((JMEElementWindowableView)view).reloadTitle();
-			}
-		}
-	}
 
 	public String getMidProcess() {
 		return midprocess;
@@ -565,26 +270,7 @@ public abstract class JMERule extends JMEElementWindowable implements JMEElement
 		if (p != null && !p.equals(midprocess)) {
 			modified = true;
 			this.midprocess = p;
-			update();
 		}
-	}
-
-	public abstract JMERule copy(JMEModeler modeler, String rulename);
-
-	public boolean hasTopoErrors() {
-		for (JMEError err : errors) {
-			if(err.getType() == JMEErrorType.TOPOLOGIC)
-				return true;
-		}
-		return false;
-	}
-
-	public boolean hasCriticalErrors() {
-		for (JMEError err : errors) {
-			if (err.getSeverity() == JMEErrorSeverity.CRITIQUE)
-				return true;
-		}
-		return false;
 	}
 	
 	public static final Pattern PATTERN_MODULE = Pattern.compile(
