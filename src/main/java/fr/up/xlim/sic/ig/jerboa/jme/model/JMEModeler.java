@@ -1,13 +1,8 @@
 package fr.up.xlim.sic.ig.jerboa.jme.model;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 public class JMEModeler implements JMEElement {
 

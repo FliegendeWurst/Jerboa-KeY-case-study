@@ -6,21 +6,19 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <version>${nameSuffix}${revision}${sha1}${changelist}</version>
     <organization>
-        <name>XLim</name>
-        <url>https://www.xlim.fr/</url>
+        <name>MICS</name>
+        <url>https://mics.centralesupelec.fr/</url>
     </organization>
-    <!-- <url>https://gitlab.com/jerboateam/jerboa-editor</url> -->
-    <url>https://gitlab.xlim.fr/jerboa/jerboa-modeler-editor</url>
-    <description>Jerboa, a rule based modeler editor</description>
+    <url>https://gitlab.com/romainpascual/jerboa-static-analizer</url>
+    <description>Topological static analyzer for Jerboa rules</description>
     <developers>
         <developer>
-            <name>Hakim</name>
-            <email>hakim.ferrier.belhaouari@univ-poitiers.fr</email>
-            <organization>University of Poitiers (XLim)</organization>
-            <organizationUrl>https://www.xlim.fr/</organizationUrl>
+            <name>Romain Pascual</name>
+            <email>romain.pascual@centralesupelec.fr</email>
+            <organization>MICS, Centralesupelec</organization>
+            <organizationUrl>https://mics.centralesupelec.fr/</organizationUrl>
         </developer>
     </developers>
-    <!-- <licenses><license><name>Apache License 2.0</name><url>https://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution></license></licenses>-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
@@ -42,7 +40,6 @@
             <artifactId>jerboa-core</artifactId>
             <version>2.1.1</version>
         </dependency>
-        <!-- public repos -->
         <dependency>
             <groupId>com.github.vbmacher</groupId>
             <artifactId>java-cup</artifactId>
@@ -88,30 +85,11 @@
 
     <issueManagement>
         <system>GitLab</system>
-        <!-- GITLAB.COM version 
-        <url>https://gitlab.com/jerboateam/jerboa-editor/-/issues</url> 
-        -->
-        <url>https://gitlab.xlim.fr/jerboa/jerboa-modeler-editor/-/issues</url>
+        <url>https://gitlab.com/romainpascual/jerboa-static-analizer/-/issues</url>
     </issueManagement>
     
-    <!-- GITLAB.COM version 
-    <repositories>
-        <repository>
-            <id>repo-jerboa-core</id>
-            <url>https://gitlab.com/api/v4/projects/44921055/packages/maven</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </snapshotRepository>
-    </distributionManagement>
-    -->
+
+    <!--  This needs to be fixed if we want to build something, but I am not sure if we want to do it.-->
     <repositories>
         <repository>
             <id>gitlab-maven</id>

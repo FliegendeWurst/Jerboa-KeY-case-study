@@ -1,7 +1,6 @@
 package fr.up.xlim.sic.ig.jerboa.jme.verif.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -680,8 +679,10 @@ public class JMEVerifTopoClassicTest {
 	 *                   explicit arc (from the graph).
 	 * 
 	 *                   - A deleted node (from the left graph) must have all
-	 *                   incident arcs. - A node preserved by the rule must have the
-	 *                   same incident arcs. - A created node (in the right graph)
+	 *                   incident arcs. 
+     *                   - A node preserved by the rule must have the
+	 *                   same incident arcs.
+     *                   - A created node (in the right graph)
 	 *                   must have all incident arcs.
 	 * 
 	 *                   Here we just check for the existence of the dimensions,

@@ -4,7 +4,7 @@
 package fr.up.xlim.sic.ig.jerboa.jme.model;
 
 /**
- * Cette classe specialise les arcs classiques pour les boucles.
+ * This class handles the loops in the editor.
  * @author hakim
  *
  */

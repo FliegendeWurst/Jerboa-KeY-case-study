@@ -1,21 +1,14 @@
 package fr.up.xlim.sic.ig.jerboa.jme.model;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-
 public class JMEParamTopo implements JMEElement {
 
 	// intrinsic parameters
-	private boolean modified;
 	private JMERule rule;
 	private JMENode node;
 
 	public JMEParamTopo(JMERule rule, JMENode node) {
 		this.rule = rule;
 		this.node = node;
-		this.modified = false;
 
 	}
 

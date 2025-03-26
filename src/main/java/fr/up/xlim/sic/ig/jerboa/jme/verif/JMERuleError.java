@@ -1,8 +1,6 @@
 package fr.up.xlim.sic.ig.jerboa.jme.verif;
 
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEElement;
-import fr.up.xlim.sic.ig.jerboa.jme.model.JMEModeler;
-import fr.up.xlim.sic.ig.jerboa.jme.model.JMERule;
 
 public class JMERuleError {
 	private JMERuleErrorType type;

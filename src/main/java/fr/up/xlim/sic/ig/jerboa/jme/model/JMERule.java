@@ -1,11 +1,7 @@
 package fr.up.xlim.sic.ig.jerboa.jme.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
@@ -46,7 +42,7 @@ public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERu
 		midprocess = "";
 
 
-		// attention a l'ordre
+		// Be careful with the order of the following lines
 		left = new JMEGraph(this, true);
 		right = new JMEGraph(this, false);
 	}
@@ -126,9 +122,9 @@ public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERu
 	}
 
 	/**
-	 * On retourne le premier hook portant le nom explicitÃ© en paramÃ¨tre.
-	 * Attention si il existe des doublons.
-	 *
+     * Return the first hook with the given name.
+     * Be careful if there are duplicates.
+     * 
 	 * @param name
 	 * @return
 	 */
@@ -259,8 +255,6 @@ public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERu
 	}
 
 	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-
 
 	public String getMidProcess() {
 		return midprocess;
