@@ -248,9 +248,9 @@ public class JMEVerifTopoClassic {
                 if (!dims.add(a.getDimension()))
                     errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node));
             }
-
-            // Right Graph
         }
+
+        // Right Graph
         for (JMENode node : rule.getRight().getNodes()) {
             HashSet<Integer> dims = new HashSet<>();
 
@@ -297,7 +297,7 @@ public class JMEVerifTopoClassic {
         for (JMENode leftNode : left.getNodes()) {
             JMENode rightNode = right.getMatchNode(leftNode);
 
-            // Noeud supprime : on verifie qu'il possede toutes les dimensions
+            // Node removed: we verify that it has an incident arc for all dimensions
             if (rightNode == null) {
                 List<JMEArc> incidents = left.getIncidentArcsFromNode(leftNode);
                 for (int i = 0; i <= modDim; i++) {
@@ -313,19 +313,19 @@ public class JMEVerifTopoClassic {
             } else {
 
                 // Left -> Right
-                // Dimensions presentes dans l'orbite
+                // Dimensions in the orbit
                 for (int i = 0; i < leftNode.getOrbit().size(); i++) {
                     boolean flag = false;
                     int dim = leftNode.getOrbit().get(i);
 
-                    // Test d'egalite a -1
+                    // Test for equality to -1
                     flag |= dim == -1;
 
-                    // Test de position identique dans l'orbite
+                    // Test for identical position in the orbit
                     flag |= (rightNode.getOrbit().contains(dim))
                             && (dim == rightNode.getOrbit().get(i));
 
-                    // Test des arcs
+                    // Test for arcs
                     for (JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)) {
                         flag |= (dim == a.getDimension());
                     }
@@ -334,15 +334,15 @@ public class JMEVerifTopoClassic {
                                 leftNode));
                 }
 
-                // Dimensions presentes dans les arcs
+                // Dimensions in the arcs
                 for (JMEArc arc : rule.getLeft().getIncidentArcsFromNode(leftNode)) {
                     boolean flag = false;
                     int dim = arc.getDimension();
 
-                    // Test d'appartenance dans l'orbite
+                    // Test if the dimension is in the orbit
                     flag |= rightNode.getOrbit().contains(dim);
 
-                    // Test des arcs
+                    // Test the other arcs
                     for (JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)) {
                         flag |= (dim == a.getDimension());
                     }
@@ -352,15 +352,15 @@ public class JMEVerifTopoClassic {
                 }
 
                 // Right -> Left
-                // Dimensions presentes dans l'orbite
+                // Dimensions in the orbit
                 for (int i = 0; i < rightNode.getOrbit().size(); i++) {
                     boolean flag = false;
                     int dim = rightNode.getOrbit().get(i);
 
-                    // Test d'egalite a -1
+                    // Test for equality to -1
                     flag |= dim == -1;
 
-                    // Test de position identique dans l'orbite
+                    // Test for identical position in the orbit
                     flag |= (leftNode.getOrbit().contains(dim))
                             && (dim == leftNode.getOrbit().get(i));
 
@@ -373,15 +373,15 @@ public class JMEVerifTopoClassic {
                                 rightNode));
                 }
 
-                // Dimensions presentes dans les arcs
+                // Dimensions in the arcs
                 for (JMEArc arc : rule.getRight().getIncidentArcsFromNode(rightNode)) {
                     boolean flag = false;
                     int dim = arc.getDimension();
 
-                    // Test d'appartenance dans l'orbite
+                    // Test if the dimension is in the orbit
                     flag |= leftNode.getOrbit().contains(dim);
 
-                    // Test des arcs
+                    // Test the other arcs
                     for (JMEArc a : rule.getLeft().getIncidentArcsFromNode(leftNode)) {
                         flag |= (dim == a.getDimension());
                     }
@@ -393,7 +393,7 @@ public class JMEVerifTopoClassic {
         }
         for (JMENode rightNode : right.getNodes()) {
             JMENode leftNode = left.getMatchNode(rightNode);
-            // Noeud ajoute : on verifie qu'il possede toutes les dimensions
+            // Node added: we verify that it has all dimensions
             if (leftNode == null) {
                 List<JMEArc> incidents = right.getIncidentArcsFromNode(rightNode);
                 for (int i = 0; i <= modDim; i++) {
@@ -594,32 +594,32 @@ public class JMEVerifTopoClassic {
                 for (JMENode leftNode : left.getNodes()) {
                     JMENode rightNode = right.getMatchNode(leftNode);
 
-                    // Noeud preserve
+                    // Preserved node
                     if (rightNode != null) {
 
-                        // Cycle dans le noeud du graphe gauche
+                        // Cycle in the left graph node
                         if (hasCycle(leftNode, i, j) == 1 && hasCycle(rightNode, i, j) == 0)
                             errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule,
                                     rightNode));
-
-                        // Pas de cycle
+                                    
+                        // No cycle
                         else if (hasCycle(leftNode, i, j) == 0) {
 
-                            // Dimension i dans l'orbite
-                            int l_pos_i = leftNode.getOrbit().indexOf(i); // -1 si absent
+                            // Dimension i in the orbit
+                            int l_pos_i = leftNode.getOrbit().indexOf(i); // -1 if absent
                             int r_pos_i = rightNode.getOrbit().indexOf(i);
                             if (l_pos_i != r_pos_i)
                                 errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,
                                         rule, leftNode));
 
-                            // Dimension j dans l'orbite
+                            // Dimension j in the orbit
                             int l_pos_j = leftNode.getOrbit().indexOf(j);
                             int r_pos_j = rightNode.getOrbit().indexOf(j);
                             if (l_pos_j != r_pos_j)
                                 errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC,
                                         rule, leftNode));
 
-                            // Dimension i manquante dans l'orbite, on regarde les arcs
+                            // Dimension i missing in the orbit, check arcs
                             if (l_pos_i == -1) {
                                 if (explicitArcHasChanged(i, rule, leftNode)) {
                                     errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE,
@@ -627,7 +627,7 @@ public class JMEVerifTopoClassic {
                                 }
                             }
 
-                            // Dimension j manquante dans l'orbite, on regarde les arcs
+                            // Dimension j missing in the orbit, check arcs
                             if (l_pos_j == -1) {
                                 if (explicitArcHasChanged(j, rule, leftNode)) {
                                     errors.add(new JMERuleError(JMERuleErrorSeverity.CRITIQUE,
@@ -638,7 +638,7 @@ public class JMEVerifTopoClassic {
                     }
                 }
 
-                // Noeud ajoute dans le graphe droit
+                // Node added in the right graph
                 for (JMENode rightNode : right.getNodes()) {
                     if (left.getNodes().isEmpty() && hasCycle(rightNode, i, j) == -1)
                         errors.add(new JMERuleError(JMERuleErrorSeverity.WARNING, JMERuleErrorType.TOPOLOGIC, rule,
