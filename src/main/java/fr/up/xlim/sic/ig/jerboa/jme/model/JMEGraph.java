@@ -253,7 +253,7 @@ public class JMEGraph implements JMEElement {
 		List<JMENode> hooks = getHooks();
 		Set<JMENode> seen = new HashSet<JMENode>();
 
-		JerboaOrbit orbitForCC = JerboaOrbit.orbit(IntStream
+		JerboaOrbit orbitForCC = new JerboaOrbit(IntStream
 				.rangeClosed(0, owner.getModeler().getDimension()).toArray());
 
 		for (JMENode node : getNodes()) {

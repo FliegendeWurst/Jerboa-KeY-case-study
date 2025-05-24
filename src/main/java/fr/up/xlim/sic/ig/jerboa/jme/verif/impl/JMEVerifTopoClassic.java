@@ -191,7 +191,7 @@ public class JMEVerifTopoClassic {
         int[] tabOrbitConnexComponent = new int[rule.getModeler().getDimension() + 1];
         for (int i = 0; i < tabOrbitConnexComponent.length; i++)
             tabOrbitConnexComponent[i] = i;
-        JerboaOrbit orbitCC = JerboaOrbit.orbit(tabOrbitConnexComponent);
+        JerboaOrbit orbitCC = new JerboaOrbit(tabOrbitConnexComponent);
 
         // Processing each node
         List/*<JMENode>*/ leftNodes = left.getNodes();
