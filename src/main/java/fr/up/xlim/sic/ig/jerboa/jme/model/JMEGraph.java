@@ -99,7 +99,6 @@ public final class JMEGraph implements JMEElement {
 		return owner;
 	}
 
-	@Override
 	public String getName() {
 		return isleft ? "LeftGraph" : "RightGraph";
 	}

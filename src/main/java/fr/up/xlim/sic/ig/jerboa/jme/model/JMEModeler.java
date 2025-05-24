@@ -9,7 +9,6 @@ public final class JMEModeler implements JMEElement {
 		this.dimension = dim;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -18,7 +17,6 @@ public final class JMEModeler implements JMEElement {
 		return dimension;
 	}
 
-	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName());

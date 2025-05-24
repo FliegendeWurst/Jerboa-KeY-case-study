@@ -34,13 +34,10 @@ public class JMEArc implements JMEElement{
         return b;
     }
 
-    
-    @Override
     public String toString() {
         return "("+a.toString()+"--"+dim+"--"+b.toString()+")";
     }
 
-    @Override
     public String getName() {
         return toString();
     }

@@ -15,7 +15,6 @@ public final class JMERuleError {
 		this.severity = severity;
 	}
 
-	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JMERuleError) {
 			JMERuleError err = (JMERuleError) obj;
@@ -26,7 +25,6 @@ public final class JMERuleError {
 		return super.equals(obj);
 	}
 
-	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(locality).append(" : ").append(type).append("<").append(target.getName()).append(">");

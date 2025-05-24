@@ -103,7 +103,6 @@ public final class JerboaOrbit implements Iterable<Integer> {
 	 * Attention la fonction échoue (RuntimeException) si une des dimensions de l'orbite
 	 * est supérieur à 32! Il en est de même pour les orbites à trou!
 	 */
-	@Override
 	public int hashCode() {
 		int result = 0;
 		for(int i : dim) {
@@ -112,8 +111,7 @@ public final class JerboaOrbit implements Iterable<Integer> {
 		// return super.hashCode();
 		return result;
 	}
-		
-	@Override
+
 	public boolean equals(Object obj) {
 		if (obj instanceof JerboaOrbit) {
 			JerboaOrbit nn = (JerboaOrbit) obj;
@@ -156,7 +154,6 @@ public final class JerboaOrbit implements Iterable<Integer> {
 		return sb.toString();
 	}
 
-	@Override
 	public Iterator<Integer> iterator() {
 		return new JerboaOrbitIterator(dim);
 	}
@@ -169,17 +166,14 @@ public final class JerboaOrbit implements Iterable<Integer> {
 			pos = 0;
 		}
 
-		@Override
 		public boolean hasNext() {
 			return (pos < dim.length);
 		}
 
-		@Override
 		public Integer next() {
 			return dim[pos++];
 		}
 
-		@Override
 		public void remove() {
 			// not supported
 		}

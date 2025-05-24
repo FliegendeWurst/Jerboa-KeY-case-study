@@ -28,7 +28,6 @@ public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule>
 		right = new JMEGraph(this, false);
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -41,7 +40,6 @@ public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule>
 		return right;
 	}
 
-	@Override
 	public String toString() {
 		return getName();
 	}
@@ -54,7 +52,6 @@ public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule>
 		return category;
 	}
 
-	@Override
 	public int compareTo(JMERule o) {
 
 		int cmpcat = -1 * getCategory().compareTo(o.getCategory());

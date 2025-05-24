@@ -30,8 +30,7 @@ public final class JMENode implements JMEElement {
 		this.orbit = new JerboaOrbit();
 		this.kind = k;
 	}
-	
-	@Override
+
 	public String getName() {
 		return name;
 	}
@@ -44,7 +43,6 @@ public final class JMENode implements JMEElement {
 		return kind;
 	}
 
-	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("[");
 		sb.append(name);
