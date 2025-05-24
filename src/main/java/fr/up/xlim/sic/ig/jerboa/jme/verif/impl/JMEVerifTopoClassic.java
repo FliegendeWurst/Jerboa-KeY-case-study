@@ -119,7 +119,7 @@ public class JMEVerifTopoClassic {
 
         // Left Graph
         JMEGraph left = rule.getLeft();
-        HashMap<String, JMENode> existingNamesLeft = new HashMap<>();
+        HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
         for (JMENode node : left.getNodes()) {
 
             // The name is already present, we add errors.
@@ -134,7 +134,7 @@ public class JMEVerifTopoClassic {
 
         // Right Graph
         JMEGraph right = rule.getRight();
-        HashMap<String, JMENode> existingNamesRight = new HashMap<>();
+        HashMap/*<String, JMENode>*/ existingNamesRight = new HashMap();
         for (JMENode node : right.getNodes()) {
 
             // The name is already present, we add errors.
@@ -160,7 +160,7 @@ public class JMEVerifTopoClassic {
 	 * @return non-null error if check fails
 	 */
     JMERuleError verifHooks(JMERule rule) {
-        List<JMENode> hooks = rule.getHooks();
+        List/*<JMENode>*/ hooks = rule.getHooks();
         JMEGraph left = rule.getLeft();
 
         // Verification of full orbit for hooks
@@ -178,7 +178,7 @@ public class JMEVerifTopoClassic {
 
         // Processing each node
         for (JMENode node : left.getNodes()) {
-            Set<JMENode> nodes = left.orbit(node, orbitCC);
+            Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
             int countHook = nodes.stream().mapToInt(f -> (hooks.contains(f) ? 1 : 0)).sum();
             if (countHook > 1) {
                 if (hooks.contains(node))
@@ -254,7 +254,7 @@ public class JMEVerifTopoClassic {
 
         // Left Graph
         for (JMENode node : rule.getLeft().getNodes()) {
-            HashSet<Integer> dims = new HashSet<>();
+            HashSet/*<Integer>*/ dims = new HashSet<>();
 
             // Orbit
             for (int i : node.getOrbit()) {
@@ -271,7 +271,7 @@ public class JMEVerifTopoClassic {
 
         // Right Graph
         for (JMENode node : rule.getRight().getNodes()) {
-            HashSet<Integer> dims = new HashSet<>();
+            HashSet/*<Integer>*/ dims = new HashSet<>();
 
             // Orbit
             for (int i : node.getOrbit()) {
@@ -320,7 +320,7 @@ public class JMEVerifTopoClassic {
 
             // Node removed: we verify that it has an incident arc for all dimensions
             if (rightNode == null) {
-                List<JMEArc> incidents = left.getIncidentArcsFromNode(leftNode);
+                List/*<JMEArc>*/ incidents = left.getIncidentArcsFromNode(leftNode);
                 for (int i = 0; i <= modDim; i++) {
                     if (!leftNode.getOrbit().contains(i)) {
                         boolean flag = false;
@@ -416,7 +416,7 @@ public class JMEVerifTopoClassic {
             JMENode leftNode = left.getMatchNode(rightNode);
             // Node added: we verify that it has all dimensions
             if (leftNode == null) {
-                List<JMEArc> incidents = right.getIncidentArcsFromNode(rightNode);
+                List/*<JMEArc>*/ incidents = right.getIncidentArcsFromNode(rightNode);
                 for (int i = 0; i <= modDim; i++) {
                     if (!rightNode.getOrbit().contains(i)) {
                         boolean flag = false;
