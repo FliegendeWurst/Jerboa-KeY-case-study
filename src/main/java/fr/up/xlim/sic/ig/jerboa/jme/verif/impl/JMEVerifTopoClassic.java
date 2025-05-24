@@ -72,15 +72,21 @@ public class JMEVerifTopoClassic {
         JMEGraph left = rule.getLeft();
 
         // Orbits
-        for (JMENode node : left.getNodes()) {
-            for (int i : node.getOrbit().tab()) {
+        List<JMENode> leftNodes = left.getNodes();
+        for (int j = 0; j < leftNodes.size(); j++) {
+            JMENode node = leftNodes.get(j);
+            int[] tab = node.getOrbit().tab();
+            for (int k = 0; k < tab.length; k++) {
+                int i = tab[k];
                 if (i > modDim || i < -1)
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
         }
 
         // Arcs
-        for (JMEArc arc : left.getArcs()) {
+        List<JMEArc> leftArcs = left.getArcs();
+        for (int i = 0; i < leftArcs.size(); i++) {
+            JMEArc arc = leftArcs.get(i);
             if (arc.getDimension() > modDim || arc.getDimension() < 0) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
             }
@@ -90,15 +96,21 @@ public class JMEVerifTopoClassic {
         JMEGraph right = rule.getRight();
 
         // Orbits
-        for (JMENode node : right.getNodes()) {
-            for (int i : node.getOrbit().tab()) {
+        List<JMENode> rightNodes = right.getNodes();
+        for (int j = 0; j < rightNodes.size(); j++) {
+            JMENode node = rightNodes.get(j);
+            int[] tab = node.getOrbit().tab();
+            for (int k = 0; k < tab.length; k++) {
+                int i = tab[k];
                 if (i > modDim || i < -1)
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
         }
 
         // Arcs
-        for (JMEArc arc : right.getArcs()) {
+        List<JMEArc> rightArcs = right.getArcs();
+        for (int i = 0; i < rightArcs.size(); i++) {
+            JMEArc arc = rightArcs.get(i);
             if (arc.getDimension() > modDim || arc.getDimension() < 0) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
             }
@@ -120,7 +132,9 @@ public class JMEVerifTopoClassic {
         // Left Graph
         JMEGraph left = rule.getLeft();
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
-        for (JMENode node : left.getNodes()) {
+        List/*<JMENode>*/ leftNodes = left.getNodes();
+        for (int i = 0; i < leftNodes.size(); i++) {
+            JMENode node = (JMENode) leftNodes.get(i);
 
             // The name is already present, we add errors.
             if (existingNamesLeft.containsKey(node.getName())) {
@@ -135,7 +149,9 @@ public class JMEVerifTopoClassic {
         // Right Graph
         JMEGraph right = rule.getRight();
         HashMap/*<String, JMENode>*/ existingNamesRight = new HashMap();
-        for (JMENode node : right.getNodes()) {
+        List/*<JMENode>*/ rightNodes = right.getNodes();
+        for (int i = 0; i < rightNodes.size(); i++) {
+            JMENode node = (JMENode) rightNodes.get(i);
 
             // The name is already present, we add errors.
             if (existingNamesRight.containsKey(node.getName())) {
@@ -164,7 +180,8 @@ public class JMEVerifTopoClassic {
         JMEGraph left = rule.getLeft();
 
         // Verification of full orbit for hooks
-        for (JMENode hook : hooks) {
+        for (int i = 0; i < hooks.size(); i++) {
+            JMENode hook = (JMENode) hooks.get(i);
             if (hook.getOrbit().contains(-1)) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, hook);
             }
@@ -177,7 +194,9 @@ public class JMEVerifTopoClassic {
         JerboaOrbit orbitCC = JerboaOrbit.orbit(tabOrbitConnexComponent);
 
         // Processing each node
-        for (JMENode node : left.getNodes()) {
+        List/*<JMENode>*/ leftNodes = left.getNodes();
+        for (int i = 0; i < leftNodes.size(); i++) {
+            JMENode node = (JMENode) leftNodes.get(i);
             Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
             int countHook = nodes.stream().mapToInt(f -> (hooks.contains(f) ? 1 : 0)).sum();
             if (countHook > 1) {
@@ -216,24 +235,28 @@ public class JMEVerifTopoClassic {
         length = node.getOrbit().size();
 
         // Left graph
-        for (JMENode n : rule.getLeft().getNodes()) {
+        List/*<JMENode>*/ leftNodes = rule.getLeft().getNodes();
+        for (int i = 0; i < leftNodes.size(); i++) {
+            JMENode n = (JMENode) leftNodes.get(i);
 
             // Orbit too small
             if (n.getOrbit().size() < length)
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
 
-            // Orbit too large
+                // Orbit too large
             else if (n.getOrbit().size() > length)
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
         }
         // Right graph
-        for (JMENode n : rule.getRight().getNodes()) {
+        List/*<JMENode>*/ rightNodes = rule.getRight().getNodes();
+        for (int i = 0; i < rightNodes.size(); i++) {
+            JMENode n = (JMENode) rightNodes.get(i);
 
             // Orbit too small
             if (n.getOrbit().size() < length)
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
 
-            // Orbit too large
+                // Orbit too large
             else if (n.getOrbit().size() > length)
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
         }
@@ -253,7 +276,9 @@ public class JMEVerifTopoClassic {
     JMERuleError verifDuplicateDimension(JMERule rule) {
 
         // Left Graph
-        for (JMENode node : rule.getLeft().getNodes()) {
+        List/*<JMENode>*/ leftNodes = rule.getLeft().getNodes();
+        for (int j = 0; j < leftNodes.size(); j++) {
+            JMENode node = (JMENode) leftNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet<>();
 
             // Orbit
@@ -263,14 +288,18 @@ public class JMEVerifTopoClassic {
             }
 
             // Arcs
-            for (JMEArc a : rule.getLeft().getIncidentArcsFromNode(node)) {
+            List/*<JMEArc>*/ incidentArcsFromNode = rule.getLeft().getIncidentArcsFromNode(node);
+            for (int i = 0; i < incidentArcsFromNode.size(); i++) {
+                JMEArc a = (JMEArc) incidentArcsFromNode.get(i);
                 if (!dims.add(a.getDimension()))
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
         }
 
         // Right Graph
-        for (JMENode node : rule.getRight().getNodes()) {
+        List/*<JMENode>*/ rightNodes = rule.getRight().getNodes();
+        for (int j = 0; j < rightNodes.size(); j++) {
+            JMENode node = (JMENode) rightNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet<>();
 
             // Orbit
@@ -280,7 +309,9 @@ public class JMEVerifTopoClassic {
             }
 
             // Arcs
-            for (JMEArc a : rule.getRight().getIncidentArcsFromNode(node)) {
+            List/*<JMEArc>*/ incidentArcsFromNode = rule.getRight().getIncidentArcsFromNode(node);
+            for (int i = 0; i < incidentArcsFromNode.size(); i++) {
+                JMEArc a = (JMEArc) incidentArcsFromNode.get(i);
                 if (!dims.add(a.getDimension()))
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
@@ -315,7 +346,9 @@ public class JMEVerifTopoClassic {
         int modDim = rule.getModeler().getDimension();
         JMEGraph left = rule.getLeft();
         JMEGraph right = rule.getRight();
-        for (JMENode leftNode : left.getNodes()) {
+        List/*<JMENode>*/ leftNodes = left.getNodes();
+        for (int k = 0; k < leftNodes.size(); k++) {
+            JMENode leftNode = (JMENode) leftNodes.get(k);
             JMENode rightNode = right.getMatchNode(leftNode);
 
             // Node removed: we verify that it has an incident arc for all dimensions
@@ -324,8 +357,10 @@ public class JMEVerifTopoClassic {
                 for (int i = 0; i <= modDim; i++) {
                     if (!leftNode.getOrbit().contains(i)) {
                         boolean flag = false;
-                        for (JMEArc a : incidents)
+                        for (int j = 0; j < incidents.size(); j++) {
+                            JMEArc a = (JMEArc) incidents.get(j);
                             flag |= a.getDimension() == i;
+                        }
                         if (!flag)
                             return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule,
                                     leftNode);
@@ -347,7 +382,9 @@ public class JMEVerifTopoClassic {
                             && (dim == rightNode.getOrbit().get(i));
 
                     // Test for arcs
-                    for (JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)) {
+                    List/*<JMEArc>*/ incidentArcsFromNode = rule.getRight().getIncidentArcsFromNode(rightNode);
+                    for (int j = 0; j < incidentArcsFromNode.size(); j++) {
+                        JMEArc a = (JMEArc) incidentArcsFromNode.get(j);
                         flag |= (dim == a.getDimension());
                     }
                     if (!flag)
@@ -356,7 +393,9 @@ public class JMEVerifTopoClassic {
                 }
 
                 // Dimensions in the arcs
-                for (JMEArc arc : rule.getLeft().getIncidentArcsFromNode(leftNode)) {
+                List/*<JMEArc>*/ incidentArcsFromNode = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                for (int i = 0; i < incidentArcsFromNode.size(); i++) {
+                    JMEArc arc = (JMEArc) incidentArcsFromNode.get(i);
                     boolean flag = false;
                     int dim = arc.getDimension();
 
@@ -364,7 +403,9 @@ public class JMEVerifTopoClassic {
                     flag |= rightNode.getOrbit().contains(dim);
 
                     // Test the other arcs
-                    for (JMEArc a : rule.getRight().getIncidentArcsFromNode(rightNode)) {
+                    List/*<JMEArc>*/ rightIncident = rule.getRight().getIncidentArcsFromNode(rightNode);
+                    for (int j = 0; j < rightIncident.size(); j++) {
+                        JMEArc a = (JMEArc) rightIncident.get(j);
                         flag |= (dim == a.getDimension());
                     }
                     if (!flag)
@@ -386,7 +427,9 @@ public class JMEVerifTopoClassic {
                             && (dim == leftNode.getOrbit().get(i));
 
                     // Test des arcs
-                    for (JMEArc a : rule.getLeft().getIncidentArcsFromNode(leftNode)) {
+                    List/*<JMEArc>*/ leftIncident = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                    for (int j = 0; j < leftIncident.size(); j++) {
+                        JMEArc a = (JMEArc) leftIncident.get(j);
                         flag |= (dim == a.getDimension());
                     }
                     if (!flag)
@@ -395,7 +438,9 @@ public class JMEVerifTopoClassic {
                 }
 
                 // Dimensions in the arcs
-                for (JMEArc arc : rule.getRight().getIncidentArcsFromNode(rightNode)) {
+                List/*<JMEArc>*/ rightIncident = rule.getRight().getIncidentArcsFromNode(rightNode);
+                for (int i = 0; i < rightIncident.size(); i++) {
+                    JMEArc arc = (JMEArc) rightIncident.get(i);
                     boolean flag = false;
                     int dim = arc.getDimension();
 
@@ -403,7 +448,9 @@ public class JMEVerifTopoClassic {
                     flag |= leftNode.getOrbit().contains(dim);
 
                     // Test the other arcs
-                    for (JMEArc a : rule.getLeft().getIncidentArcsFromNode(leftNode)) {
+                    List/*<JMEArc>*/ leftIncident = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                    for (int j = 0; j < leftIncident.size(); j++) {
+                        JMEArc a = (JMEArc) leftIncident.get(j);
                         flag |= (dim == a.getDimension());
                     }
                     if (!flag)
@@ -412,7 +459,9 @@ public class JMEVerifTopoClassic {
                 }
             }
         }
-        for (JMENode rightNode : right.getNodes()) {
+        List/*<JMENode>*/ rightNodes = right.getNodes();
+        for (int j = 0; j < rightNodes.size(); j++) {
+            JMENode rightNode = (JMENode) rightNodes.get(j);
             JMENode leftNode = left.getMatchNode(rightNode);
             // Node added: we verify that it has all dimensions
             if (leftNode == null) {
@@ -420,7 +469,8 @@ public class JMEVerifTopoClassic {
                 for (int i = 0; i <= modDim; i++) {
                     if (!rightNode.getOrbit().contains(i)) {
                         boolean flag = false;
-                        for (JMEArc a : incidents) {
+                        for (int k = 0; k < incidents.size(); k++) {
+                            JMEArc a = (JMEArc) incidents.get(k);
                             if (a.getDimension() == i)
                                 flag = true;
                         }
@@ -482,11 +532,13 @@ public class JMEVerifTopoClassic {
         JerboaOrbit orbit = node.getOrbit();
         JMEArc arc_i = null;
         JMEArc arc_j = null;
-        for (JMEArc arc : graph.getIncidentArcsFromNode(node)) {
+        List/*<JMEArc>*/ nodeIncident = graph.getIncidentArcsFromNode(node);// Case of arc j
+        for (int k = 0; k < nodeIncident.size(); k++) {
+            JMEArc arc = (JMEArc) nodeIncident.get(k);
             arc_i = (arc.getDimension() == i) ? arc : arc_i;
             arc_j = (arc.getDimension() == j) ? arc : arc_j;
 
-        } // Case of arc j
+        }
         if (orbit.contains(j)) // orbit
             cycleCode += 1;
         if (arc_j instanceof JMELoop) // loop
@@ -528,15 +580,21 @@ public class JMEVerifTopoClassic {
             // i arc and j loop
             case 14:
                 otherNode = (arc_i.getSource() == node) ? arc_i.getDestination() : arc_i.getSource();
-                for (JMEArc arc : graph.getIncidentArcsFromNode(otherNode))
+                List/*<JMEArc>*/ otherIncident = graph.getIncidentArcsFromNode(otherNode);
+                for (int k = 0; k < otherIncident.size(); k++) {
+                    JMEArc arc = (JMEArc) otherIncident.get(k);
                     flag |= arc instanceof JMELoop && arc.getDimension() == j;
+                }
                 break;
 
             // j arc and i loop
             case 11:
                 otherNode = (arc_j.getSource() == node) ? arc_j.getDestination() : arc_j.getSource();
-                for (JMEArc arc : graph.getIncidentArcsFromNode(otherNode))
+                List/*<JMEArc>*/ otherIncident2 = graph.getIncidentArcsFromNode(otherNode);
+                for (int k = 0; k < otherIncident2.size(); k++) {
+                    JMEArc arc = (JMEArc) otherIncident2.get(k);
                     flag |= arc instanceof JMELoop && arc.getDimension() == i;
+                }
                 break;
 
             // i and j orbit
@@ -546,7 +604,9 @@ public class JMEVerifTopoClassic {
                 else if (graph.getRule().getLeft().getHooks().isEmpty())
                     return -1;
                 else { // We need to check all hooks!
-                    for (JMENode hook : graph.getRule().getLeft().getHooks()) {
+                    List/*<JMENode>*/ hooks = graph.getRule().getLeft().getHooks();
+                    for (int k = 0; k < hooks.size(); k++) {
+                        JMENode hook = (JMENode) hooks.get(k);
                         pos_i = orbit.indexOf(i);
                         pos_j = orbit.indexOf(j);
                         flag |= hook.getOrbit().get(pos_i) + 2 <= hook.getOrbit().get(pos_j)
@@ -562,7 +622,9 @@ public class JMEVerifTopoClassic {
                 node_j = (arc_j.getSource() == node) ? arc_j.getDestination() : arc_j.getSource();
 
                 // We search for the fourth node to complete the cycle
-                for (JMEArc arc : graph.getIncidentArcsFromNode(node_i)) {
+                List/*<JMEArc>*/ incidentI = graph.getIncidentArcsFromNode(node_i);
+                for (int k = 0; k < incidentI.size(); k++) {
+                    JMEArc arc = (JMEArc) incidentI.get(k);
                     if ((!(arc instanceof JMELoop)) && arc.getDimension() == j)
                         node_cycle = (arc.getSource() == node_i) ? arc.getDestination() : arc.getSource();
                 }
@@ -572,7 +634,9 @@ public class JMEVerifTopoClassic {
                     break;
 
                 // Otherwise, we search for a match
-                for (JMEArc arc : graph.getIncidentArcsFromNode(node_j)) {
+                List/*<JMEArc>*/ incidentJ = graph.getIncidentArcsFromNode(node_j);
+                for (int k = 0; k < incidentJ.size(); k++) {
+                    JMEArc arc = (JMEArc) incidentJ.get(k);
                     if ((!(arc instanceof JMELoop)) && arc.getDimension() == i) {
                         otherNode = (arc.getSource() == node_j) ? arc.getDestination() : arc.getSource();
                         flag |= otherNode == node_cycle;
@@ -614,7 +678,9 @@ public class JMEVerifTopoClassic {
 
         for (int i = 0; i <= modDim - 2; i++) {
             for (int j = i + 2; j <= modDim; j++) {
-                for (JMENode leftNode : left.getNodes()) {
+                List/*<JMENode>*/ leftNodes = left.getNodes();
+                for (int k = 0; k < leftNodes.size(); k++) {
+                    JMENode leftNode = (JMENode) leftNodes.get(k);
                     JMENode rightNode = right.getMatchNode(leftNode);
 
                     // Preserved node
@@ -624,8 +690,8 @@ public class JMEVerifTopoClassic {
                         if (hasCycle(leftNode, i, j) == 1 && hasCycle(rightNode, i, j) == 0)
                             return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule,
                                     rightNode);
-                                    
-                        // No cycle
+
+                            // No cycle
                         else if (hasCycle(leftNode, i, j) == 0) {
 
                             // Dimension i in the orbit
@@ -662,7 +728,9 @@ public class JMEVerifTopoClassic {
                 }
 
                 // Node added in the right graph
-                for (JMENode rightNode : right.getNodes()) {
+                List/*<JMENode>*/ rightNodes = right.getNodes();
+                for (int k = 0; k < rightNodes.size(); k++) {
+                    JMENode rightNode = (JMENode) rightNodes.get(k);
                     if (left.getNodes().isEmpty() && hasCycle(rightNode, i, j) == -1)
                         return new JMERuleError(JMERuleErrorSeverity.WARNING, JMERuleErrorType.TOPOLOGIC, rule,
                                 rightNode);
