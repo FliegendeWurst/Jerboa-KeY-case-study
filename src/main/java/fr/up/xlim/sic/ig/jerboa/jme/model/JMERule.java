@@ -3,7 +3,7 @@ package fr.up.xlim.sic.ig.jerboa.jme.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
+public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERule>*/ {
 
 	protected JMEModeler modeler;
 	protected String name;
@@ -51,7 +51,8 @@ public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule>
 		return category;
 	}
 
-	public int compareTo(JMERule o) {
+	public int compareTo(Object o2) {
+		JMERule o = (JMERule) o2;
 
 		int cmpcat = -1 * getCategory().compareTo(o.getCategory());
 
@@ -70,9 +71,9 @@ public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule>
 		}
 	}
 
-	public List<JMENode> getHooks() {
+	public List/*<JMENode>*/ getHooks() {
 		if (left != null)
 			return left.getHooks();
-		return new ArrayList<JMENode>();
+		return new ArrayList();
 	}
 }
