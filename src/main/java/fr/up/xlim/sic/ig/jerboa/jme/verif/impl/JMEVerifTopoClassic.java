@@ -1,7 +1,5 @@
 package fr.up.xlim.sic.ig.jerboa.jme.verif.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

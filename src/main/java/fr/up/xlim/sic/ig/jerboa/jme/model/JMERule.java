@@ -2,7 +2,6 @@ package fr.up.xlim.sic.ig.jerboa.jme.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
 
