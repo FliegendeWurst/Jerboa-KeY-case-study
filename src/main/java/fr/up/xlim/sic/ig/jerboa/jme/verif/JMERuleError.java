@@ -15,22 +15,6 @@ public final class JMERuleError {
 		this.severity = severity;
 	}
 
-	public JMEElement getLocality() {
-		return locality;
-	}
-
-	public JMERuleErrorSeverity getSeverity() {
-		return severity;
-	}
-
-	public JMERuleErrorType getType() {
-		return type;
-	}
-
-	public JMEElement getTarget() {
-		return target;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JMERuleError) {
