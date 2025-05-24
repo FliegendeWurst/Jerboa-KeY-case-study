@@ -24,10 +24,4 @@ public final class JMERuleError {
 		}
 		return super.equals(obj);
 	}
-
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(locality).append(" : ").append(type).append("<").append(target.getName()).append(">");
-		return sb.toString();
-	}
 }

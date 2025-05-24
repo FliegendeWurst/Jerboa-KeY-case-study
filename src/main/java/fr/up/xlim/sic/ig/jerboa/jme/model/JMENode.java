@@ -43,13 +43,6 @@ public final class JMENode implements JMEElement {
 		return kind;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder("[");
-		sb.append(name);
-		sb.append(']');
-		return sb.toString();
-	}
-
 	public JMEGraph getGraph(){
 		return graph;
 	}

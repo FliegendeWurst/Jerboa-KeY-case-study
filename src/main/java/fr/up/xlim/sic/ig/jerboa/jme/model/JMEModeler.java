@@ -16,10 +16,4 @@ public final class JMEModeler implements JMEElement {
 	public int getDimension() {
 		return dimension;
 	}
-
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName());
-		return sb.toString();
-	}
 }

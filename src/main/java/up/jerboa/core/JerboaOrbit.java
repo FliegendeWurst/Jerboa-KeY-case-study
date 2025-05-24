@@ -133,26 +133,6 @@ public final class JerboaOrbit implements Iterable<Integer> {
 		}
 		return false;
 	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<");
-		if(dim.length >= 1) {
-			if (dim[0] == -1) sb.append("_");
-			else sb.append("a").append(dim[0]);
-			if(dim.length > 1) {
-				for(int i=1;i < dim.length;i++) {
-					if(dim[i] == -1)
-						sb.append(", _");
-					else
-						sb.append(", a").append(dim[i]);
-				}
-			}
-		}
-		sb.append(">");
-		return sb.toString();
-	}
 
 	public Iterator<Integer> iterator() {
 		return new JerboaOrbitIterator(dim);
