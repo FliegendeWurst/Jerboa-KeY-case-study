@@ -48,14 +48,15 @@ public final class JMENode implements JMEElement {
 	}
 	
 	
-	public List<JMEArc> alphas() {
+	public List/*<JMEArc>*/ alphas() {
 		return (graph.getIncidentArcsFromNode(this));
 	}
 	
 	
 	public JMENode alpha(int i) {
-		List<JMEArc> arcs = alphas();
-		for (JMEArc arc : arcs) {
+		List/*<JMEArc>*/ arcs = alphas();
+		for (int j = 0; j < arcs.size(); j++) {
+			JMEArc arc = (JMEArc) arcs.get(j);
 			if(arc.getDimension() == i) {
 				if(arc.getSource() == this )
 					return arc.getDestination();
