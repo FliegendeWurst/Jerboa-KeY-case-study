@@ -189,7 +189,7 @@ public final class JMEVerifTopoClassic {
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode node = (JMENode) leftNodes.get(i);
             Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
-            int countHook = nodes.stream().mapToInt(f -> (hooks.contains(f) ? 1 : 0)).sum();
+            int countHook = intersectionSize(nodes, hooks);
             if (countHook > 1) {
                 if (hooks.contains(node))
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
@@ -199,6 +199,16 @@ public final class JMEVerifTopoClassic {
         }
 
         return null;
+    }
+
+    private static int intersectionSize(Set a, List b) {
+        int count = 0;
+        for (Object x : a) {
+            if (b.contains(x)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -220,7 +230,7 @@ public final class JMEVerifTopoClassic {
             if (rule.getRight().getNodes().isEmpty())
                 return null;
             else
-                node = rule.getRight().getNodes().get(0);
+                node = (JMENode) rule.getRight().getNodes().get(0);
         } else
             node = rule.getHooks().get(0);
         length = node.getOrbit().size();
@@ -746,11 +756,11 @@ public final class JMEVerifTopoClassic {
     private boolean explicitArcHasChanged(int dim, JMERule rule, JMENode leftNode) {
         final int dimI = dim;
         JMENode rightNode = rule.getRight().getMatchNode(leftNode);
-        if (leftNode.alphas().stream().anyMatch(arc -> (dimI == arc.getDimension()))) {
+        if (hasAnyWithDimension(leftNode.alphas(), dimI)) {
 
             // By the incident arcs constraint, this should always be true.
             // In case it is not, we do not raise an additional error
-            if (rightNode.alphas().stream().anyMatch(arc -> (dimI == arc.getDimension()))) {
+            if (hasAnyWithDimension(rightNode.alphas(), dimI)) {
                 JMENode leftNeighbor = leftNode.alpha(dimI);
                 JMENode rightNeigbor = rightNode.alpha(dimI);
                 JMENode matchLeftNeighbor = rule.getRight().getMatchNode(leftNeighbor);
@@ -762,4 +772,13 @@ public final class JMEVerifTopoClassic {
         return false;
 	}
 
+    private static boolean hasAnyWithDimension(List/*<JMEArc>*/ arcs, int dimI) {
+        for (int i = 0; i < arcs.size(); i++) {
+            JMEArc arc = (JMEArc) arcs.get(i);
+            if (arc.getDimension() == dimI) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
