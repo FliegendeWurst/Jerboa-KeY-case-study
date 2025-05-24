@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author Hakim Belhaouari
  *
  */
-public final class JerboaOrbit implements Iterable<Integer> {
+public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	/** array that reminds the parameter of the current orbit */
 	private int dim[];
 	
@@ -134,11 +134,11 @@ public final class JerboaOrbit implements Iterable<Integer> {
 		return false;
 	}
 
-	public Iterator<Integer> iterator() {
+	public Iterator/*<Integer>*/ iterator() {
 		return new JerboaOrbitIterator(dim);
 	}
 
-	class JerboaOrbitIterator implements Iterator<Integer> {
+	class JerboaOrbitIterator implements Iterator/*<Integer>*/ {
 		private int[] dim;
 		private int pos;
 		public JerboaOrbitIterator(int[] dim) {
