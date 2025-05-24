@@ -12,7 +12,7 @@ import up.jerboa.core.JerboaOrbit;
  * @author Hakim Belhaouari & Romain Pascual
  *
  */
-public class JMENode implements JMEElement {
+public final class JMENode implements JMEElement {
 
 	// topological parameters
 	protected String name;

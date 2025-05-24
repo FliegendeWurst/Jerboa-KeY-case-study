@@ -2,7 +2,7 @@ package fr.up.xlim.sic.ig.jerboa.jme.verif;
 
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEElement;
 
-public class JMERuleError {
+public final class JMERuleError {
 	private JMERuleErrorType type;
 	private JMERuleErrorSeverity severity;
 	private JMEElement target;

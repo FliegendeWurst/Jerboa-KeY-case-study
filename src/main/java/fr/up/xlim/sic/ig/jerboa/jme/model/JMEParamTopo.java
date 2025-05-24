@@ -1,6 +1,6 @@
 package fr.up.xlim.sic.ig.jerboa.jme.model;
 
-public class JMEParamTopo implements JMEElement {
+public final class JMEParamTopo implements JMEElement {
 
 	// intrinsic parameters
 	private JMERule rule;

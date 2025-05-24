@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class JMEModeler implements JMEElement {
+public final class JMEModeler implements JMEElement {
 
 	protected boolean modified;
 	protected String name;

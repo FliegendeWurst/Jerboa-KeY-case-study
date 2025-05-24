@@ -18,7 +18,7 @@ import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleErrorType;
 import up.jerboa.core.JerboaOrbit;
 
 // Topological verification
-public class JMEVerifTopoClassic {		
+public final class JMEVerifTopoClassic {
 
 	public JMERuleError check(JMERule rule) {
         JMERuleError error = verifDimension(rule);

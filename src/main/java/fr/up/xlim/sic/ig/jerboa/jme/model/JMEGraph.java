@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 
 import up.jerboa.core.JerboaOrbit;
 
-public class JMEGraph implements JMEElement {
+public final class JMEGraph implements JMEElement {
 
 	protected JMERule owner;
 	protected ArrayList<JMENode> nodes;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public abstract class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
+public final class JMERule implements JMEElement, Cloneable, Comparable<JMERule> {
 
 	protected JMEModeler modeler;
 	protected String name;

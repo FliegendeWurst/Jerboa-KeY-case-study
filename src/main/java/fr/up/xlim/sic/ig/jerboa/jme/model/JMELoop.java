@@ -8,7 +8,7 @@ package fr.up.xlim.sic.ig.jerboa.jme.model;
  * @author hakim
  *
  */
-public class JMELoop extends JMEArc {
+public final class JMELoop extends JMEArc {
 
 	protected double angle;
 	
