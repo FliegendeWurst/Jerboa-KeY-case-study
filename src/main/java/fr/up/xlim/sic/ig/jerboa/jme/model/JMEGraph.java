@@ -76,8 +76,9 @@ public final class JMEGraph implements JMEElement {
 			JMENode cur = (JMENode) stack.pop();
 			if (!visited.contains(cur)) {
 				visited.add(cur);
-				List<JMEArc> arcs = getIncidentArcsFromNode(cur);
-				for (JMEArc arc : arcs) {
+				List/*<JMEArc>*/ arcs = getIncidentArcsFromNode(cur);
+				for (int i = 0; i < arcs.size(); i++) {
+					JMEArc arc = (JMEArc) arcs.get(i);
 					if (arc.getDimension() >= 0 && orbit.contains(arc.getDimension())) {
 						JMENode otherNode = null;
 						if (arc.getSource() == cur)
