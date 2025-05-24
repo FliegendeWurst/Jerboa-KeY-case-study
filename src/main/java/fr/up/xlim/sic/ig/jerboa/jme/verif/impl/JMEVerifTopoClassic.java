@@ -70,9 +70,24 @@ public final class JMEVerifTopoClassic {
 
         // Left Graph
         JMEGraph left = rule.getLeft();
+        JMERuleError error = verifDimensionGraph(rule, modDim, left);
+        if (error != null) {
+            return error;
+        }
 
+        // Right Graph
+        JMEGraph right = rule.getRight();
+        verifDimensionGraph(rule, modDim, right);
+        if (error != null) {
+            return error;
+        }
+
+        return null;
+    }
+
+    JMERuleError verifDimensionGraph(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
-        List<JMENode> leftNodes = left.getNodes();
+        List<JMENode> leftNodes = graph.getNodes();
         for (int j = 0; j < leftNodes.size(); j++) {
             JMENode node = leftNodes.get(j);
             int[] tab = node.getOrbit().tab();
@@ -84,33 +99,9 @@ public final class JMEVerifTopoClassic {
         }
 
         // Arcs
-        List<JMEArc> leftArcs = left.getArcs();
+        List<JMEArc> leftArcs = graph.getArcs();
         for (int i = 0; i < leftArcs.size(); i++) {
             JMEArc arc = leftArcs.get(i);
-            if (arc.getDimension() > modDim || arc.getDimension() < 0) {
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
-            }
-        }
-
-        // Right Graph
-        JMEGraph right = rule.getRight();
-
-        // Orbits
-        List<JMENode> rightNodes = right.getNodes();
-        for (int j = 0; j < rightNodes.size(); j++) {
-            JMENode node = rightNodes.get(j);
-            int[] tab = node.getOrbit().tab();
-            for (int k = 0; k < tab.length; k++) {
-                int i = tab[k];
-                if (i > modDim || i < -1)
-                    return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
-            }
-        }
-
-        // Arcs
-        List<JMEArc> rightArcs = right.getArcs();
-        for (int i = 0; i < rightArcs.size(); i++) {
-            JMEArc arc = rightArcs.get(i);
             if (arc.getDimension() > modDim || arc.getDimension() < 0) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
             }
