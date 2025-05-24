@@ -87,9 +87,9 @@ public final class JMEVerifTopoClassic {
 
     JMERuleError verifDimensionGraph(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
-        List<JMENode> leftNodes = graph.getNodes();
+        List/*<JMENode>*/ leftNodes = graph.getNodes();
         for (int j = 0; j < leftNodes.size(); j++) {
-            JMENode node = leftNodes.get(j);
+            JMENode node = (JMENode) leftNodes.get(j);
             int[] tab = node.getOrbit().tab();
             for (int k = 0; k < tab.length; k++) {
                 int i = tab[k];
@@ -99,9 +99,9 @@ public final class JMEVerifTopoClassic {
         }
 
         // Arcs
-        List<JMEArc> leftArcs = graph.getArcs();
+        List/*<JMEArc>*/ leftArcs = graph.getArcs();
         for (int i = 0; i < leftArcs.size(); i++) {
-            JMEArc arc = leftArcs.get(i);
+            JMEArc arc = (JMEArc) leftArcs.get(i);
             if (arc.getDimension() > modDim || arc.getDimension() < 0) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
             }
@@ -270,7 +270,7 @@ public final class JMEVerifTopoClassic {
         List/*<JMENode>*/ leftNodes = rule.getLeft().getNodes();
         for (int j = 0; j < leftNodes.size(); j++) {
             JMENode node = (JMENode) leftNodes.get(j);
-            HashSet/*<Integer>*/ dims = new HashSet<>();
+            HashSet/*<Integer>*/ dims = new HashSet();
 
             // Orbit
             for (int i : node.getOrbit()) {
@@ -291,7 +291,7 @@ public final class JMEVerifTopoClassic {
         List/*<JMENode>*/ rightNodes = rule.getRight().getNodes();
         for (int j = 0; j < rightNodes.size(); j++) {
             JMENode node = (JMENode) rightNodes.get(j);
-            HashSet/*<Integer>*/ dims = new HashSet<>();
+            HashSet/*<Integer>*/ dims = new HashSet();
 
             // Orbit
             for (int i : node.getOrbit()) {
