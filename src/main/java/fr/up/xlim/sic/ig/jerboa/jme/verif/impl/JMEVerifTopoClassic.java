@@ -83,12 +83,44 @@ public final class JMEVerifTopoClassic {
         return null;
     }
 
+    /*@ public normal_behavior
+      @ requires \invariant_for(graph) && \invariant_for(rule);
+      @ requires rule.left == graph || rule.right == graph;
+      @ ensures (!graph.verifyDimensionsNodes(modDim)) ==> (\result != null);
+      @ ensures (!graph.verifyDimensionsArcs(modDim)) ==> (\result != null);
+      @ pure
+      @*/
     JMERuleError verifDimensionGraph(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
         List/*<JMENode>*/ leftNodes = graph.getNodes();
-        for (int j = 0; j < leftNodes.size(); j++) {
+        int leftNodesSize = leftNodes.size();
+        /*@ loop_invariant
+          @ 0 <= j && j <= leftNodesSize
+          @  && leftNodesSize == leftNodes.size()
+          @  && (\forall int a; 0 <= a && a < j;
+          @        (\forall int b; 0 <= b && b < ((JMENode)(rule.left.nodes).get(a)).orbit.dim.length;
+          @           ((JMENode)(rule.left.nodes).get(a)).orbit.dim[b] >= -1 ));
+          @ assignable \nothing;
+          @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
+          @  && (rule.left == graph || rule.right == graph);
+          @ decreases leftNodesSize - j;
+          @*/
+        for (int j = 0; j < leftNodesSize; j++) {
             JMENode node = (JMENode) leftNodes.get(j);
             int[] tab = node.getOrbit().tab();
+            /*@ loop_invariant
+              @ 0 <= j && j < leftNodes.size()
+              @  && (\forall int a; 0 <= a && a < j;
+              @        (\forall int b; 0 <= b && b < ((JMENode)(rule.left.nodes).get(a)).orbit.dim.length;
+              @          ((JMENode)(rule.left.nodes).get(a)).orbit.dim[b] >= -1 ))
+              @  && 0 <= k && k <= ((JMENode)(rule.left.nodes).get(j)).orbit.dim.length
+              @   && (\forall int c; 0 <= c && c < k;
+              @          ((JMENode)(rule.left.nodes).get(j)).orbit.dim[c] >= -1 );
+              @ assignable \nothing;
+              @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
+              @  && (rule.left == graph || rule.right == graph);
+              @ decreases tab.length - k;
+              @*/
             for (int k = 0; k < tab.length; k++) {
                 int i = tab[k];
                 if (i > modDim || i < -1)

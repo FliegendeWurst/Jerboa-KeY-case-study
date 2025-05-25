@@ -10,9 +10,12 @@ import up.jerboa.core.JerboaOrbit;
 
 public final class JMEGraph implements JMEElement {
 
+	//@ invariant owner != null && nodes != null && arcs != null && \invariant_for(nodes) && \invariant_for(arcs);
+	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode);
+
 	protected JMERule owner;
-	protected ArrayList/*<JMENode>*/ nodes;
-	protected ArrayList/*<JMEArc>*/ arcs;
+	protected /*@ spec_public */ ArrayList/*<JMENode>*/ nodes;
+	protected /*@ spec_public */ ArrayList/*<JMEArc>*/ arcs;
 	protected boolean isleft;
 
 	public JMEGraph(JMERule rule, boolean isleft) {
@@ -23,14 +26,29 @@ public final class JMEGraph implements JMEElement {
 		arcs = new ArrayList();
 	}
 
+	/*@ public normal_behavior
+	  @ ensures \result == this.nodes;
+	  @ ensures \invariant_for(this);
+	  @ strictly_pure
+	  @*/
 	public List/*<JMENode>*/ getNodes() {
 		return nodes;
 	}
 
+	/*@ public normal_behavior
+	  @ ensures \result == this.arcs;
+	  @ ensures \invariant_for(this);
+	  @ strictly_pure
+	  @*/
 	public List/*<JMEArc>*/ getArcs() {
 		return arcs;
 	}
 
+	/*@ public normal_behavior
+	  @ ensures \result == this.isleft;
+	  @ ensures \invariant_for(this);
+	  @ strictly_pure
+	  @*/
 	public boolean isLeft() {
 		return isleft;
 	}
@@ -95,6 +113,10 @@ public final class JMEGraph implements JMEElement {
 		return visited;
 	}
 
+	/*@ public normal_behavior
+	  @ ensures \result == this.owner;
+	  @ strictly_pure
+	  @*/
 	public JMERule getRule() {
 		return owner;
 	}

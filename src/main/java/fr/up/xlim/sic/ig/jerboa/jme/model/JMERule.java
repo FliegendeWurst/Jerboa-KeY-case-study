@@ -5,12 +5,14 @@ import java.util.List;
 
 public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERule>*/ {
 
+	//@ invariant left != null && right != null && \invariant_for(left) && \invariant_for(right);
+
 	protected JMEModeler modeler;
 	protected String name;
 	protected String category;
 
-	protected JMEGraph left;
-	protected JMEGraph right;
+	protected /*@ spec_public */ JMEGraph left;
+	protected /*@ spec_public */ JMEGraph right;
 
 	protected String midprocess;
 

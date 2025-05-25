@@ -15,7 +15,7 @@ public final class JMENode implements JMEElement {
 
 	// topological parameters
 	protected String name;
-	protected JerboaOrbit orbit;
+	protected /*@ spec_public */ JerboaOrbit orbit;
 	private JMENodeKind kind;
 
 
@@ -35,6 +35,10 @@ public final class JMENode implements JMEElement {
 		return name;
 	}
 
+	/*@ public normal_behavior
+	  @ ensures \result == this.orbit;
+	  @ strictly_pure
+	  @*/
 	public JerboaOrbit getOrbit() {
 		return orbit;
 	}

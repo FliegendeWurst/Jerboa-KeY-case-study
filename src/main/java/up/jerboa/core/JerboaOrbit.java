@@ -13,7 +13,7 @@ import java.util.Iterator;
  */
 public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	/** array that reminds the parameter of the current orbit */
-	private int dim[];
+	private /*@ spec_public */ int dim[];
 	
 	/** variable used as cache in order to avoid recompute the max alpha of the dim array */
 	private transient int max;
@@ -46,6 +46,10 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 * 
 	 * @return an array that contains all alpha indexes. 
 	 */
+	/*@ public normal_behavior
+	  @ ensures \result == this.dim;
+	  @ strictly_pure
+	  @*/
 	public int[] tab() {
 		return dim; 
 	}

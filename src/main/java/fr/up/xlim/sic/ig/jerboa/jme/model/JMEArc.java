@@ -12,7 +12,7 @@ public class JMEArc implements JMEElement{
     // topological parameters
     protected JMENode a;
     protected JMENode b;
-    protected int dim;
+    protected /*@ spec_public */ int dim;
     protected JMEGraph graph;
     
     public JMEArc(JMEGraph graph, JMENode a, JMENode b, int dim) {
