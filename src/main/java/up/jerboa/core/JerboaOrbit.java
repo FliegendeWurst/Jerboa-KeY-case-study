@@ -12,11 +12,10 @@ import java.util.Iterator;
  *
  */
 public final class JerboaOrbit implements Iterable/*<Integer>*/ {
+	//@ invariant dim != null && (\forall int i; 0 <= i && i < dim.length; dim[i] >= -1);
+
 	/** array that reminds the parameter of the current orbit */
 	private /*@ spec_public */ int dim[];
-	
-	/** variable used as cache in order to avoid recompute the max alpha of the dim array */
-	private transient int max;
 	
 	/**
 	 * Constructor useful for humans. With him you can enumerate all parameters of the orbit.
@@ -30,14 +29,6 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 */
 	public JerboaOrbit(int... dimensions) {
 		dim = dimensions;
-		max = -1;
-	}
-
-	public JerboaOrbit(JerboaOrbit orbit) {
-		this.max = orbit.max;
-		dim = new int[orbit.dim.length];
-		for(int i =0;i < dim.length;i++)
-			dim[i] = orbit.dim[i];
 	}
 	
 	/**
@@ -59,6 +50,10 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 * @param i the index in the orbit
 	 * @return the value of the ith element in the orbit
 	 */
+	/*@ public normal_behavior
+	  @ ensures \result == this.dim[i];
+	  @ strictly_pure
+	  @*/
 	public int get(int i) {
 		return dim[i];
 	}
@@ -68,13 +63,27 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 * The result is cached in order to avoid multiple re-computation. 
 	 * @return The max alpha index of the current orbit.
 	 */
+	/*@ public normal_behavior
+	  @ requires \invariant_for(this);
+	  @ ensures (\forall int i; 0 <= i && i < dim.length; \result >= dim[i]);
+	  @ ensures (dim.length > 0) ==> (\exists int i; 0 <= i && i < dim.length; \result == dim[i]);
+	  @ ensures \invariant_for(this);
+	  @ pure
+	  @*/
 	public int getMaxDim() {
-		if(max != -1)
-			return max;
-		for (int i : dim) {
-			if(max < i)
-				max = i;
-		}
+		int max = -1;
+		/*@ loop_invariant
+		  @ 0 <= j && j <= dim.length
+		  @  && (\forall int a; 0 <= a && a < j; max >= dim[a])
+		  @  && ((max == -1 && (\forall int b; 0 <= b && b < j; -1 == dim[b])) || (j > 0 && (\exists int b; 0 <= b && b < j; max == dim[b])));
+		  @ assignable max;
+		  @ decreases dim.length - j;
+		  @*/
+        for (int j = 0; j < dim.length; j++) {
+            int i = dim[j];
+            if (max < i)
+                max = i;
+        }
 		return max;
 	}
 	
@@ -83,21 +92,47 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 * @param alpha is the searched alpha index
 	 * @return Return true if the alpha index is present and false otherwise.
 	 */
+	/*@ public normal_behaviour
+      @ ensures \result == (\exists int i; 0 <= i < dim.length; dim[i] == alpha);
+	  @ pure
+	  @*/
 	public boolean contains(int alpha) {
-		for (int i : dim) {
-			if(i == alpha)
-				return true;
-		}
+		/*@ loop_invariant
+		  @ 0 <= j && j <= dim.length
+		  @  && (\forall int a; 0 <= a && a < j; dim[a] != alpha);
+		  @ assignable \nothing;
+		  @ decreases dim.length - j;
+		  @*/
+        for (int j = 0; j < dim.length; j++) {
+            int i = dim[j];
+            if (i == alpha)
+                return true;
+        }
 		return false;
 	}
-	
+
+	/*@ public normal_behaviour
+      @ ensures !contains(alpha) ==> \result == -1;
+      @ ensures contains(alpha) ==> (dim[\result] == alpha && (\forall int i; 0 <= i && i < \result; dim[i] != alpha));
+	  @ pure
+	  @*/
 	public int indexOf(int alpha) {
+		/*@ loop_invariant
+		  @ 0 <= i && i <= dim.length
+		  @  && (\forall int a; 0 <= a && a < i; dim[a] != alpha);
+		  @ assignable \nothing;
+		  @ decreases dim.length - i;
+		  @*/
 		for (int i = 0; i < size(); i ++){
 			if (dim[i] == alpha)
 				return i;
 		} return -1;
 	}
-	
+
+	/*@ public normal_behavior
+	  @ ensures \result == dim.length;
+	  @ strictly_pure
+	  @*/
 	public int size() {
 		return dim.length;
 	}
@@ -162,17 +197,6 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 			// not supported
 		}
 		
-	}
-
-	public boolean equalsStrict(JerboaOrbit orbit) {
-		final int size = orbit.dim.length;
-		if(size != dim.length)
-			return false;
-		for(int i = 0; i < size; i++) {
-			if(dim[i] != orbit.dim[i])
-				return false;
-		}
-		return true;
 	}
 }
 
