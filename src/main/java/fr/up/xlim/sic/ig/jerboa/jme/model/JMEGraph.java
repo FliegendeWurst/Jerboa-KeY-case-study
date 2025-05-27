@@ -12,6 +12,39 @@ public final class JMEGraph implements JMEElement {
 
 	//@ invariant owner != null && nodes != null && arcs != null && \invariant_for(nodes) && \invariant_for(arcs);
 	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode);
+	//@ invariant (\forall int i; 0 <= i && i < arcs.size(); arcs.get(i) instanceof JMEArc);
+
+	 /*@ public model_behaviour
+       @ requires \invariant_for(this);
+       @ ensures \result == (\forall int i;
+       @  0 <= i && i < nodes.size();
+       @   (\forall int j; 0 <= j && j < ((JMENode)nodes.get(i)).orbit.dim.length;
+       @           ((JMENode)(nodes).get(i)).orbit.dim[j] >= -1
+       @        && ((JMENode)(nodes).get(i)).orbit.dim[j] <= modDim));
+       @
+       @ model boolean verifyDimensionsNodes(
+       @ int modDim
+       @ ) {
+       @ return (\forall int i;
+       @  0 <= i && i < nodes.size();
+       @   (\forall int j; 0 <= j && j < ((JMENode)nodes.get(i)).orbit.dim.length;
+       @           ((JMENode)(nodes).get(i)).orbit.dim[j] >= -1
+       @        && ((JMENode)(nodes).get(i)).orbit.dim[j] <= modDim));
+       @}*/
+
+	/*@ public model_behaviour
+       @ requires \invariant_for(this);
+       @ ensures \result == (\forall int i;
+       @  0 <= i && i < arcs.size();
+       @   ((JMEArc)arcs.get(i)).dim >= 0 && ((JMEArc)arcs.get(i)).dim <= modDim);
+       @
+       @ model boolean verifyDimensionsArcs(
+       @ int modDim
+       @ ) {
+       @ return (\forall int i;
+       @  0 <= i && i < arcs.size();
+       @   ((JMEArc)arcs.get(i)).dim >= 0 && ((JMEArc)arcs.get(i)).dim <= modDim);
+       @}*/
 
 	protected JMERule owner;
 	protected /*@ spec_public */ ArrayList/*<JMENode>*/ nodes;
