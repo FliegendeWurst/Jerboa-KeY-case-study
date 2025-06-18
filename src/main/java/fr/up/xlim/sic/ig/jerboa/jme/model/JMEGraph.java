@@ -102,6 +102,8 @@ public final class JMEGraph implements JMEElement {
 	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length; listHook.seq[a] instanceof JMENode && \invariant_for((JMENode)listHook.seq[a]))
 	  		  @  && \invariant_for(nodes)
 	  		  @  && \invariant_for(this)
+	  		  @  && \disjoint(nodes.footprint, listHook.footprint)
+	  		  @  && \disjoint(this.footprint, listHook.footprint)
 	  		  @  && nodesSize == nodes.size();
 			  @ decreases nodesSize - i;
 			  @ assignable listHook.seq;

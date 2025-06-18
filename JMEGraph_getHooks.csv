@@ -1,41 +1,47 @@
 open goals;0
-Nodes;52,148
-Branches;547
-Interactive steps;152
-Symbolic execution steps;635
-Automode time;129.1s
-Automode time;129169ms
-Avg. time per step;2.477ms
+Nodes;79,771
+Branches;670
+Interactive steps;286
+Symbolic execution steps;740
+Automode time;314.8s
+Automode time;314889ms
+Avg. time per step;3.947ms
 Rule applications
-Quantifier instantiations;54
-One-step Simplifier apps;6646
+Quantifier instantiations;254
+One-step Simplifier apps;9570
 SMT solver apps;0
-Dependency Contract apps;30
-Operation Contract apps;44
+Dependency Contract apps;25
+Operation Contract apps;55
 Block/Loop Contract apps;0
 Loop invariant apps;1
 Merge Rule apps;0
-Total rule apps;73,920
-interactive;andRight;23
-interactive;applyEq;15
-interactive;eqTermCut;15
-interactive;allLeft;10
-interactive;seqGetAlphaCast;10
-interactive;allRight;8
-interactive;impLeft;8
-interactive;Use Dependency Contract;7
-interactive;exRight;7
-interactive;One Step Simplification;6
-interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;5
-interactive;castedGetAny;5
-interactive;exLeft;5
-interactive;ineffectiveCast;5
-interactive;ineffectiveCast2;5
-interactive;ifthenelse_split;4
+Total rule apps;106,371
+interactive;applyEq;68
+interactive;andRight;38
+interactive;eqTermCut;26
+interactive;allLeft;15
+interactive;seqGetAlphaCast;15
+interactive;impLeft;13
+interactive;One Step Simplification;12
+interactive;Use Dependency Contract;11
+interactive;allRight;9
+interactive;ineffectiveCast;9
+interactive;castedGetAny;8
+interactive;ifthenelse_split;8
+interactive;replace_known_left;8
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;7
+interactive;ineffectiveCast2;6
+interactive;getOfSeqConcat;5
+interactive;exRight;4
 interactive;Evaluate Query;3
 interactive;doubleImpLeft;3
+interactive;exLeft;3
+interactive;getOfSeqSingleton;3
+interactive;applyEqReverse;2
 interactive;castDel;2
-interactive;getOfSeqConcat;2
-interactive;getOfSeqSingleton;2
-interactive;cut;1
+interactive;eqSymm;2
+interactive;pullOut;2
+interactive;applyEqRigid;1
+interactive;close;1
+interactive;cut_direct;1
 interactive;instAll;1
