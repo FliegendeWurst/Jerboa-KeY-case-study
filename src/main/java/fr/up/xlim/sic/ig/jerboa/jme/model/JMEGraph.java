@@ -136,7 +136,9 @@ public final class JMEGraph implements JMEElement {
       @        ==> (\exists int a; 0 <= a && a < \result.seq.length;
       @             \result.seq[a] == arcs.seq[j]))
       @  && !(\exists int a; 0 <= a && a < \result.seq.length; (\exists int b; a < b && b < \result.seq.length; \result.seq[a] == \result.seq[b]))
-      @  && \fresh(\result);
+      @  && \fresh(\result)
+      @  && \fresh(\result.footprint)
+      @  && \invariant_for(\result);
       @ assignable \nothing;
       @*/
 	public List/*<JMEArc>*/ getIncidentArcsFromNode(JMENode node) {

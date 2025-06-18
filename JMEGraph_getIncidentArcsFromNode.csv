@@ -1,52 +1,53 @@
 open goals;0
-Nodes;136,608
-Branches;699
-Interactive steps;538
-Symbolic execution steps;780
-Automode time;9min
-Automode time;541607ms
-Avg. time per step;3.964ms
+Nodes;142,292
+Branches;753
+Interactive steps;471
+Symbolic execution steps;797
+Automode time;14min
+Automode time;858788ms
+Avg. time per step;6.035ms
 Rule applications
-Quantifier instantiations;224
-One-step Simplifier apps;13055
+Quantifier instantiations;154
+One-step Simplifier apps;13811
 SMT solver apps;0
-Dependency Contract apps;24
-Operation Contract apps;74
+Dependency Contract apps;22
+Operation Contract apps;90
 Block/Loop Contract apps;0
 Loop invariant apps;1
 Merge Rule apps;0
-Total rule apps;175,598
-interactive;applyEq;140
-interactive;andRight;54
-interactive;eqTermCut;43
-interactive;One Step Simplification;28
-interactive;seqGetAlphaCast;27
-interactive;ifthenelse_split;24
-interactive;impLeft;22
-interactive;allLeft;21
-interactive;replace_known_left;19
-interactive;getOfSeqConcat;16
-interactive;ineffectiveCast;15
-interactive;Use Dependency Contract;14
-interactive;castedGetAny;14
+Total rule apps;183,862
+interactive;applyEq;100
+interactive;andRight;68
+interactive;eqTermCut;39
+interactive;seqGetAlphaCast;32
+interactive;impLeft;24
+interactive;allLeft;23
+interactive;castedGetAny;17
+interactive;ifthenelse_split;17
+interactive;ineffectiveCast;17
+interactive;ineffectiveCast2;15
+interactive;exRight;13
 interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;12
-interactive;ineffectiveCast2;12
-interactive;exRight;11
 interactive;exLeft;10
-interactive;allRight;8
-interactive;castDel;8
-interactive;getOfSeqSingleton;8
-interactive;Evaluate Query;4
+interactive;getOfSeqConcat;10
+interactive;One Step Simplification;9
+interactive;getOfSeqSingleton;7
+interactive;allRight;6
+interactive;castDel;6
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_java_util_Collection_no_5;5
+interactive;Use Dependency Contract;5
+interactive;replace_known_left;5
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMENode_no_5;4
 interactive;applyEqReverse;4
-interactive;eqSymm;4
-interactive;pullOut;4
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_3;3
+interactive;createdDefinition;4
 interactive;Definition_axiom_for_arcsAreUnique_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;2
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMENode_no_5;2
-interactive;cut;2
-interactive;replace_known_right;2
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_1;1
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_2;1
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_5;1
-interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_7;1
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_1;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_2;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_3;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_5;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_7;2
+interactive;eqSymm;2
+interactive;pullOut;2
+interactive;applyEqRigid;1
+interactive;castDel2;1
 interactive;instAll;1
