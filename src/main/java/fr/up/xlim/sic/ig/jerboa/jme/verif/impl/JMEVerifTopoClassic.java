@@ -327,7 +327,9 @@ public final class JMEVerifTopoClassic {
             HashSet/*<Integer>*/ dims = new HashSet();
 
             // Orbit
-            for (int i : node.getOrbit()) {
+            int[] orbit = node.getOrbit().tab();
+            for (int ii = 0; ii < orbit.length; ii++) {
+                int i = orbit[ii];
                 if (!dims.add(i) && i != -1)
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
@@ -348,7 +350,9 @@ public final class JMEVerifTopoClassic {
             HashSet/*<Integer>*/ dims = new HashSet();
 
             // Orbit
-            for (int i : node.getOrbit()) {
+            int[] orbit = node.getOrbit().tab();
+            for (int ii = 0; ii < orbit.length; ii++) {
+                int i = orbit[ii];
                 if (!dims.add(i) && i != -1)
                     return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
