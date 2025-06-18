@@ -11,8 +11,8 @@ import up.jerboa.core.JerboaOrbit;
 public final class JMEGraph implements JMEElement {
 
 	//@ invariant \invariant_for(nodes) && \invariant_for(arcs);
-	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode && \invariant_for(nodes.get(i)));
-	//@ invariant (\forall int j; 0 <= j && j < arcs.size(); arcs.get(j) instanceof JMEArc && \invariant_for(arcs.get(j)));
+	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode && \invariant_for((JMENode)nodes.get(i)));
+	//@ invariant (\forall int j; 0 <= j && j < arcs.size(); arcs.get(j) instanceof JMEArc && \invariant_for((JMEArc)arcs.get(j)));
 
 	//@ ghost \locset footprint;
 	//@ accessible \inv : footprint;
@@ -21,16 +21,14 @@ public final class JMEGraph implements JMEElement {
 	//@ invariant \subset(this.arcs.footprint, footprint);
 	//@ invariant \subset(\singleton(this.isleft), footprint);
 
-	 /*@ helper model boolean verifyDimensionsNodes(int modDim) {
+	 /*@ helper model public boolean verifyDimensionsNodes(int modDim) {
            return (\forall int i;
              0 <= i && i < nodes.size();
-             (\forall int j; 0 <= j && j < ((JMENode)nodes.get(i)).orbit.dim.length;
-                  ((JMENode)(nodes).get(i)).orbit.dim[j] >= -1
-                && ((JMENode)(nodes).get(i)).orbit.dim[j] <= modDim));
+             ((JMENode)nodes.get(i)).orbit.verifyDimensions(modDim));
          }
        @*/
 
-	/*@ helper model boolean verifyDimensionsArcs(int modDim) {
+	/*@ helper model public boolean verifyDimensionsArcs(int modDim) {
         return (\forall int i;
          0 <= i && i < arcs.size();
           ((JMEArc)arcs.get(i)).dim >= 0 && ((JMEArc)arcs.get(i)).dim <= modDim);

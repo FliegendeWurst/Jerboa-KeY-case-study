@@ -12,7 +12,17 @@ import java.util.Iterator;
  *
  */
 public final class JerboaOrbit implements Iterable/*<Integer>*/ {
-	//@ invariant dim != null && (\forall int i; 0 <= i && i < dim.length; dim[i] >= -1);
+	//@ public ghost \locset footprint;
+	//@ public accessible \inv : footprint;
+	//@ public invariant \subset(\singleton(footprint), footprint);
+	//@ public invariant \subset(this.dim[*], footprint);
+
+	/*@ helper model public boolean verifyDimensions(int modDim) {
+           return (\forall int i;
+             0 <= i && i < dim.length;
+             dim[i] >= -1 && dim[i] <= modDim);
+         }
+       @*/
 
 	/** array that reminds the parameter of the current orbit */
 	public int dim[];
@@ -27,24 +37,27 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 *  
 	 *  @param dimensions is the sequence of integer that correspond to the alpha index of an orbit.
 	 */
+	/*@ public normal_behaviour
+	  @ ensures this != null;
+	  @*/
 	public JerboaOrbit(int... dimensions) {
 		dim = dimensions;
 	}
-	
+
 	/**
 	 * Accessor on the inner array that reminds the alpha indexes.
 	 * You must NOT modify the resulted array. If needed you must duplicate it before modification.
-	 * 
-	 * @return an array that contains all alpha indexes. 
+	 *
+	 * @return an array that contains all alpha indexes.
 	 */
 	/*@ public normal_behavior
 	  @ ensures \result == this.dim;
 	  @ strictly_pure
 	  @*/
 	public int[] tab() {
-		return dim; 
+		return dim;
 	}
-	
+
 	/**
 	 * Getter for searching inside the orbit for a specific position.
 	 * @param i the index in the orbit
