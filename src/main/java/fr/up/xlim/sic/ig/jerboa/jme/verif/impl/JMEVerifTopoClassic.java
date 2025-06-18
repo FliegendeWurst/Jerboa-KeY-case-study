@@ -63,7 +63,19 @@ public final class JMEVerifTopoClassic {
 	 * @param rule Rule to verify.
 	 * @return non-null error if check fails
 	 */
-    JMERuleError verifDimension(JMERule rule) {
+    /*@ public normal_behaviour
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ requires \invariant_for(rule);
+      @ ensures (
+      @   !rule.left.verifyDimensionsNodes(rule.modeler.dimension)
+      @   || !rule.left.verifyDimensionsArcs(rule.modeler.dimension)
+      @   || !rule.right.verifyDimensionsNodes(rule.modeler.dimension)
+      @   || !rule.right.verifyDimensionsArcs(rule.modeler.dimension)
+      @ ) <==> (\result != null);
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifDimension(JMERule rule) {
         int modDim = rule.modeler.dimension;
 
         // Left Graph
@@ -87,7 +99,10 @@ public final class JMEVerifTopoClassic {
         if (error != null) {
             return error;
         }
-
+        //@ assert rule.left.verifyDimensionsNodes(rule.modeler.dimension);
+        //@ assert rule.left.verifyDimensionsArcs(rule.modeler.dimension);
+        //@ assert rule.right.verifyDimensionsNodes(rule.modeler.dimension);
+        //@ assert rule.right.verifyDimensionsArcs(rule.modeler.dimension);
         return null;
     }
 
