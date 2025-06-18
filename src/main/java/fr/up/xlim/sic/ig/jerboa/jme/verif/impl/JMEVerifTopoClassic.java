@@ -20,35 +20,36 @@ import up.jerboa.core.JerboaOrbit;
 public final class JMEVerifTopoClassic {
 
 	public JMERuleError check(JMERule rule) {
-        JMERuleError error = verifDimension(rule);
+        JMERuleError error = verifDimension(rule); // done
         if (error != null) {
             return error;
         }
-        error = verifDuplicateNode(rule);
+        error = verifDuplicateNode(rule); // done
         if (error != null) {
             return error;
         }
-        error = verifHooksFullOrbit(rule);
+        error = verifHooksFullOrbit(rule); // done, re-do proof
         if (error != null) {
             return error;
         }
-        error = verifHooks(rule);
+        JerboaOrbit orbitCC = JerboaOrbit.makeCC(rule.modeler.dimension + 1);
+        error = verifHooks(rule, orbitCC); // todo
         if (error != null) {
             return error;
         }
-        error = verifNodeOrbitSizes(rule);
+        error = verifNodeOrbitSizes(rule); // todo
         if (error != null) {
             return error;
         }
-        error = verifDuplicateDimension(rule);
+        error = verifDuplicateDimension(rule); // no
         if (error != null) {
             return error;
         }
-        error = verifIncidentArc(rule);
+        error = verifIncidentArc(rule); // no
         if (error != null) {
             return error;
         }
-        error = verifCycle(rule);
+        error = verifCycle(rule); // no
         if (error != null) {
             return error;
         }
@@ -322,30 +323,166 @@ public final class JMEVerifTopoClassic {
 	 * @param rule Rule to verify.
 	 * @return non-null error if check fails
 	 */
-    JMERuleError verifHooks(JMERule rule) {
+    /*@ public normal_behavior
+      @ requires \invariant_for(rule)
+      @  && \invariant_for(orbitCC)
+      @  && rule.left.nodesAreUnique()
+      @  && rule.left.arcsAreUnique()
+      @  && rule.modeler.dimension >= 0
+      @  && rule.modeler.dimension <= 2147483646
+      @ ;
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ ensures (\result != null) <==> (
+      @  (\exists \bigint i; 0 <= i && i < rule.left.nodes.seq.length;
+      @    (
+      @      (\exists \bigint a; 0 <= a && a < rule.left.nodes.seq.length;
+      @        (\exists \bigint b; a < b && b < rule.left.nodes.seq.length;
+      @             rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[a],orbitCC)
+      @          && rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[b],orbitCC)
+      @          && ((JMENode)rule.left.nodes.seq[a]).kind == JMENodeKind.HOOK
+      @          && ((JMENode)rule.left.nodes.seq[b]).kind == JMENodeKind.HOOK
+      @        )
+      @      )
+      @    )
+      @    ||
+      @    (
+      @      !(\exists \bigint a; 0 <= a && a < rule.left.nodes.seq.length;
+      @         rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[a],orbitCC)
+      @         && ((JMENode)rule.left.nodes.seq[a]).kind == JMENodeKind.HOOK
+      @       )
+      @    )
+      @  )
+      @ );
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifHooks(JMERule rule, JerboaOrbit orbitCC) {
+        // Processing each node
         List/*<JMENode>*/ hooks = rule.getHooks();
         JMEGraph left = rule.left;
-
-        // Preparation of the connected component orbit for the chosen dimension
-        int[] tabOrbitConnexComponent = new int[rule.modeler.dimension + 1];
-        for (int i = 0; i < tabOrbitConnexComponent.length; i++)
-            tabOrbitConnexComponent[i] = i;
-        JerboaOrbit orbitCC = new JerboaOrbit(tabOrbitConnexComponent);
-
-        // Processing each node
         List/*<JMENode>*/ leftNodes = left.nodes;
-        for (int i = 0; i < leftNodes.size(); i++) {
-            JMENode node = (JMENode) leftNodes.get(i);
-            Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
-            int countHook = intersectionSize(nodes, hooks);
-            if (countHook > 1) {
-                if (hooks.contains(node))
-                    return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
-            } else if (countHook == 0) {
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
+        int leftNodesSize = leftNodes.size();
+        /*@ loop_invariant
+          @  j >= 0 && j <= leftNodesSize
+          @  && rule != null
+          @  && orbitCC != null
+          @  && hooks != null
+          @  && left != null
+          @  && leftNodes != null
+          @  && leftNodes.size() == leftNodesSize
+          @  && leftNodes == rule.left.nodes
+          @  && rule.left == left
+          @  && \invariant_for(leftNodes)
+          @  && \invariant_for(left)
+          @  && \invariant_for(rule)
+          @  && \invariant_for(orbitCC)
+          @  && rule.left.arcsAreUnique()
+          @  && rule.left.nodesAreUnique()
+          @  && !(\exists \bigint i; 0 <= i && i < j;
+          @    (
+          @      (\exists \bigint a; 0 <= a && a < rule.left.nodes.seq.length;
+          @        (\exists \bigint b; a < b && b < rule.left.nodes.seq.length;
+          @             rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[a],orbitCC)
+          @          && rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[b],orbitCC)
+          @          && ((JMENode)rule.left.nodes.seq[a]).kind == JMENodeKind.HOOK
+          @          && ((JMENode)rule.left.nodes.seq[b]).kind == JMENodeKind.HOOK
+          @        )
+          @      )
+          @    )
+          @    ||
+          @    (
+          @      !(\exists \bigint a; 0 <= a && a < rule.left.nodes.seq.length;
+          @         rule.left.existsValidPath((JMENode)rule.left.nodes.seq[i],(JMENode)rule.left.nodes.seq[a],orbitCC)
+          @         && ((JMENode)rule.left.nodes.seq[a]).kind == JMENodeKind.HOOK
+          @       )
+          @    )
+          @  )
+          @ ;
+          @ decreases leftNodesSize - j;
+          @ assignable \nothing;
+          @*/
+        for (int j = 0; j < leftNodesSize; j++) {
+            JMENode node = (JMENode) leftNodes.get(j);
+            JMERuleError error = verifHooksForNode(rule, left, orbitCC, hooks, node);
+            if (error != null) {
+                return error;
             }
         }
 
+        return null;
+    }
+
+    /*@ public normal_behavior
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ requires
+      @ rule.left == left
+      @  && rule.modeler.dimension >= 0
+      @  && rule.modeler.dimension <= 2147483646
+      @  && \invariant_for(left)
+      @  && \invariant_for(rule)
+      @  && \invariant_for(hooks)
+      @  && \invariant_for(orbitCC)
+      @  && \invariant_for(node)
+      @  && rule.left.arcsAreUnique()
+      @  && rule.left.nodesAreUnique()
+      @  && (\exists \bigint i; 0 <= i && i < left.nodes.seq.length; node == (JMENode)left.nodes.seq[i])
+      @  && (\forall \bigint i; 0 <= i && i < hooks.seq.length;
+      @       hooks.seq[i] instanceof JMENode
+      @       && ((JMENode)hooks.seq[i]).kind == JMENodeKind.HOOK
+      @       && (\exists \bigint j; 0 <= j && j < left.nodes.seq.length;
+      @            left.nodes.seq[j] == hooks.seq[i]
+      @          )
+      @     )
+      @  && (\forall int i; 0 <= i && i < left.nodes.seq.length;
+      @       (((JMENode)left.nodes.seq[i]).kind == JMENodeKind.HOOK)
+      @       ==> (\exists int j; 0 <= j && j < hooks.seq.length; hooks.seq[j] == left.nodes.seq[i])
+      @     )
+      @  && !(\exists \bigint i; 0 <= i && i < hooks.seq.length;
+      @        (\exists \bigint j; i < j && j < hooks.seq.length;
+      @          hooks.seq[i] == hooks.seq[j]
+      @        )
+      @      )
+      @ ;
+      @ ensures
+      @ \invariant_for(rule)
+      @  && \invariant_for(left)
+      @  && \invariant_for(orbitCC)
+      @  && \invariant_for(hooks)
+      @  && \invariant_for(node)
+      @ ;
+      @ ensures (\result != null) <==>
+      @  (
+      @    (
+      @      (\exists \bigint a; 0 <= a && a < left.nodes.seq.length;
+      @        (\exists \bigint b; a < b && b < left.nodes.seq.length;
+      @             left.existsValidPath(node,(JMENode)left.nodes.seq[a],orbitCC)
+      @          && left.existsValidPath(node,(JMENode)left.nodes.seq[b],orbitCC)
+      @          && ((JMENode)left.nodes.seq[a]).kind == JMENodeKind.HOOK
+      @          && ((JMENode)left.nodes.seq[b]).kind == JMENodeKind.HOOK
+      @        )
+      @      )
+      @    )
+      @    ||
+      @    (
+      @      !(\exists \bigint a; 0 <= a && a < left.nodes.seq.length;
+      @         left.existsValidPath(node,(JMENode)left.nodes.seq[a],orbitCC)
+      @         && ((JMENode)left.nodes.seq[a]).kind == JMENodeKind.HOOK
+      @       )
+      @    )
+      @  )
+      @ ;
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifHooksForNode(JMERule rule, JMEGraph left, JerboaOrbit orbitCC, List/*<JMENode>*/ hooks, JMENode node) {
+        Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
+        int countHook = intersectionSize(nodes, hooks);
+        if (countHook > 1) {
+            // removed: if (hooks.contains(node))
+            return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
+        } else if (countHook == 0) {
+            return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
+        }
         return null;
     }
 

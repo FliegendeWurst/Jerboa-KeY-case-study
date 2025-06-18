@@ -5,6 +5,8 @@ package java.util;
 
 public interface Set extends java.util.Collection
 {
+   //@ public instance invariant !(\exists \bigint a; 0 <= a && a < seq.length;
+   //@   (\exists \bigint b; a < b && b < seq.length; seq[a] == seq[b]));
 
    public int size();
    
