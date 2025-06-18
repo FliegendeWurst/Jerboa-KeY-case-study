@@ -47,8 +47,8 @@ public final class JMEGraph implements JMEElement {
        @}*/
 
 	protected JMERule owner;
-	protected /*@ spec_public */ ArrayList/*<JMENode>*/ nodes;
-	protected /*@ spec_public */ ArrayList/*<JMEArc>*/ arcs;
+	public final List/*<JMENode>*/ nodes;
+	public final List/*<JMEArc>*/ arcs;
 	protected boolean isleft;
 
 	public JMEGraph(JMERule rule, boolean isleft) {
@@ -57,24 +57,6 @@ public final class JMEGraph implements JMEElement {
 		this.isleft = isleft;
 		nodes = new ArrayList();
 		arcs = new ArrayList();
-	}
-
-	/*@ public normal_behavior
-	  @ ensures \result == this.nodes;
-	  @ ensures \invariant_for(this);
-	  @ strictly_pure
-	  @*/
-	public List/*<JMENode>*/ getNodes() {
-		return nodes;
-	}
-
-	/*@ public normal_behavior
-	  @ ensures \result == this.arcs;
-	  @ ensures \invariant_for(this);
-	  @ strictly_pure
-	  @*/
-	public List/*<JMEArc>*/ getArcs() {
-		return arcs;
 	}
 
 	/*@ public normal_behavior
@@ -108,7 +90,7 @@ public final class JMEGraph implements JMEElement {
 
 	public List/*<JMEArc>*/ getIncidentArcsFromNode(JMENode node) {
 		ArrayList/*<JMEArc>*/ incidentArcs = new ArrayList();
-        List list = getArcs();
+		List list = arcs;
         for (int i = 0; i < list.size(); i++) {
             JMEArc arc = (JMEArc) list.get(i);
             if (arc.getSource() == node || arc.getDestination() == node) { // Undirected graph

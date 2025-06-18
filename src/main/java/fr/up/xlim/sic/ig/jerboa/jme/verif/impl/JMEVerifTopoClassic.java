@@ -92,7 +92,7 @@ public final class JMEVerifTopoClassic {
       @*/
     JMERuleError verifDimensionGraph(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
-        List/*<JMENode>*/ leftNodes = graph.getNodes(); // graph.nodes == result_getNodes
+        List/*<JMENode>*/ leftNodes = graph.nodes; // graph.nodes == result_getNodes
         int leftNodesSize = leftNodes.size();
         //@ assert \invariant_for(graph);
         //@ assert \invariant_for(rule);
@@ -131,7 +131,7 @@ public final class JMEVerifTopoClassic {
         }
 
         // Arcs
-        List/*<JMEArc>*/ leftArcs = graph.getArcs();
+        List/*<JMEArc>*/ leftArcs = graph.arcs;
         int leftArcsSize = leftArcs.size();
         /*@ loop_invariant
           @ 0 <= i && i <= leftArcsSize
@@ -167,7 +167,7 @@ public final class JMEVerifTopoClassic {
         // Left Graph
         JMEGraph left = rule.getLeft();
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
-        List/*<JMENode>*/ leftNodes = left.getNodes();
+        List/*<JMENode>*/ leftNodes = left.nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode node = (JMENode) leftNodes.get(i);
 
@@ -184,7 +184,7 @@ public final class JMEVerifTopoClassic {
         // Right Graph
         JMEGraph right = rule.getRight();
         HashMap/*<String, JMENode>*/ existingNamesRight = new HashMap();
-        List/*<JMENode>*/ rightNodes = right.getNodes();
+        List/*<JMENode>*/ rightNodes = right.nodes;
         for (int i = 0; i < rightNodes.size(); i++) {
             JMENode node = (JMENode) rightNodes.get(i);
 
@@ -229,7 +229,7 @@ public final class JMEVerifTopoClassic {
         JerboaOrbit orbitCC = new JerboaOrbit(tabOrbitConnexComponent);
 
         // Processing each node
-        List/*<JMENode>*/ leftNodes = left.getNodes();
+        List/*<JMENode>*/ leftNodes = left.nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode node = (JMENode) leftNodes.get(i);
             Set/*<JMENode>*/ nodes = left.orbit(node, orbitCC);
@@ -271,16 +271,16 @@ public final class JMEVerifTopoClassic {
         int length;
         JMENode node = null;
         if (rule.getHooks().isEmpty()) {
-            if (rule.getRight().getNodes().isEmpty())
+            if (rule.getRight().nodes.isEmpty())
                 return null;
             else
-                node = (JMENode) rule.getRight().getNodes().get(0);
+                node = (JMENode) rule.getRight().nodes.get(0);
         } else
             node = rule.getHooks().get(0);
         length = node.getOrbit().size();
 
         // Left graph
-        List/*<JMENode>*/ leftNodes = rule.getLeft().getNodes();
+        List/*<JMENode>*/ leftNodes = rule.getLeft().nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode n = (JMENode) leftNodes.get(i);
 
@@ -293,7 +293,7 @@ public final class JMEVerifTopoClassic {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
         }
         // Right graph
-        List/*<JMENode>*/ rightNodes = rule.getRight().getNodes();
+        List/*<JMENode>*/ rightNodes = rule.getRight().nodes;
         for (int i = 0; i < rightNodes.size(); i++) {
             JMENode n = (JMENode) rightNodes.get(i);
 
@@ -321,7 +321,7 @@ public final class JMEVerifTopoClassic {
     JMERuleError verifDuplicateDimension(JMERule rule) {
 
         // Left Graph
-        List/*<JMENode>*/ leftNodes = rule.getLeft().getNodes();
+        List/*<JMENode>*/ leftNodes = rule.getLeft().nodes;
         for (int j = 0; j < leftNodes.size(); j++) {
             JMENode node = (JMENode) leftNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet();
@@ -342,7 +342,7 @@ public final class JMEVerifTopoClassic {
         }
 
         // Right Graph
-        List/*<JMENode>*/ rightNodes = rule.getRight().getNodes();
+        List/*<JMENode>*/ rightNodes = rule.getRight().nodes;
         for (int j = 0; j < rightNodes.size(); j++) {
             JMENode node = (JMENode) rightNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet();
@@ -391,7 +391,7 @@ public final class JMEVerifTopoClassic {
         int modDim = rule.getModeler().getDimension();
         JMEGraph left = rule.getLeft();
         JMEGraph right = rule.getRight();
-        List/*<JMENode>*/ leftNodes = left.getNodes();
+        List/*<JMENode>*/ leftNodes = left.nodes;
         for (int k = 0; k < leftNodes.size(); k++) {
             JMENode leftNode = (JMENode) leftNodes.get(k);
             JMENode rightNode = right.getMatchNode(leftNode);
@@ -504,7 +504,7 @@ public final class JMEVerifTopoClassic {
                 }
             }
         }
-        List/*<JMENode>*/ rightNodes = right.getNodes();
+        List/*<JMENode>*/ rightNodes = right.nodes;
         for (int j = 0; j < rightNodes.size(); j++) {
             JMENode rightNode = (JMENode) rightNodes.get(j);
             JMENode leftNode = left.getMatchNode(rightNode);
@@ -723,7 +723,7 @@ public final class JMEVerifTopoClassic {
 
         for (int i = 0; i <= modDim - 2; i++) {
             for (int j = i + 2; j <= modDim; j++) {
-                List/*<JMENode>*/ leftNodes = left.getNodes();
+                List/*<JMENode>*/ leftNodes = left.nodes;
                 for (int k = 0; k < leftNodes.size(); k++) {
                     JMENode leftNode = (JMENode) leftNodes.get(k);
                     JMENode rightNode = right.getMatchNode(leftNode);
@@ -773,10 +773,10 @@ public final class JMEVerifTopoClassic {
                 }
 
                 // Node added in the right graph
-                List/*<JMENode>*/ rightNodes = right.getNodes();
+                List/*<JMENode>*/ rightNodes = right.nodes;
                 for (int k = 0; k < rightNodes.size(); k++) {
                     JMENode rightNode = (JMENode) rightNodes.get(k);
-                    if (left.getNodes().isEmpty() && hasCycle(rightNode, i, j) == -1)
+                    if (left.nodes.isEmpty() && hasCycle(rightNode, i, j) == -1)
                         return new JMERuleError(JMERuleErrorSeverity.WARNING, JMERuleErrorType.TOPOLOGIC, rule,
                                 rightNode);
                     if (left.getMatchNode(rightNode) == null && hasCycle(rightNode, i, j) == 0)
