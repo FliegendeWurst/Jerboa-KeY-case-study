@@ -1,45 +1,52 @@
 open goals;0
-Nodes;100,831
-Branches;698
-Interactive steps;365
-Symbolic execution steps;809
-Automode time;11min
-Automode time;714754ms
-Avg. time per step;7.088ms
+Nodes;136,608
+Branches;699
+Interactive steps;538
+Symbolic execution steps;780
+Automode time;9min
+Automode time;541607ms
+Avg. time per step;3.964ms
 Rule applications
-Quantifier instantiations;158
-One-step Simplifier apps;11815
+Quantifier instantiations;224
+One-step Simplifier apps;13055
 SMT solver apps;0
 Dependency Contract apps;24
-Operation Contract apps;84
+Operation Contract apps;74
 Block/Loop Contract apps;0
 Loop invariant apps;1
 Merge Rule apps;0
-Total rule apps;136,926
-interactive;applyEq;104
-interactive;andRight;57
-interactive;eqTermCut;36
-interactive;seqGetAlphaCast;22
-interactive;allLeft;16
-interactive;impLeft;15
-interactive;ineffectiveCast;13
-interactive;ifthenelse_split;12
-interactive;castedGetAny;11
-interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;10
-interactive;ineffectiveCast2;9
-interactive;getOfSeqConcat;8
-interactive;replace_known_left;8
-interactive;allRight;6
-interactive;exRight;6
-interactive;eqSymm;5
-interactive;castDel;4
-interactive;getOfSeqSingleton;4
-interactive;Use Dependency Contract;3
-interactive;cut;3
-interactive;doubleImpLeft;3
-interactive;exLeft;3
-interactive;One Step Simplification;2
-interactive;pullOut;2
-interactive;Evaluate Query;1
-interactive;applyEqReverse;1
-interactive;replace_known_right;1
+Total rule apps;175,598
+interactive;applyEq;140
+interactive;andRight;54
+interactive;eqTermCut;43
+interactive;One Step Simplification;28
+interactive;seqGetAlphaCast;27
+interactive;ifthenelse_split;24
+interactive;impLeft;22
+interactive;allLeft;21
+interactive;replace_known_left;19
+interactive;getOfSeqConcat;16
+interactive;ineffectiveCast;15
+interactive;Use Dependency Contract;14
+interactive;castedGetAny;14
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;12
+interactive;ineffectiveCast2;12
+interactive;exRight;11
+interactive;exLeft;10
+interactive;allRight;8
+interactive;castDel;8
+interactive;getOfSeqSingleton;8
+interactive;Evaluate Query;4
+interactive;applyEqReverse;4
+interactive;eqSymm;4
+interactive;pullOut;4
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_3;3
+interactive;Definition_axiom_for_arcsAreUnique_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMENode_no_5;2
+interactive;cut;2
+interactive;replace_known_right;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_1;1
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_2;1
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_5;1
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_7;1
+interactive;instAll;1

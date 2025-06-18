@@ -41,6 +41,12 @@ public final class JMEGraph implements JMEElement {
         }
       @*/
 
+    /*@ accessible arcs,arcs.seq;
+      @ helper model public boolean arcsAreUnique() {
+        return !(\exists int a; 0 <= a && a < arcs.seq.length; (\exists int b; a < b && b < arcs.seq.length; arcs.seq[a] == arcs.seq[b]));
+      }
+      @*/
+
 	protected JMERule owner;
 	public final List/*<JMENode>*/ nodes;
 	public final List/*<JMEArc>*/ arcs;
@@ -118,18 +124,18 @@ public final class JMEGraph implements JMEElement {
 		return listHook;
 	}
 
-    // TODO: should ensure the result does not have duplicates
     /*@ public normal_behavior
-      @ requires \invariant_for(this);
+      @ requires \invariant_for(this) && this.arcsAreUnique();
       @ ensures (\forall int a; 0 <= a && a < \result.seq.length;
       @           \result.seq[a] instanceof JMEArc
       @           && \invariant_for((JMEArc)\result.seq[a])
       @           && (\exists int j; 0 <= j && j < arcs.seq.length;
-      @             \result.seq[a] == arcs.seq[j] && ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node))
+      @             \result.seq[a] == arcs.seq[j] && (((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node)))
       @  && (\forall int j; 0 <= j && j < arcs.seq.length;
       @       ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node
       @        ==> (\exists int a; 0 <= a && a < \result.seq.length;
       @             \result.seq[a] == arcs.seq[j]))
+      @  && !(\exists int a; 0 <= a && a < \result.seq.length; (\exists int b; a < b && b < \result.seq.length; \result.seq[a] == \result.seq[b]))
       @  && \fresh(\result);
       @ assignable \nothing;
       @*/
@@ -145,12 +151,14 @@ public final class JMEGraph implements JMEElement {
           @   && (\forall int a; 0 <= a && a < incidentArcs.seq.length;
           @           incidentArcs.seq[a] instanceof JMEArc
           @           && \invariant_for((JMEArc)incidentArcs.seq[a])
-          @           && (\exists int j; 0 <= j && j < arcs.seq.length;
-          @             incidentArcs.seq[a] == arcs.seq[j] && ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node))
+          @           && (\exists int j; 0 <= j && j < i;
+          @             incidentArcs.seq[a] == arcs.seq[j] && (((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node)))
           @  && (\forall int j; 0 <= j && j < i;
           @       ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node
           @        ==> (\exists int a; 0 <= a && a < incidentArcs.seq.length;
-          @             incidentArcs.seq[a] == arcs.seq[j]));
+          @             incidentArcs.seq[a] == arcs.seq[j]))
+          @  && !(\exists int a; 0 <= a && a < incidentArcs.seq.length; (\exists int b; a < b && b < incidentArcs.seq.length; incidentArcs.seq[a] == incidentArcs.seq[b]))
+          @  ;
           @ decreases arcsSize - i;
           @ assignable incidentArcs.seq;
           @*/
