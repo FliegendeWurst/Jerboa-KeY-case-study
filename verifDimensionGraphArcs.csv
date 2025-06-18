@@ -1,21 +1,21 @@
 open goals;0
-Nodes;44,898
-Branches;311
-Interactive steps;117
-Symbolic execution steps;396
-Automode time;277.4s
-Automode time;277478ms
-Avg. time per step;6.180ms
+Nodes;36,228
+Branches;178
+Interactive steps;108
+Symbolic execution steps;266
+Automode time;6min
+Automode time;361759ms
+Avg. time per step;9.985ms
 Rule applications
 Quantifier instantiations;10
-One-step Simplifier apps;4880
+One-step Simplifier apps;3432
 SMT solver apps;0
 Dependency Contract apps;4
-Operation Contract apps;17
+Operation Contract apps;13
 Block/Loop Contract apps;0
 Loop invariant apps;1
 Merge Rule apps;0
-Total rule apps;59,950
+Total rule apps;49,477
 interactive;andRight;17
 interactive;seqGetAlphaCast;12
 interactive;applyEq;10
@@ -24,16 +24,13 @@ interactive;applyEqRigid;8
 interactive;castedGetAny;8
 interactive;allLeft;7
 interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;6
-interactive;One Step Simplification;6
 interactive;impLeft;6
 interactive;ineffectiveCast;6
 interactive;ineffectiveCast2;6
 interactive;replace_known_left;4
-interactive;Use Dependency Contract;2
 interactive;allRight;2
 interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_verif_impl_JMEVerifTopoClassic;1
 interactive;Definition_axiom_for_hasCorrectDimensionsArcs_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;1
-interactive;Evaluate Query;1
 interactive;closeTrue;1
 interactive;false_right;1
 interactive;instAll;1
