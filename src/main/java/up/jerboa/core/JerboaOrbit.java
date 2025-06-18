@@ -15,7 +15,7 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	//@ invariant dim != null && (\forall int i; 0 <= i && i < dim.length; dim[i] >= -1);
 
 	/** array that reminds the parameter of the current orbit */
-	private /*@ spec_public */ int dim[];
+	public int dim[];
 	
 	/**
 	 * Constructor useful for humans. With him you can enumerate all parameters of the orbit.

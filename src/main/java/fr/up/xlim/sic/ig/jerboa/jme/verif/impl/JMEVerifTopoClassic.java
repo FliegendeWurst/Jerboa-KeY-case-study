@@ -119,7 +119,7 @@ public final class JMEVerifTopoClassic {
           @*/
         for (int j = 0; j < leftNodesSize; j++) {
             JMENode node = (JMENode) leftNodes.get(j);
-            int[] tab = node.orbit.tab();
+            int[] tab = node.orbit.dim;
             /*@ loop_invariant
               @ 0 <= j && j < leftNodesSize
               @  && leftNodesSize == leftNodes.size()
