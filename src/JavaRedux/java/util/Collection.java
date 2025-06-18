@@ -5,7 +5,11 @@ package java.util;
 
 public interface Collection extends java.lang.Iterable
 {
-    
+   //@ public instance ghost \locset footprint;
+   //@ public accessible \inv : footprint;
+   //@ public instance invariant \subset(\singleton(footprint), footprint);
+   //@ public instance invariant \subset(\singleton(seq), footprint);
+
    //@ public instance ghost \seq seq;
 
    /*@ public normal_behavior

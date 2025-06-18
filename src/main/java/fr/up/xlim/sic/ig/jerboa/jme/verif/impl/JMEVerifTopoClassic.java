@@ -51,6 +51,7 @@ public final class JMEVerifTopoClassic {
 		return null;
 	}
 
+    // TODO: write down "dependency graph" of methods and helper methods
 	
 	/**
 	 * Checks if the dimensions are between:
@@ -68,10 +69,10 @@ public final class JMEVerifTopoClassic {
       @ requires JMERuleErrorType.TOPOLOGIC != null;
       @ requires \invariant_for(rule);
       @ ensures (
-      @   !rule.left.verifyDimensionsNodes(rule.modeler.dimension)
-      @   || !rule.left.verifyDimensionsArcs(rule.modeler.dimension)
-      @   || !rule.right.verifyDimensionsNodes(rule.modeler.dimension)
-      @   || !rule.right.verifyDimensionsArcs(rule.modeler.dimension)
+      @   !rule.left.hasCorrectDimensionsNodes(rule.modeler.dimension)
+      @   || !rule.left.hasCorrectDimensionsArcs(rule.modeler.dimension)
+      @   || !rule.right.hasCorrectDimensionsNodes(rule.modeler.dimension)
+      @   || !rule.right.hasCorrectDimensionsArcs(rule.modeler.dimension)
       @ ) <==> (\result != null);
       @ assignable \nothing;
       @*/
@@ -99,10 +100,10 @@ public final class JMEVerifTopoClassic {
         if (error != null) {
             return error;
         }
-        //@ assert rule.left.verifyDimensionsNodes(rule.modeler.dimension);
-        //@ assert rule.left.verifyDimensionsArcs(rule.modeler.dimension);
-        //@ assert rule.right.verifyDimensionsNodes(rule.modeler.dimension);
-        //@ assert rule.right.verifyDimensionsArcs(rule.modeler.dimension);
+        //@ assert rule.left.hasCorrectDimensionsNodes(rule.modeler.dimension);
+        //@ assert rule.left.hasCorrectDimensionsArcs(rule.modeler.dimension);
+        //@ assert rule.right.hasCorrectDimensionsNodes(rule.modeler.dimension);
+        //@ assert rule.right.hasCorrectDimensionsArcs(rule.modeler.dimension);
         return null;
     }
 
@@ -111,7 +112,7 @@ public final class JMEVerifTopoClassic {
       @ requires rule.left == graph || rule.right == graph;
       @ requires JMERuleErrorSeverity.CRITIQUE != null;
       @ requires JMERuleErrorType.TOPOLOGIC != null;
-      @ ensures (!graph.verifyDimensionsNodes(modDim)) <==> (\result != null);
+      @ ensures (!graph.hasCorrectDimensionsNodes(modDim)) <==> (\result != null);
       @ assignable \nothing;
       @*/
     /*@ nullable @*/ JMERuleError verifDimensionGraphNodes(JMERule rule, int modDim, JMEGraph graph) {
@@ -161,7 +162,7 @@ public final class JMEVerifTopoClassic {
       @ requires rule.left == graph || rule.right == graph;
       @ requires JMERuleErrorSeverity.CRITIQUE != null;
       @ requires JMERuleErrorType.TOPOLOGIC != null;
-      @ ensures (!graph.verifyDimensionsArcs(modDim)) <==> (\result != null);
+      @ ensures (!graph.hasCorrectDimensionsArcs(modDim)) <==> (\result != null);
       @ assignable \nothing;
       @*/
     /*@ nullable */ JMERuleError verifDimensionGraphArcs(JMERule rule, int modDim, JMEGraph graph) {
@@ -216,12 +217,33 @@ public final class JMEVerifTopoClassic {
         return null;
     }
 
-    JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
+    /*@ public normal_behavior
+      @ requires \invariant_for(graph);
+      @ requires \static_invariant_for(JMERuleErrorSeverity) && \static_invariant_for(JMERuleErrorType);
+      @ ensures (\exists \bigint a; 0 <= a && a < graph.nodes.seq.length;
+      @           (\exists \bigint b; a < b && b < graph.nodes.seq.length;
+      @             ((JMENode)graph.nodes.seq[a]).name == ((JMENode)graph.nodes.seq[b]).name
+      @         )) <==> (\result != null);
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
         List/*<JMENode>*/ leftNodes = graph.nodes;
         int leftNodesSize = leftNodes.size();
+        /*@ loop_invariant
+          @ 0 <= i && i <= leftNodesSize
+          @  && (\forall \bigint j; 0 <= j && j < i; (existingNamesLeft.key_seq[j] == ((JMENode)leftNodes.seq[j]).name))
+          @  && \invariant_for(graph)
+          @  && \invariant_for(existingNamesLeft)
+          @  && leftNodes == graph.nodes
+          @  && leftNodesSize == leftNodes.size()
+          @  && existingNamesLeft.key_seq.length == i;
+          @ decreases leftNodesSize - i;
+          @ assignable existingNamesLeft.key_seq,existingNamesLeft.value_seq;
+          @*/
         for (int i = 0; i < leftNodesSize; i++) {
             JMENode node = (JMENode) leftNodes.get(i);
+            //@ assert node != null && \invariant_for(node);
 
             // The name is already present, we add errors.
             if (existingNamesLeft.containsKey(node.name)) {
@@ -282,7 +304,8 @@ public final class JMEVerifTopoClassic {
 
     /*@ public normal_behaviour
       @ ensures \result == (\sum int i; 0 <= i && i < a.seq.length; b.contains((Object)a.seq[i]) ? 1 : 0);
-     */
+      @ assignable \nothing;
+      @*/
     private static int intersectionSize(Set a, List b) {
         int count = 0;
         /*@ loop_invariant

@@ -5,14 +5,22 @@ package java.util;
 
 public interface Map
 {
-    
+   //@ public instance ghost \locset footprint;
+   //@ public accessible \inv : footprint;
+   //@ public instance invariant \subset(\singleton(footprint), footprint);
+   //@ public instance invariant \subset(\singleton(key_seq), footprint);
+   //@ public instance invariant \subset(\singleton(value_seq), footprint);
+
     //@ public instance ghost \seq key_seq;
     //@ public instance ghost \seq value_seq;
     
     //@ public instance invariant key_seq.length == value_seq.length;
     //@ public instance invariant (\forall \bigint i; 0 <= i && i < key_seq.length; ((Object)key_seq[i]) != null);
     //@ public instance invariant (\forall \bigint i; 0 <= i && i < value_seq.length; ((Object)value_seq[i]) != null);
-    
+
+    //@ public instance invariant !(\exists \bigint a; 0 <= a && a < key_seq.length;
+    //@   (\exists \bigint b; 0 < b && b < key_seq.length && a != b; key_seq[a] == key_seq[b]));
+
     /*@ public normal_behavior
       @ ensures \result.seq == key_seq;
       @ ensures \fresh(\result);
@@ -22,9 +30,21 @@ public interface Map
 
    public int size();
    public boolean isEmpty();
+
+   /*@ public normal_behavior
+     @ ensures \result == (\exists \bigint i; 0 <= i && i < key_seq.length; ((Object)key_seq[i]) == arg0);
+     @ assignable \nothing;
+     @*/
    public boolean containsKey(java.lang.Object arg0);
    public boolean containsValue(java.lang.Object arg0);
    public java.lang.Object get(java.lang.Object arg0);
+
+   /*@ public normal_behavior
+     @ requires !(\exists \bigint i; 0 <= i && i < key_seq.length; ((Object)key_seq[i]) == arg0);
+     @ ensures key_seq == \seq_concat(\old(key_seq), \seq_singleton(arg0));
+     @ ensures value_seq == \seq_concat(\old(value_seq), \seq_singleton(arg1));
+     @ assignable key_seq, value_seq;
+     @*/
    public java.lang.Object put(java.lang.Object arg0, java.lang.Object arg1);
    public java.lang.Object remove(java.lang.Object arg0);
    public void putAll(java.util.Map arg0);

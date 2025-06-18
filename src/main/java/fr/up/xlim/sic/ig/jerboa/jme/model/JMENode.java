@@ -16,17 +16,18 @@ public final class JMENode implements JMEElement {
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
 	//@ public invariant \subset(\singleton(footprint), footprint);
+	//@ public invariant \subset(orbit.footprint, footprint);
 
 	//@ public invariant \invariant_for(this.orbit);
 
 	// topological parameters
 	public final String name;
 	public final JerboaOrbit orbit;
-	private /*@ spec_public */ JMENodeKind kind;
+	private /*@ spec_public */ final JMENodeKind kind;
 
 
 	// editor parameters
-	protected /*@ spec_public */ JMEGraph graph;
+	protected /*@ spec_public */ final JMEGraph graph;
 
 
 	/*@ public normal_behaviour
