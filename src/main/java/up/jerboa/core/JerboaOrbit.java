@@ -14,8 +14,7 @@ import java.util.Iterator;
 public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
-	//@ public invariant \subset(\singleton(footprint), footprint);
-	//@ public invariant \subset(this.dim[*], footprint);
+	//@ public invariant footprint == \set_union(\singleton(footprint), this.dim[*]);
 
 	/*@ requires \invariant_for(this);
 	  @ accessible dim,dim[*];

@@ -111,8 +111,8 @@ public final class JMEVerifTopoClassic {
     /*@ public normal_behavior
       @ requires \invariant_for(graph) && \invariant_for(rule);
       @ requires rule.left == graph || rule.right == graph;
-      @ requires JMERuleErrorSeverity.CRITIQUE != null;
-      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ requires \static_invariant_for(JMERuleErrorSeverity);
+      @ requires \static_invariant_for(JMERuleErrorType);
       @ ensures (!graph.hasCorrectDimensionsNodes(modDim)) <==> (\result != null);
       @ assignable \nothing;
       @*/
@@ -126,10 +126,11 @@ public final class JMEVerifTopoClassic {
           @ 0 <= j && j <= leftNodesSize
           @  && leftNodesSize == leftNodes.size()
           @  && (\forall int a; 0 <= a && a < j;
-          @        ((JMENode)leftNodes.get(a)).orbit.verifyDimensions(modDim));
-          @ assignable \nothing;
-          @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
+          @        ((JMENode)leftNodes.seq[a]).orbit.verifyDimensions(modDim))
+          @  && \invariant_for(graph) && \invariant_for(rule)
+          @  && graph != null && rule != null
           @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes;
+          @ assignable \nothing;
           @ decreases leftNodesSize - j;
           @*/
         for (int j = 0; j < leftNodesSize; j++) {
@@ -140,13 +141,17 @@ public final class JMEVerifTopoClassic {
               @ 0 <= j && j < leftNodesSize
               @  && leftNodesSize == leftNodes.size()
               @  && (\forall int a; 0 <= a && a < j;
-              @        ((JMENode)leftNodes.get(a)).orbit.verifyDimensions(modDim))
+              @        ((JMENode)leftNodes.seq[a]).orbit.verifyDimensions(modDim))
               @  && 0 <= k && k <= tab.length
               @  && (\forall int c; 0 <= c && c < k;
-              @         tab[c] >= -1 && tab[c] <= modDim);
+              @         tab[c] >= -1 && tab[c] <= modDim)
+              @  && \invariant_for(graph) && \invariant_for(rule)
+              @  && graph != null && rule != null
+              @  && (rule.left == graph || rule.right == graph)
+              @  && leftNodes == graph.nodes
+              @  && node == leftNodes.seq[j]
+              @  && tab == node.orbit.dim;
               @ assignable \nothing;
-              @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
-              @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes && node == leftNodes.get(j) && tab == node.orbit.dim;
               @ decreases tab.length - k;
               @*/
             for (int k = 0; k < tab.length; k++) {
