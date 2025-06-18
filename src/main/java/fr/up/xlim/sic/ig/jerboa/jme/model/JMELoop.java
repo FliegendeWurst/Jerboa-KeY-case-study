@@ -11,6 +11,6 @@ package fr.up.xlim.sic.ig.jerboa.jme.model;
 public final class JMELoop extends JMEArc {
 
 	public JMELoop(JMEGraph graph, JMENode node, int dim) {
-		super(graph, node,node,dim);
+		super(node,node,dim);
 	}
 }

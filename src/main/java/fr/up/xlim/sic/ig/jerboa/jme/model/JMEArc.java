@@ -13,13 +13,11 @@ public class JMEArc implements JMEElement{
     public final JMENode a;
     public final JMENode b;
     public final int dim;
-    public final JMEGraph graph;
     
-    public JMEArc(JMEGraph graph, JMENode a, JMENode b, int dim) {
+    public JMEArc(JMENode a, JMENode b, int dim) {
         this.a = a;
         this.b = b;
         this.dim = dim;
-        this.graph = graph;
     }
 
     public int getDimension() {
