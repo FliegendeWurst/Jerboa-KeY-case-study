@@ -257,7 +257,7 @@ public final class JMEVerifTopoClassic {
         int leftNodesSize = leftNodes.size();
         /*@ loop_invariant
           @ 0 <= i && i <= leftNodesSize
-          @  && (\forall \bigint j; 0 <= j && j < i; (existingNamesLeft.key_seq[j] == ((JMENode)leftNodes.seq[j]).name))
+          @  && (\forall \bigint j; 0 <= j && j < i; (existingNamesLeft.key_seq[j] instanceof String && (String)existingNamesLeft.key_seq[j] == ((JMENode)leftNodes.seq[j]).name))
           @  && \disjoint(graph.footprint,existingNamesLeft.footprint)
           @  && \invariant_for(graph)
           @  && \invariant_for(existingNamesLeft)
@@ -277,8 +277,9 @@ public final class JMEVerifTopoClassic {
             }
 
             // The name is not present, we add it to the HashMap.
-            else
+            else {
                 existingNamesLeft.put(node.name, node);
+            }
         }
 
         return null;
