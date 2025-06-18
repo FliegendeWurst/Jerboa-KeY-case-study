@@ -47,6 +47,12 @@ public final class JMEGraph implements JMEElement {
       }
       @*/
 
+    /*@ accessible nodes,nodes.seq;
+      @ helper model public boolean nodesAreUnique() {
+        return !(\exists int a; 0 <= a && a < nodes.seq.length; (\exists int b; a < b && b < nodes.seq.length; nodes.seq[a] == nodes.seq[b]));
+      }
+      @*/
+
 	protected JMERule owner;
 	public final List/*<JMENode>*/ nodes;
 	public final List/*<JMEArc>*/ arcs;
@@ -82,7 +88,7 @@ public final class JMEGraph implements JMEElement {
 	}
 
 	/*@ public normal_behavior
-	  @ requires this.isleft;
+	  @ requires this.isleft && this.nodesAreUnique();
 	  @ ensures (\forall int i; 0 <= i && i < this.nodes.seq.length;
 	  @  (((JMENode)this.nodes.seq[i]).kind == JMENodeKind.HOOK)
 	  @    ==> (\exists int j; 0 <= j && j < \result.seq.length; \result.seq[j] == this.nodes.seq[i]))
@@ -90,7 +96,14 @@ public final class JMEGraph implements JMEElement {
 	  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
 	  @         \result.seq[a] == this.nodes.seq[b] && (((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK)))
 	  @  && (\forall int a; 0 <= a && a < \result.seq.length; \result.seq[a] instanceof JMENode && \invariant_for((JMENode)\result.seq[a]))
-	  @  && \invariant_for(\result) && \fresh(\result);
+	  @  && !(\exists \bigint i; 0 <= i && i < \result.seq.length;
+	  @        (\exists \bigint j; i < j && j < \result.seq.length;
+	  @          \result.seq[i] == \result.seq[j]
+	  @        )
+	  @      )
+	  @  && \invariant_for(\result)
+	  @  && \fresh(\result)
+	  @ ;
 	  @ assignable \nothing;
 	  @*/
 	public List/*<JMENode>*/ getHooks() {
@@ -103,12 +116,18 @@ public final class JMEGraph implements JMEElement {
 	  		  @       (((JMENode)this.nodes.seq[ix]).kind == JMENodeKind.HOOK)
 	  		  @         ==> (\exists int j; 0 <= j && j < listHook.seq.length; listHook.seq[j] == this.nodes.seq[ix]))
 	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length;
-	  		  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
+	  		  @       (\exists int b; 0 <= b && b < i;
 	  		  @         listHook.seq[a] == this.nodes.seq[b] && ((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK))
 	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length; listHook.seq[a] instanceof JMENode && \invariant_for((JMENode)listHook.seq[a]))
+	  		  @  && !(\exists \bigint a; 0 <= a && a < listHook.seq.length;
+	          @        (\exists \bigint b; a < b && b < listHook.seq.length;
+	          @          listHook.seq[a] == listHook.seq[b]
+	          @        )
+	          @     )
 	  		  @  && \invariant_for(nodes)
 	  		  @  && \invariant_for(this)
-	  		  @  && nodes.seq != listHook.seq
+	  		  @  && this.nodesAreUnique()
+	  		  @  && \invariant_for(listHook)
 	  		  @  && \disjoint(this.footprint, \singleton(listHook.seq))
 	  		  @  && nodesSize == nodes.size();
 			  @ decreases nodesSize - i;

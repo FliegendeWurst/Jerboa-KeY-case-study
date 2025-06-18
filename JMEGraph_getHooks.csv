@@ -1,47 +1,48 @@
 open goals;0
-Nodes;79,771
-Branches;670
-Interactive steps;286
-Symbolic execution steps;740
-Automode time;314.8s
-Automode time;314889ms
-Avg. time per step;3.947ms
+Nodes;98,984
+Branches;663
+Interactive steps;360
+Symbolic execution steps;793
+Automode time;12min
+Automode time;730911ms
+Avg. time per step;7.384ms
 Rule applications
-Quantifier instantiations;254
-One-step Simplifier apps;9570
+Quantifier instantiations;440
+One-step Simplifier apps;8970
 SMT solver apps;0
-Dependency Contract apps;25
-Operation Contract apps;55
+Dependency Contract apps;82
+Operation Contract apps;52
 Block/Loop Contract apps;0
 Loop invariant apps;1
 Merge Rule apps;0
-Total rule apps;106,371
-interactive;applyEq;68
-interactive;andRight;38
-interactive;eqTermCut;26
-interactive;allLeft;15
-interactive;seqGetAlphaCast;15
-interactive;impLeft;13
-interactive;One Step Simplification;12
-interactive;Use Dependency Contract;11
+Total rule apps;123,301
+interactive;applyEq;88
+interactive;andRight;47
+interactive;eqTermCut;27
+interactive;allLeft;22
+interactive;seqGetAlphaCast;22
+interactive;impLeft;15
+interactive;Use Dependency Contract;14
+interactive;castedGetAny;13
+interactive;ineffectiveCast;11
+interactive;ineffectiveCast2;11
+interactive;One Step Simplification;10
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;9
 interactive;allRight;9
-interactive;ineffectiveCast;9
-interactive;castedGetAny;8
-interactive;ifthenelse_split;8
-interactive;replace_known_left;8
-interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;7
-interactive;ineffectiveCast2;6
-interactive;getOfSeqConcat;5
-interactive;exRight;4
-interactive;Evaluate Query;3
-interactive;doubleImpLeft;3
-interactive;exLeft;3
-interactive;getOfSeqSingleton;3
+interactive;ifthenelse_split;9
+interactive;exLeft;8
+interactive;getOfSeqConcat;7
+interactive;exRight;6
+interactive;castDel;5
+interactive;getOfSeqSingleton;5
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_java_util_Collection_no_1;4
+interactive;replace_known_left;4
+interactive;Evaluate Query;2
 interactive;applyEqReverse;2
-interactive;castDel;2
+interactive;createdDefinition;2
+interactive;doubleImpLeft;2
 interactive;eqSymm;2
-interactive;pullOut;2
-interactive;applyEqRigid;1
-interactive;close;1
-interactive;cut_direct;1
-interactive;instAll;1
+interactive;Definition_axiom_for_nodesAreUnique_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;1
+interactive;cut;1
+interactive;pullOut;1
+interactive;replace_known_right;1
