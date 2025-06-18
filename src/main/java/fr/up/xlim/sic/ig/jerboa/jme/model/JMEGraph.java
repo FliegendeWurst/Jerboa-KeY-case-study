@@ -10,28 +10,42 @@ import up.jerboa.core.JerboaOrbit;
 
 public final class JMEGraph implements JMEElement {
 
-	//@ invariant \invariant_for(nodes) && \invariant_for(arcs);
-	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode && \invariant_for((JMENode)nodes.get(i)));
-	//@ invariant (\forall int j; 0 <= j && j < arcs.size(); arcs.get(j) instanceof JMEArc && \invariant_for((JMEArc)arcs.get(j)));
+	//@ public invariant \invariant_for(nodes) && \invariant_for(arcs);
+	//@ public invariant (\forall int i; 0 <= i && i < nodes.seq.length; nodes.seq[i] instanceof JMENode && \invariant_for((JMENode)nodes.seq[i]));
+	//@ public invariant (\forall int j; 0 <= j && j < arcs.seq.length; arcs.seq[j] instanceof JMEArc && \invariant_for((JMEArc)arcs.seq[j]));
 
-	//@ ghost \locset footprint;
-	//@ accessible \inv : footprint;
-	//@ invariant \subset(\singleton(footprint), footprint);
-	//@ invariant \subset(this.nodes.footprint, footprint);
-	//@ invariant \subset(this.arcs.footprint, footprint);
-	//@ invariant \subset(\singleton(this.isleft), footprint);
+	//@ public ghost \locset footprint;
+	//@ public accessible \inv : footprint;
+	//@ public invariant \subset(\singleton(footprint), footprint);
+	//@ public invariant \subset(this.nodes.footprint, footprint);
+	// public invariant \subset((\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), footprint);
+	//@ public invariant (\forall int i; 0 <= i && i < nodes.seq.length; \subset(((JMENode)nodes.seq[i]).footprint, footprint));
+	//@ public invariant \subset(this.arcs.footprint, footprint);
+	//@ public invariant \subset(\singleton(this.isleft), footprint);
+	//@ public invariant \subset(\singleton(this.owner), footprint);
 
-	 /*@ helper model public boolean verifyDimensionsNodes(int modDim) {
+	 /*@ requires \invariant_for(this);
+	   @ accessible nodes,nodes.footprint,
+	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit),
+	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit.footprint);
+	   @ helper model public boolean hasCorrectDimensionsNodes(int modDim) {
            return (\forall int i;
-             0 <= i && i < nodes.size();
-             ((JMENode)nodes.get(i)).orbit.verifyDimensions(modDim));
+             0 <= i && i < nodes.seq.length;
+				(\forall int j;
+	              0 <= j && j < ((JMENode)nodes.seq[i]).orbit.dim.length;
+	              ((JMENode)nodes.seq[i]).orbit.dim[j] >= -1 && ((JMENode)nodes.seq[i]).orbit.dim[j] <= modDim)
+             );
          }
        @*/
 
-	/*@ helper model public boolean verifyDimensionsArcs(int modDim) {
+	// ((JMENode)nodes.seq[i]).orbit.verifyDimensions(modDim)
+
+	/*@ requires \invariant_for(this);
+	  @ accessible arcs,arcs.footprint;
+	  @ helper model public boolean hasCorrectDimensionsArcs(int modDim) {
         return (\forall int i;
-         0 <= i && i < arcs.size();
-          ((JMEArc)arcs.get(i)).dim >= 0 && ((JMEArc)arcs.get(i)).dim <= modDim);
+         0 <= i && i < arcs.seq.length;
+          ((JMEArc)arcs.seq[i]).dim >= 0 && ((JMEArc)arcs.seq[i]).dim <= modDim);
         }
       @*/
 

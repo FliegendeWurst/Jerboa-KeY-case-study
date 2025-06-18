@@ -17,7 +17,9 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	//@ public invariant \subset(\singleton(footprint), footprint);
 	//@ public invariant \subset(this.dim[*], footprint);
 
-	/*@ helper model public boolean verifyDimensions(int modDim) {
+	/*@ requires \invariant_for(this);
+	  @ accessible dim,dim[*];
+	  @ helper model public boolean verifyDimensions(int modDim) {
            return (\forall int i;
              0 <= i && i < dim.length;
              dim[i] >= -1 && dim[i] <= modDim);
@@ -25,7 +27,7 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
        @*/
 
 	/** array that reminds the parameter of the current orbit */
-	public int dim[];
+	public final int dim[];
 	
 	/**
 	 * Constructor useful for humans. With him you can enumerate all parameters of the orbit.
