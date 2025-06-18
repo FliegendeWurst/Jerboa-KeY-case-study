@@ -276,7 +276,7 @@ public final class JMEVerifTopoClassic {
             else
                 node = (JMENode) rule.getRight().nodes.get(0);
         } else
-            node = rule.getHooks().get(0);
+            node = (JMENode) rule.getHooks().get(0);
         length = node.getOrbit().size();
 
         // Left graph
