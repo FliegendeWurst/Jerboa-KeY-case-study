@@ -83,14 +83,41 @@ public final class JMEGraph implements JMEElement {
 		return null;
 	}
 
+	/*@ public normal_behavior
+	  @ requires this.isleft;
+	  @ ensures (\forall int i; 0 <= i && i < this.nodes.seq.length;
+	  @  (((JMENode)this.nodes.seq[i]).kind == JMENodeKind.HOOK)
+	  @    ==> (\exists int j; 0 <= j && j < \result.seq.length; \result.seq[j] == this.nodes.seq[i]))
+	  @  && (\forall int a; 0 <= a && a < \result.seq.length;
+	  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
+	  @         \result.seq[a] == this.nodes.seq[b] && (((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK)));
+	  @ assignable \nothing;
+	  @*/
 	public List/*<JMENode>*/ getHooks() {
 		List/*<JMENode>*/ listHook = new ArrayList();
-		if (isLeft())
-            for (int i = 0; i < nodes.size(); i++) {
-                JMENode n = (JMENode) nodes.get(i);
-                if (n.getKind() == JMENodeKind.HOOK)
-                    listHook.add(n);
-            }
+		if (isleft) {
+			int nodesSize = nodes.size();
+			/*@ loop_invariant
+			  @ 0 <= i && i <= nodesSize
+			  @  && (\forall int ix; 0 <= ix && ix < i;
+	  		  @       (((JMENode)this.nodes.seq[ix]).kind == JMENodeKind.HOOK)
+	  		  @         ==> (\exists int j; 0 <= j && j < listHook.seq.length; listHook.seq[j] == this.nodes.seq[ix]))
+	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length;
+	  		  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
+	  		  @         listHook.seq[a] == this.nodes.seq[b] && ((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK))
+	  		  @  && \invariant_for(nodes)
+	  		  @  && \invariant_for(this)
+	  		  @  && nodesSize == nodes.size();
+			  @ decreases nodesSize - i;
+			  @ assignable listHook.seq;
+			  @*/
+			for (int i = 0; i < nodesSize; i++) {
+				JMENode n = (JMENode) nodes.get(i);
+				//@ assert n != null && \invariant_for(n);
+				if (n.getKind() == JMENodeKind.HOOK)
+					listHook.add(n);
+			}
+		}
 		return listHook;
 	}
 
