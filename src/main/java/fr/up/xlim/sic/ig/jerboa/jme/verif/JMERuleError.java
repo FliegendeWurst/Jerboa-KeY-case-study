@@ -10,7 +10,7 @@ public final class JMERuleError {
 
 	/*@ public normal_behavior
 	  @ ensures this != null;
-	  @ strictly_pure
+	  @ pure
 	  @*/
 	public JMERuleError(JMERuleErrorSeverity severity, JMERuleErrorType type, JMEElement locality, JMEElement target) {
 		this.target = target;
