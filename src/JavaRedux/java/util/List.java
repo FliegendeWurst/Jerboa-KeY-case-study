@@ -5,10 +5,6 @@ package java.util;
 
 public interface List extends java.util.Collection
 {
-   //@ instance ghost \locset footprint;
-   //@ accessible \inv : footprint;
-   //@ instance invariant \subset(\singleton(footprint), footprint);
-
    /*@ public normal_behavior
      @ requires arg0 == 0;
      @ ensures seq == \seq_concat(\seq_singleton(arg0), \old(seq));
