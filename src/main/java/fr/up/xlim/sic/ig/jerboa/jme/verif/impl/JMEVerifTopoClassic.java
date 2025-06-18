@@ -208,7 +208,21 @@ public final class JMEVerifTopoClassic {
 	 * @param rule Rule to verify.
 	 * @return non-null error if check fails
 	 */
-    JMERuleError verifDuplicateNode(JMERule rule) {
+    /*@ public normal_behavior
+      @ requires \invariant_for(rule);
+      @ requires JMERuleErrorSeverity.CRITIQUE != null
+      @  && JMERuleErrorType.TOPOLOGIC != null;
+      @ ensures (\exists \bigint a; 0 <= a && a < rule.left.nodes.seq.length;
+      @           (\exists \bigint b; a < b && b < rule.left.nodes.seq.length;
+      @             ((JMENode)rule.left.nodes.seq[a]).name == ((JMENode)rule.left.nodes.seq[b]).name
+      @         ))
+      @         || (\exists \bigint a; 0 <= a && a < rule.right.nodes.seq.length;
+      @           (\exists \bigint b; a < b && b < rule.right.nodes.seq.length;
+      @             ((JMENode)rule.right.nodes.seq[a]).name == ((JMENode)rule.right.nodes.seq[b]).name
+      @         )) <==> (\result != null);
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifDuplicateNode(JMERule rule) {
 
         // Left Graph
         JMEGraph left = rule.left;
