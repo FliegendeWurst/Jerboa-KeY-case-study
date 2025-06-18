@@ -5,10 +5,7 @@ package java.util;
 
 public interface Collection extends java.lang.Iterable
 {
-   //@ public instance ghost \locset footprint;
-   //@ public accessible \inv : footprint;
-   //@ public instance invariant \subset(\singleton(footprint), footprint);
-   //@ public instance invariant \subset(\singleton(seq), footprint);
+   //@ public accessible \inv : seq;
 
    //@ public instance invariant (\forall int i; 0 <= i && i < seq.length; \dl_created((Object)seq[i]));
 

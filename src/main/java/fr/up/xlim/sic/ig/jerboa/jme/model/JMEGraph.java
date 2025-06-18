@@ -16,10 +16,10 @@ public final class JMEGraph implements JMEElement {
 
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
-	//@ public invariant footprint == \set_union(\singleton(footprint), this.nodes.footprint, (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), this.arcs.footprint, (\infinite_union int i; 0<=i && i<arcs.seq.length; ((JMEArc)arcs.seq[i]).footprint), \singleton(this.isleft), \singleton(this.owner));
+	//@ public invariant footprint == \set_union(\singleton(footprint), \singleton(this.nodes.seq), (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), \singleton(this.arcs.seq), (\infinite_union int i; 0<=i && i<arcs.seq.length; ((JMEArc)arcs.seq[i]).footprint), \singleton(this.isleft), \singleton(this.owner));
 
 	 /*@ requires \invariant_for(this);
-	   @ accessible nodes,nodes.footprint,
+	   @ accessible nodes,nodes.seq,
 	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit),
 	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit.dim[*]);
 	   @ helper model public boolean hasCorrectDimensionsNodes(int modDim) {
@@ -33,7 +33,7 @@ public final class JMEGraph implements JMEElement {
        @*/
 
 	/*@ requires \invariant_for(this);
-	  @ accessible arcs,arcs.footprint;
+	  @ accessible arcs,arcs.seq;
 	  @ helper model public boolean hasCorrectDimensionsArcs(int modDim) {
         return (\forall int i;
          0 <= i && i < arcs.seq.length;
@@ -108,8 +108,8 @@ public final class JMEGraph implements JMEElement {
 	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length; listHook.seq[a] instanceof JMENode && \invariant_for((JMENode)listHook.seq[a]))
 	  		  @  && \invariant_for(nodes)
 	  		  @  && \invariant_for(this)
-	  		  @  && \disjoint(nodes.footprint, listHook.footprint)
-	  		  @  && \disjoint(this.footprint, listHook.footprint)
+	  		  @  && nodes.seq != listHook.seq
+	  		  @  && \disjoint(this.footprint, \singleton(listHook.seq))
 	  		  @  && nodesSize == nodes.size();
 			  @ decreases nodesSize - i;
 			  @ assignable listHook.seq;
@@ -137,7 +137,6 @@ public final class JMEGraph implements JMEElement {
       @             \result.seq[a] == arcs.seq[j]))
       @  && !(\exists int a; 0 <= a && a < \result.seq.length; (\exists int b; a < b && b < \result.seq.length; \result.seq[a] == \result.seq[b]))
       @  && \fresh(\result)
-      @  && \fresh(\result.footprint)
       @  && \invariant_for(\result);
       @ assignable \nothing;
       @*/
@@ -149,7 +148,7 @@ public final class JMEGraph implements JMEElement {
           @   && arcsSize == arcs.size()
           @   && \invariant_for(this)
           @   && \invariant_for(incidentArcs)
-          @   && \disjoint(this.footprint,incidentArcs.footprint)
+          @   && \disjoint(this.footprint, \singleton(incidentArcs.seq))
           @   && (\forall int a; 0 <= a && a < incidentArcs.seq.length;
           @           incidentArcs.seq[a] instanceof JMEArc
           @           && \invariant_for((JMEArc)incidentArcs.seq[a])
