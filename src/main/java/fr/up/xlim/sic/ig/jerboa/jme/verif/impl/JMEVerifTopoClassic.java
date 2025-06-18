@@ -216,10 +216,22 @@ public final class JMEVerifTopoClassic {
         return null;
     }
 
-    JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
+    /*@ public normal_behavior
+      @ requires \invariant_for(graph);
+      @ ensures (\exists \bigint a; 0 <= a && a < graph.nodes.seq.length;
+      @           (\exists \bigint b; 0 <= b && b < graph.nodes.seq.length;
+      @             a != b && ((JMENode)graph.nodes.seq[a]).name == ((JMENode)graph.nodes.seq[b]).name)) <==> (\result != null);
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
         List/*<JMENode>*/ leftNodes = graph.nodes;
         int leftNodesSize = leftNodes.size();
+        /*@ loop_invariant
+          @ (\forall \bigint j; 0 <= j && j < i; (existingNamesLeft.key_seq[i] == leftNodes.seq[i]));
+          @ decreases leftNodesSize - i;
+          @ maintaining \invariant_for(graph) && leftNodes == graph.nodes && leftNodesSize == leftNodes.size();
+          @*/
         for (int i = 0; i < leftNodesSize; i++) {
             JMENode node = (JMENode) leftNodes.get(i);
 
