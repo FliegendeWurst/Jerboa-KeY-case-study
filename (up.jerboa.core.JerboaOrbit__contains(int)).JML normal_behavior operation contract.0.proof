@@ -78,7 +78,11 @@
 
 
 \bootclasspath "bootclasspath";
-\javaSource "src/main/java";\proofObligation 
+\javaSource "src/main/java";
+
+\include "rules.key";
+
+\proofObligation 
 // 
 { 
     "class" : "de.uka.ilkd.key.proof.init.FunctionalOperationContractPO",

@@ -15,6 +15,7 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
 	//@ public invariant footprint == \set_union(\singleton(footprint), this.dim[*]);
+	//@ public invariant (\forall \bigint i; 0 <= i < dim.length; dim[i] >= -1);
 
 	/*@ requires \invariant_for(this);
 	  @ accessible dim,dim[*];
@@ -81,15 +82,20 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	  @ requires \invariant_for(this);
 	  @ ensures (\forall int i; 0 <= i && i < dim.length; \result >= dim[i]);
 	  @ ensures (dim.length > 0) ==> (\exists int i; 0 <= i && i < dim.length; \result == dim[i]);
+	  @ ensures (dim.length == 0) ==> (\result == -1);
 	  @ ensures \invariant_for(this);
-	  @ pure
+	  @ assignable \nothing;
 	  @*/
 	public int getMaxDim() {
 		int max = -1;
 		/*@ loop_invariant
 		  @ 0 <= j && j <= dim.length
+		  @  && max >= -1
 		  @  && (\forall int a; 0 <= a && a < j; max >= dim[a])
-		  @  && ((max == -1 && (\forall int b; 0 <= b && b < j; -1 == dim[b])) || (j > 0 && (\exists int b; 0 <= b && b < j; max == dim[b])));
+		  @  && (
+		  @      (max == -1 && (\forall int b; 0 <= b && b < j; -1 == dim[b]))
+		  @      || (max >= 0 && (\exists int b; 0 <= b && b < j; max == dim[b]))
+		  @     );
 		  @ assignable max;
 		  @ decreases dim.length - j;
 		  @*/
