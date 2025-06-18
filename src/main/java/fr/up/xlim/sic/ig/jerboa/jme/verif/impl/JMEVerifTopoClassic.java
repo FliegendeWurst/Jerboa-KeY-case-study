@@ -67,7 +67,7 @@ public final class JMEVerifTopoClassic {
         int modDim = rule.modeler.dimension;
 
         // Left Graph
-        JMEGraph left = rule.getLeft();
+        JMEGraph left = rule.left;
         JMERuleError error = verifDimensionGraphNodes(rule, modDim, left);
         if (error != null) {
             return error;
@@ -78,8 +78,8 @@ public final class JMEVerifTopoClassic {
         }
 
         // Right Graph
-        JMEGraph right = rule.getRight();
-        verifDimensionGraphNodes(rule, modDim, right);
+        JMEGraph right = rule.right;
+        error = verifDimensionGraphNodes(rule, modDim, right);
         if (error != null) {
             return error;
         }
@@ -185,7 +185,7 @@ public final class JMEVerifTopoClassic {
     JMERuleError verifDuplicateNode(JMERule rule) {
 
         // Left Graph
-        JMEGraph left = rule.getLeft();
+        JMEGraph left = rule.left;
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
         List/*<JMENode>*/ leftNodes = left.nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
@@ -202,7 +202,7 @@ public final class JMEVerifTopoClassic {
         }
 
         // Right Graph
-        JMEGraph right = rule.getRight();
+        JMEGraph right = rule.right;
         HashMap/*<String, JMENode>*/ existingNamesRight = new HashMap();
         List/*<JMENode>*/ rightNodes = right.nodes;
         for (int i = 0; i < rightNodes.size(); i++) {
@@ -232,7 +232,7 @@ public final class JMEVerifTopoClassic {
 	 */
     JMERuleError verifHooks(JMERule rule) {
         List/*<JMENode>*/ hooks = rule.getHooks();
-        JMEGraph left = rule.getLeft();
+        JMEGraph left = rule.left;
 
         // Verification of full orbit for hooks
         for (int i = 0; i < hooks.size(); i++) {
@@ -300,16 +300,16 @@ public final class JMEVerifTopoClassic {
         int length;
         JMENode node = null;
         if (rule.getHooks().isEmpty()) {
-            if (rule.getRight().nodes.isEmpty())
+            if (rule.right.nodes.isEmpty())
                 return null;
             else
-                node = (JMENode) rule.getRight().nodes.get(0);
+                node = (JMENode) rule.right.nodes.get(0);
         } else
             node = (JMENode) rule.getHooks().get(0);
         length = node.orbit.size();
 
         // Left graph
-        List/*<JMENode>*/ leftNodes = rule.getLeft().nodes;
+        List/*<JMENode>*/ leftNodes = rule.left.nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode n = (JMENode) leftNodes.get(i);
 
@@ -322,7 +322,7 @@ public final class JMEVerifTopoClassic {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
         }
         // Right graph
-        List/*<JMENode>*/ rightNodes = rule.getRight().nodes;
+        List/*<JMENode>*/ rightNodes = rule.right.nodes;
         for (int i = 0; i < rightNodes.size(); i++) {
             JMENode n = (JMENode) rightNodes.get(i);
 
@@ -350,7 +350,7 @@ public final class JMEVerifTopoClassic {
     JMERuleError verifDuplicateDimension(JMERule rule) {
 
         // Left Graph
-        List/*<JMENode>*/ leftNodes = rule.getLeft().nodes;
+        List/*<JMENode>*/ leftNodes = rule.left.nodes;
         for (int j = 0; j < leftNodes.size(); j++) {
             JMENode node = (JMENode) leftNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet();
@@ -364,7 +364,7 @@ public final class JMEVerifTopoClassic {
             }
 
             // Arcs
-            List/*<JMEArc>*/ incidentArcsFromNode = rule.getLeft().getIncidentArcsFromNode(node);
+            List/*<JMEArc>*/ incidentArcsFromNode = rule.left.getIncidentArcsFromNode(node);
             for (int i = 0; i < incidentArcsFromNode.size(); i++) {
                 JMEArc a = (JMEArc) incidentArcsFromNode.get(i);
                 if (!dims.add(a.getDimension()))
@@ -373,7 +373,7 @@ public final class JMEVerifTopoClassic {
         }
 
         // Right Graph
-        List/*<JMENode>*/ rightNodes = rule.getRight().nodes;
+        List/*<JMENode>*/ rightNodes = rule.right.nodes;
         for (int j = 0; j < rightNodes.size(); j++) {
             JMENode node = (JMENode) rightNodes.get(j);
             HashSet/*<Integer>*/ dims = new HashSet();
@@ -387,7 +387,7 @@ public final class JMEVerifTopoClassic {
             }
 
             // Arcs
-            List/*<JMEArc>*/ incidentArcsFromNode = rule.getRight().getIncidentArcsFromNode(node);
+            List/*<JMEArc>*/ incidentArcsFromNode = rule.right.getIncidentArcsFromNode(node);
             for (int i = 0; i < incidentArcsFromNode.size(); i++) {
                 JMEArc a = (JMEArc) incidentArcsFromNode.get(i);
                 if (!dims.add(a.getDimension()))
@@ -422,8 +422,8 @@ public final class JMEVerifTopoClassic {
 	 */
     JMERuleError verifIncidentArc(JMERule rule) {
         int modDim = rule.modeler.dimension;
-        JMEGraph left = rule.getLeft();
-        JMEGraph right = rule.getRight();
+        JMEGraph left = rule.left;
+        JMEGraph right = rule.right;
         List/*<JMENode>*/ leftNodes = left.nodes;
         for (int k = 0; k < leftNodes.size(); k++) {
             JMENode leftNode = (JMENode) leftNodes.get(k);
@@ -460,7 +460,7 @@ public final class JMEVerifTopoClassic {
                             && (dim == rightNode.orbit.get(i));
 
                     // Test for arcs
-                    List/*<JMEArc>*/ incidentArcsFromNode = rule.getRight().getIncidentArcsFromNode(rightNode);
+                    List/*<JMEArc>*/ incidentArcsFromNode = rule.right.getIncidentArcsFromNode(rightNode);
                     for (int j = 0; j < incidentArcsFromNode.size(); j++) {
                         JMEArc a = (JMEArc) incidentArcsFromNode.get(j);
                         flag |= (dim == a.getDimension());
@@ -471,7 +471,7 @@ public final class JMEVerifTopoClassic {
                 }
 
                 // Dimensions in the arcs
-                List/*<JMEArc>*/ incidentArcsFromNode = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                List/*<JMEArc>*/ incidentArcsFromNode = rule.left.getIncidentArcsFromNode(leftNode);
                 for (int i = 0; i < incidentArcsFromNode.size(); i++) {
                     JMEArc arc = (JMEArc) incidentArcsFromNode.get(i);
                     boolean flag = false;
@@ -481,7 +481,7 @@ public final class JMEVerifTopoClassic {
                     flag |= rightNode.orbit.contains(dim);
 
                     // Test the other arcs
-                    List/*<JMEArc>*/ rightIncident = rule.getRight().getIncidentArcsFromNode(rightNode);
+                    List/*<JMEArc>*/ rightIncident = rule.right.getIncidentArcsFromNode(rightNode);
                     for (int j = 0; j < rightIncident.size(); j++) {
                         JMEArc a = (JMEArc) rightIncident.get(j);
                         flag |= (dim == a.getDimension());
@@ -505,7 +505,7 @@ public final class JMEVerifTopoClassic {
                             && (dim == leftNode.orbit.get(i));
 
                     // Test des arcs
-                    List/*<JMEArc>*/ leftIncident = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                    List/*<JMEArc>*/ leftIncident = rule.left.getIncidentArcsFromNode(leftNode);
                     for (int j = 0; j < leftIncident.size(); j++) {
                         JMEArc a = (JMEArc) leftIncident.get(j);
                         flag |= (dim == a.getDimension());
@@ -516,7 +516,7 @@ public final class JMEVerifTopoClassic {
                 }
 
                 // Dimensions in the arcs
-                List/*<JMEArc>*/ rightIncident = rule.getRight().getIncidentArcsFromNode(rightNode);
+                List/*<JMEArc>*/ rightIncident = rule.right.getIncidentArcsFromNode(rightNode);
                 for (int i = 0; i < rightIncident.size(); i++) {
                     JMEArc arc = (JMEArc) rightIncident.get(i);
                     boolean flag = false;
@@ -526,7 +526,7 @@ public final class JMEVerifTopoClassic {
                     flag |= leftNode.orbit.contains(dim);
 
                     // Test the other arcs
-                    List/*<JMEArc>*/ leftIncident = rule.getLeft().getIncidentArcsFromNode(leftNode);
+                    List/*<JMEArc>*/ leftIncident = rule.left.getIncidentArcsFromNode(leftNode);
                     for (int j = 0; j < leftIncident.size(); j++) {
                         JMEArc a = (JMEArc) leftIncident.get(j);
                         flag |= (dim == a.getDimension());
@@ -679,10 +679,10 @@ public final class JMEVerifTopoClassic {
             case 5:
                 if (graph.isLeft())
                     return 1;
-                else if (graph.getRule().getLeft().getHooks().isEmpty())
+                else if (graph.getRule().left.getHooks().isEmpty())
                     return -1;
                 else { // We need to check all hooks!
-                    List/*<JMENode>*/ hooks = graph.getRule().getLeft().getHooks();
+                    List/*<JMENode>*/ hooks = graph.getRule().left.getHooks();
                     for (int k = 0; k < hooks.size(); k++) {
                         JMENode hook = (JMENode) hooks.get(k);
                         pos_i = orbit.indexOf(i);
@@ -751,8 +751,8 @@ public final class JMEVerifTopoClassic {
 	 */
     JMERuleError verifCycle(JMERule rule) {
         int modDim = rule.modeler.dimension;
-        JMEGraph left = rule.getLeft();
-        JMEGraph right = rule.getRight();
+        JMEGraph left = rule.left;
+        JMEGraph right = rule.right;
 
         for (int i = 0; i <= modDim - 2; i++) {
             for (int j = i + 2; j <= modDim; j++) {
@@ -832,7 +832,7 @@ public final class JMEVerifTopoClassic {
 	 */
     private boolean explicitArcHasChanged(int dim, JMERule rule, JMENode leftNode) {
         final int dimI = dim;
-        JMENode rightNode = rule.getRight().getMatchNode(leftNode);
+        JMENode rightNode = rule.right.getMatchNode(leftNode);
         if (hasAnyWithDimension(leftNode.alphas(), dimI)) {
 
             // By the incident arcs constraint, this should always be true.
@@ -840,7 +840,7 @@ public final class JMEVerifTopoClassic {
             if (hasAnyWithDimension(rightNode.alphas(), dimI)) {
                 JMENode leftNeighbor = leftNode.alpha(dimI);
                 JMENode rightNeigbor = rightNode.alpha(dimI);
-                JMENode matchLeftNeighbor = rule.getRight().getMatchNode(leftNeighbor);
+                JMENode matchLeftNeighbor = rule.right.getMatchNode(leftNeighbor);
                 if (matchLeftNeighbor == null)
                     return true;
                 return (!matchLeftNeighbor.equals(rightNeigbor));

@@ -17,8 +17,8 @@ public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERul
 	protected String name;
 	protected String category;
 
-	protected /*@ spec_public */ JMEGraph left;
-	protected /*@ spec_public */ JMEGraph right;
+	public final JMEGraph left;
+	public final JMEGraph right;
 
 	protected String midprocess;
 
@@ -37,14 +37,6 @@ public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERul
 
 	public String getName() {
 		return name;
-	}
-
-	public JMEGraph getLeft() {
-		return left;
-	}
-
-	public JMEGraph getRight() {
-		return right;
 	}
 
 	public String toString() {
