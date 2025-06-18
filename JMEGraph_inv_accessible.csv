@@ -1,0 +1,53 @@
+open goals;0
+Nodes;17,076
+Branches;278
+Interactive steps;231
+Symbolic execution steps;58
+Automode time;8min
+Automode time;493378ms
+Avg. time per step;28.894ms
+Rule applications
+Quantifier instantiations;227
+One-step Simplifier apps;3017
+SMT solver apps;0
+Dependency Contract apps;20
+Operation Contract apps;0
+Block/Loop Contract apps;0
+Loop invariant apps;0
+Merge Rule apps;0
+Total rule apps;20,711
+interactive;elementOfUnion;42
+interactive;castedGetAny;19
+interactive;ifthenelse_split;18
+interactive;applyEq;12
+interactive;selectOfAnon;12
+interactive;elementOfInfiniteUnion;11
+interactive;One Step Simplification;10
+interactive;elementOfSingleton;9
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_java_util_Collection_no_3;8
+interactive;orLeft;8
+interactive;andRight;7
+interactive;exRight;7
+interactive;allRight;6
+interactive;eqTermCut;6
+interactive;ineffectiveCast;6
+interactive;seqGetAlphaCast;6
+interactive;split_or_strong;6
+interactive;replace_known_left;5
+interactive;exLeft;4
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_java_util_Collection_no_1;3
+interactive;allLeft;3
+interactive;elementOfSetMinus;3
+interactive;instAll;3
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEArc_no_3;2
+interactive;Partial_inv_axiom_for_JML_class_invariant_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMENode_no_5;2
+interactive;equalityToElementOfRight;2
+interactive;impLeft;2
+interactive;disjointDefinition;1
+interactive;elementOfIntersect;1
+interactive;equiv_right;1
+interactive;instanceof_static_type_2;1
+interactive;notRight;1
+interactive;replace_known_right;1
+interactive;true_left;1

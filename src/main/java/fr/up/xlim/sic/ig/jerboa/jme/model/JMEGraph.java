@@ -16,7 +16,7 @@ public final class JMEGraph implements JMEElement {
 
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
-	//@ public invariant footprint == \set_union(\singleton(footprint), this.nodes.footprint, (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), this.arcs.footprint, \singleton(this.isleft), \singleton(this.owner));
+	//@ public invariant footprint == \set_union(\singleton(footprint), this.nodes.footprint, (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), this.arcs.footprint, (\infinite_union int i; 0<=i && i<arcs.seq.length; ((JMEArc)arcs.seq[i]).footprint), \singleton(this.isleft), \singleton(this.owner));
 
 	 /*@ requires \invariant_for(this);
 	   @ accessible nodes,nodes.footprint,
@@ -118,6 +118,7 @@ public final class JMEGraph implements JMEElement {
 		return listHook;
 	}
 
+    // TODO: should ensure the result does not have duplicates
     /*@ public normal_behavior
       @ requires \invariant_for(this);
       @ ensures (\forall int a; 0 <= a && a < \result.seq.length;
@@ -162,29 +163,63 @@ public final class JMEGraph implements JMEElement {
 		return incidentArcs;
 	}
 
+    /**
+     * Given a node, calculate all the nodes reachable using arcs
+     * with dimension included in the provided orbit.
+     * @param node the start node
+     * @param orbit orbit with allowed dimensions
+     * @return set of reachable nodes
+     */
+    /*@ public normal_behavior
+      @ requires \invariant_for(this);
+      @ requires \invariant_for(node);
+      @ requires \invariant_for(orbit);
+      @ ensures \fresh(\result);
+      @*/
 	public Set/*<JMENode>*/ orbit(JMENode node, JerboaOrbit orbit) {
 		HashSet/*<JMENode>*/ visited = new HashSet();
-		Stack/*<JMENode>*/ stack = new Stack();
-		stack.push(node);
+		List/*<JMENode>*/ stack = new ArrayList();
+		stack.add(node);
+        //@ ghost int iteration;
+        //@ set iteration = 0;
 
+        /* loop_invariant
+          @  (\forall \seq p;
+          @     (\dl_seqLen(p) <= iteration
+          @      && (\forall int i; i >= 0 && i < \dl_seqLen(p); p[i] instanceof JMENode)
+          @      && (\forall int i; i >= 0 && i < \dl_seqLen(p) - 1;
+          @           (\exists int j; ((JMEArc)arcs.seq[i]).a == p[i] && ((JMEArc)arcs.seq[i]).b == p[i+1])
+          @                            || ((JMEArc)arcs.seq[i]).b == p[i] && ((JMEArc)arcs.seq[i]).a == p[i+1])
+          @            )
+          @     ) ==> true
+          @  );
+          @ decreases this.nodes.seq.length - iteration;
+          @*/
 		while (!stack.isEmpty()) {
-			JMENode cur = (JMENode) stack.pop();
-			if (!visited.contains(cur)) {
-				visited.add(cur);
-				List/*<JMEArc>*/ arcs = getIncidentArcsFromNode(cur);
-				for (int i = 0; i < arcs.size(); i++) {
-					JMEArc arc = (JMEArc) arcs.get(i);
-					if (arc.getDimension() >= 0 && orbit.contains(arc.getDimension())) {
-						JMENode otherNode = null;
-						if (arc.getSource() == cur)
-							otherNode = arc.getDestination();
-						else if (arc.getDestination() == cur)
-							otherNode = arc.getSource();
-						if (otherNode != null && !visited.contains(otherNode))
-							stack.push(otherNode);
-					} // end dimension ok
-				} // for all incident arcs
+            //@ set iteration = iteration + 1;
+            List/*<JMENode>*/ newStack = new ArrayList();
+            int stackSize = stack.size();
+            for (int j = 0; j < stackSize; j++) {
+                JMENode cur = (JMENode) stack.get(j);
+                if (!visited.contains(cur)) {
+                    visited.add(cur);
+                    // TODO: move below in separate function
+                    List/*<JMEArc>*/ arcsIncident = getIncidentArcsFromNode(cur);
+                    for (int i = 0; i < arcsIncident.size(); i++) {
+                        JMEArc arc = (JMEArc) arcsIncident.get(i);
+                        if (arc.dim >= 0 && orbit.contains(arc.dim)) {
+                            JMENode otherNode = null;
+                            if (arc.getSource() == cur)
+                                otherNode = arc.getDestination();
+                            else if (arc.getDestination() == cur)
+                                otherNode = arc.getSource();
+                            if (otherNode != null && !visited.contains(otherNode))
+                                newStack.add(otherNode);
+                        } // end dimension ok
+                    }
+                } // for all incident arcs
 			} // if node is still not visited
+            stack = newStack;
 		} // while the search continue
 
 		return visited;
