@@ -20,7 +20,7 @@ public final class JMENode implements JMEElement {
 	//@ public invariant \invariant_for(this.orbit);
 
 	// topological parameters
-	protected /*@ spec_public */ String name;
+	public final String name;
 	public final JerboaOrbit orbit;
 	private /*@ spec_public */ JMENodeKind kind;
 

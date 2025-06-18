@@ -63,7 +63,7 @@ public final class JMEGraph implements JMEElement {
 	public JMENode getMatchNode(JMENode n) {
         for (int i = 0; i < nodes.size(); i++) {
             JMENode n2 = (JMENode) nodes.get(i);
-            if (n.getName().equals(n2.getName()))
+			if (n.name.equals(n2.name))
                 return n2;
         }
 		return null;

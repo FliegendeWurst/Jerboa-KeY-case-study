@@ -223,13 +223,13 @@ public final class JMEVerifTopoClassic {
             JMENode node = (JMENode) leftNodes.get(i);
 
             // The name is already present, we add errors.
-            if (existingNamesLeft.containsKey(node.getName())) {
+            if (existingNamesLeft.containsKey(node.name)) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
             }
 
             // The name is not present, we add it to the HashMap.
             else
-                existingNamesLeft.put(node.getName(), node);
+                existingNamesLeft.put(node.name, node);
         }
 
         return null;
