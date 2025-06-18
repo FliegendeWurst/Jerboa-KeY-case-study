@@ -98,6 +98,7 @@ public final class JMEVerifTopoClassic {
       @ requires JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (!graph.verifyDimensionsNodes(modDim)) <==> (\result != null);
       @ pure
+      @ nullable
       @*/
     JMERuleError verifDimensionGraphNodes(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
@@ -109,8 +110,8 @@ public final class JMEVerifTopoClassic {
           @ 0 <= j && j <= leftNodesSize
           @  && leftNodesSize == leftNodes.size()
           @  && (\forall int a; 0 <= a && a < j;
-          @        (\forall int b; 0 <= b && b < ((JMENode)(rule.left.nodes).get(a)).orbit.dim.length;
-          @           ((JMENode)(rule.left.nodes).get(a)).orbit.dim[b] >= -1 ));
+          @        (\forall int b; 0 <= b && b < ((JMENode)(graph.nodes).get(a)).orbit.dim.length;
+          @           ((JMENode)(graph.nodes).get(a)).orbit.dim[b] >= -1 ));
           @ assignable \nothing;
           @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
           @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes;
@@ -123,11 +124,11 @@ public final class JMEVerifTopoClassic {
               @ 0 <= j && j < leftNodesSize
               @  && leftNodesSize == leftNodes.size()
               @  && (\forall int a; 0 <= a && a < j;
-              @        (\forall int b; 0 <= b && b < ((JMENode)(rule.left.nodes).get(a)).orbit.dim.length;
-              @          ((JMENode)(rule.left.nodes).get(a)).orbit.dim[b] >= -1 ))
-              @  && 0 <= k && k <= ((JMENode)(rule.left.nodes).get(j)).orbit.dim.length
+              @        (\forall int b; 0 <= b && b < ((JMENode)(graph.nodes).get(a)).orbit.dim.length;
+              @          ((JMENode)(graph.nodes).get(a)).orbit.dim[b] >= -1 ))
+              @  && 0 <= k && k <= ((JMENode)(graph.nodes).get(j)).orbit.dim.length
               @   && (\forall int c; 0 <= c && c < k;
-              @          ((JMENode)(rule.left.nodes).get(j)).orbit.dim[c] >= -1 );
+              @          ((JMENode)(graph.nodes).get(j)).orbit.dim[c] >= -1 );
               @ assignable \nothing;
               @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
               @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes && node == leftNodes.get(j);
@@ -149,6 +150,7 @@ public final class JMEVerifTopoClassic {
       @ requires JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (!graph.verifyDimensionsArcs(modDim)) <==> (\result != null);
       @ pure
+      @ nullable
       @*/
     JMERuleError verifDimensionGraphArcs(JMERule rule, int modDim, JMEGraph graph) {
         // Arcs
