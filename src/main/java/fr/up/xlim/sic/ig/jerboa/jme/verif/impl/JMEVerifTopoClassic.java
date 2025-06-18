@@ -9,6 +9,7 @@ import fr.up.xlim.sic.ig.jerboa.jme.model.JMEArc;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEGraph;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMELoop;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMENode;
+import fr.up.xlim.sic.ig.jerboa.jme.model.JMENodeKind;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMERule;
 import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleError;
 import fr.up.xlim.sic.ig.jerboa.jme.verif.JMERuleErrorSeverity;
@@ -257,7 +258,37 @@ public final class JMEVerifTopoClassic {
 
         return null;
     }
-	
+
+    /*@ public normal_behavior
+      @ requires \invariant_for(rule)
+      @  && \static_invariant_for(JMERuleErrorSeverity) && \static_invariant_for(JMERuleErrorType);
+      @ ensures (\result != null) <==>
+      @  (\exists int i; 0 <= i && i < rule.left.nodes.seq.length;
+      @    ((JMENode)rule.left.nodes.seq[i]).kind == JMENodeKind.HOOK
+      @    && ((JMENode)rule.left.nodes.seq[i]).orbit.contains(-1));
+      @*/
+    /*@ nullable @*/ JMERuleError verifHooksFullOrbit(JMERule rule) {
+        List/*<JMENode>*/ hooks = rule.left.getHooks();
+
+        int hooksSize = hooks.size();
+        /*@ loop_invariant
+          @  0 <= i && i <= hooksSize
+          @  && (\forall int j; 0 <= j && j < i; !((JMENode)hooks.seq[j]).orbit.contains(-1))
+          @  && \invariant_for(hooks)
+          @  && (\forall int j; 0 <= j && j < hooksSize; hooks.seq[j] instanceof JMENode && \invariant_for((JMENode)hooks.seq[j]))
+          @  && hooksSize == hooks.size();
+          @ decreases hooksSize - i;
+          @ assignable \nothing;
+          @*/
+        for (int i = 0; i < hooksSize; i++) {
+            JMENode hook = (JMENode) hooks.get(i);
+            if (hook.orbit.contains(-1)) {
+                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, hook);
+            }
+        }
+        return null;
+    }
+
 	/**
 	 * Checks that:
 	 * - all nodes in the left graph are connected to a hook;
@@ -272,11 +303,9 @@ public final class JMEVerifTopoClassic {
         JMEGraph left = rule.left;
 
         // Verification of full orbit for hooks
-        for (int i = 0; i < hooks.size(); i++) {
-            JMENode hook = (JMENode) hooks.get(i);
-            if (hook.orbit.contains(-1)) {
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, hook);
-            }
+        JMERuleError error = verifHooksFullOrbit(rule);
+        if (error != null) {
+            return error;
         }
 
         // Preparation of the connected component orbit for the chosen dimension

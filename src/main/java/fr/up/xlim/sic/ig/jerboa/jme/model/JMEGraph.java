@@ -90,7 +90,9 @@ public final class JMEGraph implements JMEElement {
 	  @    ==> (\exists int j; 0 <= j && j < \result.seq.length; \result.seq[j] == this.nodes.seq[i]))
 	  @  && (\forall int a; 0 <= a && a < \result.seq.length;
 	  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
-	  @         \result.seq[a] == this.nodes.seq[b] && (((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK)));
+	  @         \result.seq[a] == this.nodes.seq[b] && (((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK)))
+	  @  && (\forall int a; 0 <= a && a < \result.seq.length; \result.seq[a] instanceof JMENode && \invariant_for((JMENode)\result.seq[a]))
+	  @  && \invariant_for(\result) && \fresh(\result);
 	  @ assignable \nothing;
 	  @*/
 	public List/*<JMENode>*/ getHooks() {
