@@ -286,6 +286,7 @@ public final class JMEVerifTopoClassic {
 
     /*@ public normal_behavior
       @ requires \invariant_for(rule)
+      @  && rule.left.nodesAreUnique()
       @  && JMERuleErrorSeverity.CRITIQUE != null && JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (\result != null) <==>
       @  (\exists int i; 0 <= i && i < rule.left.nodes.seq.length;
