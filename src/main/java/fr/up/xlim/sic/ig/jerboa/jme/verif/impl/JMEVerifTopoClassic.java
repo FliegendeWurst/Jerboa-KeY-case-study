@@ -245,8 +245,17 @@ public final class JMEVerifTopoClassic {
         return null;
     }
 
+    /*@ public normal_behaviour
+      @ ensures \result == (\sum int i; 0 <= i && i < a.seq.length; b.contains((Object)a.seq[i]) ? 1 : 0);
+     */
     private static int intersectionSize(Set a, List b) {
         int count = 0;
+        /*@ loop_invariant
+          @ 0 <= \index && \index <= a.seq.length
+          @  && count == (\sum int i; 0 <= i && i < \index; b.contains((Object)a.seq[i]) ? 1 : 0);
+          @ decreasing a.size() - \index;
+          @ assignable count;
+          @*/
         for (Object x : a) {
             if (b.contains(x)) {
                 count++;
