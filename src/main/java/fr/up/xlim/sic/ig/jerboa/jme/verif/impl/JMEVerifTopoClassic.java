@@ -111,7 +111,8 @@ public final class JMEVerifTopoClassic {
           @  && leftNodesSize == leftNodes.size()
           @  && (\forall int a; 0 <= a && a < j;
           @        (\forall int b; 0 <= b && b < ((JMENode)(graph.nodes).get(a)).orbit.dim.length;
-          @           ((JMENode)(graph.nodes).get(a)).orbit.dim[b] >= -1 ));
+          @           ((JMENode)(graph.nodes).get(a)).orbit.dim[b] >= -1
+          @           && ((JMENode)(graph.nodes).get(a)).orbit.dim[b] <= modDim));
           @ assignable \nothing;
           @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
           @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes;
@@ -119,6 +120,7 @@ public final class JMEVerifTopoClassic {
           @*/
         for (int j = 0; j < leftNodesSize; j++) {
             JMENode node = (JMENode) leftNodes.get(j);
+            // assert \invariant_for(node);
             int[] tab = node.orbit.tab();
             /*@ loop_invariant
               @ 0 <= j && j < leftNodesSize
@@ -128,10 +130,11 @@ public final class JMEVerifTopoClassic {
               @          ((JMENode)(graph.nodes).get(a)).orbit.dim[b] >= -1 ))
               @  && 0 <= k && k <= ((JMENode)(graph.nodes).get(j)).orbit.dim.length
               @   && (\forall int c; 0 <= c && c < k;
-              @          ((JMENode)(graph.nodes).get(j)).orbit.dim[c] >= -1 );
+              @          ((JMENode)(graph.nodes).get(j)).orbit.dim[c] >= -1
+              @           && ((JMENode)(graph.nodes).get(j)).orbit.dim[c] <= modDim);
               @ assignable \nothing;
               @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
-              @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes && node == leftNodes.get(j);
+              @  && (rule.left == graph || rule.right == graph) && leftNodes == graph.nodes && node == leftNodes.get(j) && tab == node.orbit.dim;
               @ decreases tab.length - k;
               @*/
             for (int k = 0; k < tab.length; k++) {
@@ -149,10 +152,9 @@ public final class JMEVerifTopoClassic {
       @ requires JMERuleErrorSeverity.CRITIQUE != null;
       @ requires JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (!graph.verifyDimensionsArcs(modDim)) <==> (\result != null);
-      @ pure
-      @ nullable
+      @ assignable \nothing;
       @*/
-    JMERuleError verifDimensionGraphArcs(JMERule rule, int modDim, JMEGraph graph) {
+    /*@ nullable */ JMERuleError verifDimensionGraphArcs(JMERule rule, int modDim, JMEGraph graph) {
         // Arcs
         List/*<JMEArc>*/ leftArcs = graph.arcs;
         int leftArcsSize = leftArcs.size();

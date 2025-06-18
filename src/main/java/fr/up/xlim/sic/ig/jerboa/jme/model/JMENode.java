@@ -13,7 +13,11 @@ import up.jerboa.core.JerboaOrbit;
  */
 public final class JMENode implements JMEElement {
 
-	//@ invariant name != null && orbit != null && kind != null;
+	//@ ghost \locset footprint;
+	//@ accessible \inv : footprint;
+	//@ invariant \subset(\singleton(footprint), footprint);
+
+	//@ invariant \invariant_for(this.orbit);
 
 	// topological parameters
 	protected /*@ spec_public */ String name;

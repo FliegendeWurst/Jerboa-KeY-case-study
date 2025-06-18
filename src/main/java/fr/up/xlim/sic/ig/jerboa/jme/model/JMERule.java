@@ -5,7 +5,12 @@ import java.util.List;
 
 public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERule>*/ {
 
-	//@ invariant left != null && right != null && \invariant_for(left) && \invariant_for(right);
+	//@ ghost \locset footprint;
+	//@ invariant \subset(this.left.footprint, footprint);
+	//@ invariant \subset(this.right.footprint, footprint);
+
+	//@ public invariant \invariant_for(left) && \invariant_for(right);
+	//@ public accessible \inv: footprint;
 
 	protected JMEModeler modeler;
 	protected String name;

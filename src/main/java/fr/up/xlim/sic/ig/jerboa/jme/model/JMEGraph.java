@@ -11,8 +11,8 @@ import up.jerboa.core.JerboaOrbit;
 public final class JMEGraph implements JMEElement {
 
 	//@ invariant \invariant_for(nodes) && \invariant_for(arcs);
-	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode && \invariant_for(nodes.get(i)));
-	//@ invariant (\forall int j; 0 <= j && j < arcs.size(); arcs.get(j) instanceof JMEArc && \invariant_for(arcs.get(j)));
+	//@ invariant (\forall int i; 0 <= i && i < nodes.size(); nodes.get(i) instanceof JMENode && \invariant_for((JMENode)nodes.get(i)));
+	//@ invariant (\forall int j; 0 <= j && j < arcs.size(); arcs.get(j) instanceof JMEArc && \invariant_for((JMEArc)arcs.get(j)));
 
 	//@ ghost \locset footprint;
 	//@ accessible \inv : footprint;

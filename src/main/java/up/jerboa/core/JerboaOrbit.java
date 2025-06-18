@@ -12,7 +12,12 @@ import java.util.Iterator;
  *
  */
 public final class JerboaOrbit implements Iterable/*<Integer>*/ {
-	//@ invariant dim != null && (\forall int i; 0 <= i && i < dim.length; dim[i] >= -1);
+	//@ ghost \locset footprint;
+	//@ accessible \inv : footprint;
+	//@ invariant \subset(\singleton(footprint), footprint);
+	//@ invariant \subset(this.dim[*], footprint);
+
+	//@ invariant (\forall int i; 0 <= i && i < dim.length; dim[i] >= -1);
 
 	/** array that reminds the parameter of the current orbit */
 	private /*@ spec_public */ int dim[];
