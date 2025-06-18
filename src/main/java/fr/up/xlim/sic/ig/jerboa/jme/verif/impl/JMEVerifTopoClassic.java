@@ -64,7 +64,7 @@ public final class JMEVerifTopoClassic {
 	 * @return non-null error if check fails
 	 */
     JMERuleError verifDimension(JMERule rule) {
-        int modDim = rule.getModeler().getDimension();
+        int modDim = rule.modeler.getDimension();
 
         // Left Graph
         JMEGraph left = rule.getLeft();
@@ -243,7 +243,7 @@ public final class JMEVerifTopoClassic {
         }
 
         // Preparation of the connected component orbit for the chosen dimension
-        int[] tabOrbitConnexComponent = new int[rule.getModeler().getDimension() + 1];
+        int[] tabOrbitConnexComponent = new int[rule.modeler.getDimension() + 1];
         for (int i = 0; i < tabOrbitConnexComponent.length; i++)
             tabOrbitConnexComponent[i] = i;
         JerboaOrbit orbitCC = new JerboaOrbit(tabOrbitConnexComponent);
@@ -421,7 +421,7 @@ public final class JMEVerifTopoClassic {
 	 * @return non-null error if check fails
 	 */
     JMERuleError verifIncidentArc(JMERule rule) {
-        int modDim = rule.getModeler().getDimension();
+        int modDim = rule.modeler.getDimension();
         JMEGraph left = rule.getLeft();
         JMEGraph right = rule.getRight();
         List/*<JMENode>*/ leftNodes = left.nodes;
@@ -750,7 +750,7 @@ public final class JMEVerifTopoClassic {
 	 * @return non-null error if check fails
 	 */
     JMERuleError verifCycle(JMERule rule) {
-        int modDim = rule.getModeler().getDimension();
+        int modDim = rule.modeler.getDimension();
         JMEGraph left = rule.getLeft();
         JMEGraph right = rule.getRight();
 

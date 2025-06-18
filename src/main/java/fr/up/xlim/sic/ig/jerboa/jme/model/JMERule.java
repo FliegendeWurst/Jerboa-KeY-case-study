@@ -13,7 +13,7 @@ public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERul
 	//@ public invariant \invariant_for(left) && \invariant_for(right);
 	//@ public accessible \inv: footprint;
 
-	protected JMEModeler modeler;
+	public final JMEModeler modeler;
 	protected String name;
 	protected String category;
 
@@ -49,10 +49,6 @@ public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERul
 
 	public String toString() {
 		return getName();
-	}
-
-	public JMEModeler getModeler() {
-		return modeler;
 	}
 
 	public String getCategory() {
