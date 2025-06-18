@@ -349,22 +349,39 @@ public final class JMEVerifTopoClassic {
         return null;
     }
 
-    /*@ public normal_behaviour
+    /*@ public normal_behavior
+      @ requires
+      @  \invariant_for(a)
+      @  && \invariant_for(b)
+      @  && (\forall \bigint i; 0 <= i < a.seq.length; (Object)a.seq[i] != null)
+      @  && (\forall \bigint i; 0 <= i < b.seq.length; (Object)b.seq[i] != null)
+      @ ;
       @ ensures \result == (\sum int i; 0 <= i && i < a.seq.length; b.contains((Object)a.seq[i]) ? 1 : 0);
       @ assignable \nothing;
       @*/
     private static int intersectionSize(Set a, List b) {
         int count = 0;
+        //@ ghost \seq values;
+        //@ set values = \seq_empty;
+        Iterator it = a.iterator();
         /*@ loop_invariant
-          @ 0 <= \index && \index <= a.seq.length
-          @  && count == (\sum int i; 0 <= i && i < \index; b.contains((Object)a.seq[i]) ? 1 : 0);
-          @ decreasing a.size() - \index;
-          @ assignable count;
+          @ it.seq == a.seq
+          @  && \invariant_for(b)
+          @  && \invariant_for(it)
+          @  && (\forall \bigint i; 0 <= i < a.seq.length; (Object)a.seq[i] != null)
+          @  && (\forall \bigint i; 0 <= i < b.seq.length; (Object)b.seq[i] != null)
+          @  && it.index == values.length
+          @  && values == a.seq[0 .. values.length]
+          @  && count == (\sum int i; 0 <= i && i < values.length; b.contains((Object)values[i]) ? 1 : 0);
+          @ decreasing a.size() - values.length;
+          @ assignable count, it.index, values;
           @*/
-        for (Object x : a) {
+        while (it.hasNext()) {
+            Object x = it.next();
             if (b.contains(x)) {
                 count++;
             }
+            //@ set values = \seq_concat(values, \seq_singleton(x));
         }
         return count;
     }

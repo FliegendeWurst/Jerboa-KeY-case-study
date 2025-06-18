@@ -10,7 +10,13 @@ public interface Collection extends java.lang.Iterable
    //@ public instance invariant \subset(\singleton(footprint), footprint);
    //@ public instance invariant \subset(\singleton(seq), footprint);
 
+   //@ public instance invariant (\forall int i; 0 <= i && i < seq.length; \dl_created((Object)seq[i]));
+
+   //@ public instance ghost \TYPE elementType;
    //@ public instance ghost \seq seq;
+
+   // would be nice to have, but requires proof changes: public instance invariant (\forall int i; 0 <= i && i < seq.length; seq[i] instanceof elementType);
+   // also nice perhaps: public instance invariant (\forall int i; 0 <= i && i < seq.length; \invariant_for(seq[i]));
 
    /*@ public normal_behavior
      @ ensures \result == seq.length;
@@ -49,13 +55,22 @@ public interface Collection extends java.lang.Iterable
    /*@ public normal_behavior
      @ ensures \result == (\exists \bigint i; 0 <= i && i < seq.length; ((Object)seq[i]) == arg0);
      @ assignable \nothing;
+     @ accessible seq, arg0;
      @ determines \result \by seq, arg0;
      @*/
    public boolean contains(Object arg0);
    public boolean containsAll(java.util.Collection arg0);
-   
+
+   /*@ public normal_behavior
+     @ ensures \fresh(\result);
+     @ ensures \result.elementType == elementType;
+     @ ensures \result.seq == seq;
+     @ ensures \result.index == 0;
+     @ ensures \invariant_for(\result);
+     @ assignable \nothing;
+     @*/
    public java.util.Iterator iterator();
-   
+
    public java.lang.Object[] toArray();
    public java.lang.Object[] toArray(java.lang.Object[] arg0);
 }
