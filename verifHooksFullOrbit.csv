@@ -1,0 +1,49 @@
+open goals;0
+Nodes;33,035
+Branches;294
+Interactive steps;189
+Symbolic execution steps;354
+Automode time;35min
+Automode time;2128917ms
+Avg. time per step;64.446ms
+Rule applications
+Quantifier instantiations;215
+One-step Simplifier apps;3376
+SMT solver apps;0
+Dependency Contract apps;8
+Operation Contract apps;36
+Block/Loop Contract apps;0
+Loop invariant apps;1
+Merge Rule apps;0
+Total rule apps;44,957
+interactive;applyEq;27
+interactive;andRight;24
+interactive;seqGetAlphaCast;21
+interactive;impLeft;19
+interactive;eqTermCut;16
+interactive;allLeft;15
+interactive;ineffectiveCast;14
+interactive;ineffectiveCast2;7
+interactive;replace_known_left;7
+interactive;castedGetAny;5
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMENode;4
+interactive;applyEqReverse;4
+interactive;allRight;3
+interactive;exLeft;3
+interactive;ifthenelse_split;3
+interactive;One Step Simplification;2
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;1
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMERule;1
+interactive;Class_invariant_axiom_for_up_jerboa_core_JerboaOrbit;1
+interactive;Evaluate Query;1
+interactive;close;1
+interactive;doubleImpLeft;1
+interactive;exRight;1
+interactive;false_right;1
+interactive;instAll;1
+interactive;notLeft;1
+interactive;notRight;1
+interactive;replace_known_right;1
+interactive;selectCreatedOfAnon;1
+interactive;selectOfAnonEQ;1
+interactive;split_or_strong;1

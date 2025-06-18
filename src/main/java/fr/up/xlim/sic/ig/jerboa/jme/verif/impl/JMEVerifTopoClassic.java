@@ -28,6 +28,10 @@ public final class JMEVerifTopoClassic {
         if (error != null) {
             return error;
         }
+        error = verifHooksFullOrbit(rule);
+        if (error != null) {
+            return error;
+        }
         error = verifHooks(rule);
         if (error != null) {
             return error;
@@ -266,7 +270,7 @@ public final class JMEVerifTopoClassic {
 
     /*@ public normal_behavior
       @ requires \invariant_for(rule)
-      @  && \static_invariant_for(JMERuleErrorSeverity) && \static_invariant_for(JMERuleErrorType);
+      @  && JMERuleErrorSeverity.CRITIQUE != null && JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (\result != null) <==>
       @  (\exists int i; 0 <= i && i < rule.left.nodes.seq.length;
       @    ((JMENode)rule.left.nodes.seq[i]).kind == JMENodeKind.HOOK
@@ -306,12 +310,6 @@ public final class JMEVerifTopoClassic {
     JMERuleError verifHooks(JMERule rule) {
         List/*<JMENode>*/ hooks = rule.getHooks();
         JMEGraph left = rule.left;
-
-        // Verification of full orbit for hooks
-        JMERuleError error = verifHooksFullOrbit(rule);
-        if (error != null) {
-            return error;
-        }
 
         // Preparation of the connected component orbit for the chosen dimension
         int[] tabOrbitConnexComponent = new int[rule.modeler.dimension + 1];
