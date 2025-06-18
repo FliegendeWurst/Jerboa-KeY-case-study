@@ -4,7 +4,7 @@ public final class ArrayList implements java.util.List {
 
     /*@ public normal_behavior
       @ ensures seq.length == 0;
-      @ ensures \fresh(this) && \fresh(this.*);
+      @ ensures \fresh(this) && \fresh(this.*) && \fresh(this.footprint);
       @ determines seq \by \nothing;
       @*/
     public /*@pure@*/ ArrayList();

@@ -116,12 +116,44 @@ public final class JMEGraph implements JMEElement {
 		return listHook;
 	}
 
+    /*@ public normal_behavior
+      @ requires \invariant_for(this);
+      @ ensures (\forall int a; 0 <= a && a < \result.seq.length;
+      @           \result.seq[a] instanceof JMEArc
+      @           && \invariant_for((JMEArc)\result.seq[a])
+      @           && (\exists int j; 0 <= j && j < arcs.seq.length;
+      @             \result.seq[a] == arcs.seq[j] && ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node))
+      @  && (\forall int j; 0 <= j && j < arcs.seq.length;
+      @       ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node
+      @        ==> (\exists int a; 0 <= a && a < \result.seq.length;
+      @             \result.seq[a] == arcs.seq[j]))
+      @  && \fresh(\result);
+      @ assignable \nothing;
+      @*/
 	public List/*<JMEArc>*/ getIncidentArcsFromNode(JMENode node) {
 		ArrayList/*<JMEArc>*/ incidentArcs = new ArrayList();
-		List list = arcs;
-        for (int i = 0; i < list.size(); i++) {
-            JMEArc arc = (JMEArc) list.get(i);
-            if (arc.getSource() == node || arc.getDestination() == node) { // Undirected graph
+        int arcsSize = arcs.size();
+        /*@ loop_invariant
+          @  i >= 0 && i <= arcsSize
+          @   && arcsSize == arcs.size()
+          @   && \invariant_for(this)
+          @   && \invariant_for(incidentArcs)
+          @   && \disjoint(this.footprint,incidentArcs.footprint)
+          @   && (\forall int a; 0 <= a && a < incidentArcs.seq.length;
+          @           incidentArcs.seq[a] instanceof JMEArc
+          @           && \invariant_for((JMEArc)incidentArcs.seq[a])
+          @           && (\exists int j; 0 <= j && j < arcs.seq.length;
+          @             incidentArcs.seq[a] == arcs.seq[j] && ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node))
+          @  && (\forall int j; 0 <= j && j < i;
+          @       ((JMEArc)arcs.seq[j]).a == node || ((JMEArc)arcs.seq[j]).b == node
+          @        ==> (\exists int a; 0 <= a && a < incidentArcs.seq.length;
+          @             incidentArcs.seq[a] == arcs.seq[j]));
+          @ decreases arcsSize - i;
+          @ assignable incidentArcs.seq;
+          @*/
+        for (int i = 0; i < arcsSize; i++) {
+            JMEArc arc = (JMEArc) arcs.get(i);
+            if (arc.a == node || arc.b == node) { // Undirected graph
                 incidentArcs.add(arc);
             }
         }
