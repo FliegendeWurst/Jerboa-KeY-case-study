@@ -10,10 +10,10 @@ package fr.up.xlim.sic.ig.jerboa.jme.model;
  */
 public class JMEArc implements JMEElement{
     // topological parameters
-    protected JMENode a;
-    protected JMENode b;
-    protected /*@ spec_public */ int dim;
-    protected JMEGraph graph;
+    public final JMENode a;
+    public final JMENode b;
+    public final int dim;
+    public final JMEGraph graph;
     
     public JMEArc(JMEGraph graph, JMENode a, JMENode b, int dim) {
         this.a = a;
