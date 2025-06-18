@@ -115,8 +115,8 @@ public final class JMEVerifTopoClassic {
     /*@ public normal_behavior
       @ requires \invariant_for(graph) && \invariant_for(rule);
       @ requires rule.left == graph || rule.right == graph;
-      @ requires \static_invariant_for(JMERuleErrorSeverity);
-      @ requires \static_invariant_for(JMERuleErrorType);
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (!graph.hasCorrectDimensionsNodes(modDim)) <==> (\result != null);
       @ assignable \nothing;
       @*/
