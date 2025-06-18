@@ -1,0 +1,49 @@
+open goals;0
+Nodes;12,799
+Branches;147
+Interactive steps;149
+Symbolic execution steps;252
+Automode time;122.3s
+Automode time;122330ms
+Avg. time per step;9.558ms
+Rule applications
+Quantifier instantiations;11
+One-step Simplifier apps;1598
+SMT solver apps;0
+Dependency Contract apps;10
+Operation Contract apps;27
+Block/Loop Contract apps;0
+Loop invariant apps;1
+Merge Rule apps;0
+Total rule apps;21,413
+interactive;andRight;28
+interactive;One Step Simplification;25
+interactive;Evaluate Query;10
+interactive;allLeft;9
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;8
+interactive;notRight;8
+interactive;impLeft;7
+interactive;Use Dependency Contract;6
+interactive;orRight;6
+interactive;applyEq;4
+interactive;selectOfAnonEQ;4
+interactive;andLeft;3
+interactive;applyEqReverse;3
+interactive;false_right;3
+interactive;replace_known_right;3
+interactive;allRight;2
+interactive;cut_direct;2
+interactive;eqTermCut;2
+interactive;impRight;2
+interactive;notLeft;2
+interactive;replace_known_left;2
+interactive;Definition_axiom_for_verifyDimensionsArcs_in_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;1
+interactive;castedGetAny;1
+interactive;closeTrue;1
+interactive;eqSymm;1
+interactive;orLeft;1
+interactive;precOfInt;1
+interactive;selectCreatedOfAnon;1
+interactive;selectCreatedOfAnonEQ;1
+interactive;seqGetAlphaCast;1
+interactive;true_left;1
