@@ -219,7 +219,8 @@ public final class JMEVerifTopoClassic {
     JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
         List/*<JMENode>*/ leftNodes = graph.nodes;
-        for (int i = 0; i < leftNodes.size(); i++) {
+        int leftNodesSize = leftNodes.size();
+        for (int i = 0; i < leftNodesSize; i++) {
             JMENode node = (JMENode) leftNodes.get(i);
 
             // The name is already present, we add errors.
