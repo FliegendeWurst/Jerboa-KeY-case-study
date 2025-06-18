@@ -1,0 +1,44 @@
+open goals;0
+Nodes;56,926
+Branches;302
+Interactive steps;157
+Symbolic execution steps;330
+Automode time;186.7s
+Automode time;186744ms
+Avg. time per step;3.280ms
+Rule applications
+Quantifier instantiations;354
+One-step Simplifier apps;6591
+SMT solver apps;0
+Dependency Contract apps;10
+Operation Contract apps;22
+Block/Loop Contract apps;0
+Loop invariant apps;1
+Merge Rule apps;0
+Total rule apps;72,897
+interactive;andRight;24
+interactive;applyEq;22
+interactive;eqTermCut;16
+interactive;seqGetAlphaCast;12
+interactive;impLeft;11
+interactive;One Step Simplification;10
+interactive;allLeft;10
+interactive;castedGetAny;8
+interactive;Class_invariant_axiom_for_fr_up_xlim_sic_ig_jerboa_jme_model_JMEGraph;7
+interactive;ineffectiveCast;6
+interactive;ineffectiveCast2;6
+interactive;Use Dependency Contract;5
+interactive;exLeft;3
+interactive;ifthenelse_split;3
+interactive;getOfSeqConcat;2
+interactive;replace_known_left;2
+interactive;Evaluate Query;1
+interactive;allRight;1
+interactive;applyEqReverse;1
+interactive;castDel;1
+interactive;closeFalse;1
+interactive;exRight;1
+interactive;getOfSeqSingleton;1
+interactive;hide_left;1
+interactive;impRight;1
+interactive;notRight;1

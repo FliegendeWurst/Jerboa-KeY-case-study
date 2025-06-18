@@ -229,7 +229,7 @@ public final class JMEVerifTopoClassic {
 
     /*@ public normal_behavior
       @ requires \invariant_for(graph);
-      @ requires \static_invariant_for(JMERuleErrorSeverity) && \static_invariant_for(JMERuleErrorType);
+      @ requires JMERuleErrorSeverity.CRITIQUE != null && JMERuleErrorType.TOPOLOGIC != null;
       @ ensures (\exists \bigint a; 0 <= a && a < graph.nodes.seq.length;
       @           (\exists \bigint b; a < b && b < graph.nodes.seq.length;
       @             ((JMENode)graph.nodes.seq[a]).name == ((JMENode)graph.nodes.seq[b]).name
@@ -243,6 +243,7 @@ public final class JMEVerifTopoClassic {
         /*@ loop_invariant
           @ 0 <= i && i <= leftNodesSize
           @  && (\forall \bigint j; 0 <= j && j < i; (existingNamesLeft.key_seq[j] == ((JMENode)leftNodes.seq[j]).name))
+          @  && \disjoint(graph.footprint,existingNamesLeft.footprint)
           @  && \invariant_for(graph)
           @  && \invariant_for(existingNamesLeft)
           @  && leftNodes == graph.nodes
