@@ -16,18 +16,12 @@ public final class JMEGraph implements JMEElement {
 
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
-	//@ public invariant \subset(\singleton(footprint), footprint);
-	//@ public invariant \subset(this.nodes.footprint, footprint);
-	// public invariant \subset((\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), footprint);
-	//@ public invariant (\forall int i; 0 <= i && i < nodes.seq.length; \subset(((JMENode)nodes.seq[i]).footprint, footprint));
-	//@ public invariant \subset(this.arcs.footprint, footprint);
-	//@ public invariant \subset(\singleton(this.isleft), footprint);
-	//@ public invariant \subset(\singleton(this.owner), footprint);
+	//@ public invariant footprint == \set_union(\singleton(footprint), this.nodes.footprint, (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).footprint), this.arcs.footprint, \singleton(this.isleft), \singleton(this.owner));
 
 	 /*@ requires \invariant_for(this);
 	   @ accessible nodes,nodes.footprint,
 	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit),
-	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit.footprint);
+	   @   (\infinite_union int i; 0<=i && i<nodes.seq.length; ((JMENode)nodes.seq[i]).orbit.dim[*]);
 	   @ helper model public boolean hasCorrectDimensionsNodes(int modDim) {
            return (\forall int i;
              0 <= i && i < nodes.seq.length;
@@ -37,8 +31,6 @@ public final class JMEGraph implements JMEElement {
              );
          }
        @*/
-
-	// ((JMENode)nodes.seq[i]).orbit.verifyDimensions(modDim)
 
 	/*@ requires \invariant_for(this);
 	  @ accessible arcs,arcs.footprint;
@@ -107,6 +99,7 @@ public final class JMEGraph implements JMEElement {
 	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length;
 	  		  @       (\exists int b; 0 <= b && b < this.nodes.seq.length;
 	  		  @         listHook.seq[a] == this.nodes.seq[b] && ((JMENode)this.nodes.seq[b]).kind == JMENodeKind.HOOK))
+	  		  @  && (\forall int a; 0 <= a && a < listHook.seq.length; listHook.seq[a] instanceof JMENode && \invariant_for((JMENode)listHook.seq[a]))
 	  		  @  && \invariant_for(nodes)
 	  		  @  && \invariant_for(this)
 	  		  @  && nodesSize == nodes.size();

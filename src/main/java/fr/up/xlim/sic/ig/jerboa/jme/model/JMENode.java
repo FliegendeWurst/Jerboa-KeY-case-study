@@ -15,8 +15,7 @@ public final class JMENode implements JMEElement {
 
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
-	//@ public invariant \subset(\singleton(footprint), footprint);
-	//@ public invariant \subset(orbit.footprint, footprint);
+	//@ public invariant footprint == \set_union(\singleton(footprint), orbit.footprint);
 
 	//@ public invariant \invariant_for(this.orbit);
 

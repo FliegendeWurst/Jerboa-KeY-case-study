@@ -174,7 +174,7 @@ public final class JMEVerifTopoClassic {
           @ 0 <= i && i <= leftArcsSize
           @  && leftArcsSize == leftArcs.size()
           @  && (\forall int a; 0 <= a && a < i;
-          @       ((JMEArc)leftArcs.get(a)).dim >= 0 && ((JMEArc)leftArcs.get(a)).dim <= modDim
+          @       ((JMEArc)leftArcs.seq[a]).dim >= 0 && ((JMEArc)leftArcs.seq[a]).dim <= modDim
           @     );
           @ assignable \nothing;
           @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
