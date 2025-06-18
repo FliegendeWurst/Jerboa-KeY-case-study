@@ -108,7 +108,8 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 */
 	/*@ public normal_behaviour
       @ ensures \result == (\exists int i; 0 <= i < dim.length; dim[i] == alpha);
-	  @ pure
+      @ accessible dim[*];
+	  @ assignable \nothing;
 	  @*/
 	public boolean contains(int alpha) {
 		/*@ loop_invariant
