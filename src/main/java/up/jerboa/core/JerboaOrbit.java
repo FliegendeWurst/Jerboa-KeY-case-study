@@ -39,11 +39,37 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 *  
 	 *  @param dimensions is the sequence of integer that correspond to the alpha index of an orbit.
 	 */
-	/*@ public normal_behaviour
+	/*@ public normal_behavior
+	  @ requires (\forall \bigint i; 0 <= i < dimensions.length; dimensions[i] >= -1);
 	  @ ensures this.dim == dimensions;
+	  @ ensures \fresh(this);
+	  @ assignable dim;
 	  @*/
 	public JerboaOrbit(int[] dimensions) {
 		dim = dimensions;
+		//@ set footprint = \set_union(\singleton(footprint), this.dim[*]);
+	}
+
+	/*@ public normal_behavior
+	  @ requires size >= 0;
+	  @ ensures \fresh(\result);
+	  @ ensures \invariant_for(\result);
+	  @ ensures \result.dim.length == size;
+	  @ ensures (\forall \bigint i; 0 <= i && i < \result.dim.length; \result.dim[i] == i);
+	  @ assignable \nothing;
+	  @*/
+	public static JerboaOrbit makeCC(int size) {
+		// Preparation of the connected component orbit for the chosen dimension
+		int[] tabOrbitConnexComponent = new int[size];
+        /*@ loop_invariant
+          @  i >= 0 && i <= tabOrbitConnexComponent.length
+          @   && (\forall int j; j >= 0 && j < i; tabOrbitConnexComponent[j] == j);
+          @ decreases tabOrbitConnexComponent.length - i;
+          @ assignable tabOrbitConnexComponent[*];
+          @*/
+		for (int i = 0; i < tabOrbitConnexComponent.length; i++)
+			tabOrbitConnexComponent[i] = i;
+		return new JerboaOrbit(tabOrbitConnexComponent);
 	}
 
 	/**
@@ -152,6 +178,7 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 
 	/*@ public normal_behavior
 	  @ ensures \result == dim.length;
+	  @ accessible \nothing;
 	  @ strictly_pure
 	  @*/
 	public int size() {
