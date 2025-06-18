@@ -201,8 +201,24 @@ public final class JMEVerifTopoClassic {
 
         // Left Graph
         JMEGraph left = rule.left;
+        JMERuleError error = verifDuplicateNodeGraph(rule, left);
+        if (error != null) {
+            return error;
+        }
+
+        // Right Graph
+        JMEGraph right = rule.right;
+        error = verifDuplicateNodeGraph(rule, right);
+        if (error != null) {
+            return error;
+        }
+
+        return null;
+    }
+
+    JMERuleError verifDuplicateNodeGraph(JMERule rule, JMEGraph graph) {
         HashMap/*<String, JMENode>*/ existingNamesLeft = new HashMap();
-        List/*<JMENode>*/ leftNodes = left.nodes;
+        List/*<JMENode>*/ leftNodes = graph.nodes;
         for (int i = 0; i < leftNodes.size(); i++) {
             JMENode node = (JMENode) leftNodes.get(i);
 
@@ -214,23 +230,6 @@ public final class JMEVerifTopoClassic {
             // The name is not present, we add it to the HashMap.
             else
                 existingNamesLeft.put(node.getName(), node);
-        }
-
-        // Right Graph
-        JMEGraph right = rule.right;
-        HashMap/*<String, JMENode>*/ existingNamesRight = new HashMap();
-        List/*<JMENode>*/ rightNodes = right.nodes;
-        for (int i = 0; i < rightNodes.size(); i++) {
-            JMENode node = (JMENode) rightNodes.get(i);
-
-            // The name is already present, we add errors.
-            if (existingNamesRight.containsKey(node.getName())) {
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, node);
-            }
-
-            // The name is not present, we add it to the HashMap.
-            else
-                existingNamesRight.put(node.getName(), node);
         }
 
         return null;
