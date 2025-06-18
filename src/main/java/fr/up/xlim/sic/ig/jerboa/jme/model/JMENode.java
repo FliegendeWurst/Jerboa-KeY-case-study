@@ -36,7 +36,7 @@ public final class JMENode implements JMEElement {
 		this.graph = graph;
 		this.name = name;
 
-		this.orbit = new JerboaOrbit();
+		this.orbit = new JerboaOrbit(new int[0]);
 		this.kind = k;
 	}
 

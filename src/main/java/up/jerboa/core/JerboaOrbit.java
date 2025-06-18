@@ -39,9 +39,9 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 	 *  @param dimensions is the sequence of integer that correspond to the alpha index of an orbit.
 	 */
 	/*@ public normal_behaviour
-	  @ ensures this != null;
+	  @ ensures this.dim == dimensions;
 	  @*/
-	public JerboaOrbit(int... dimensions) {
+	public JerboaOrbit(int[] dimensions) {
 		dim = dimensions;
 	}
 
