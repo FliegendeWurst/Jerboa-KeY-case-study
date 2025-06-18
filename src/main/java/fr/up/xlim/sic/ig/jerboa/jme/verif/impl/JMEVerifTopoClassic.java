@@ -92,8 +92,10 @@ public final class JMEVerifTopoClassic {
       @*/
     JMERuleError verifDimensionGraph(JMERule rule, int modDim, JMEGraph graph) {
         // Orbits
-        List/*<JMENode>*/ leftNodes = graph.getNodes();
+        List/*<JMENode>*/ leftNodes = graph.getNodes(); // graph.nodes == result_getNodes
         int leftNodesSize = leftNodes.size();
+        //@ assert \invariant_for(graph);
+        //@ assert \invariant_for(rule);
         /*@ loop_invariant
           @ 0 <= j && j <= leftNodesSize
           @  && leftNodesSize == leftNodes.size()
@@ -130,9 +132,21 @@ public final class JMEVerifTopoClassic {
 
         // Arcs
         List/*<JMEArc>*/ leftArcs = graph.getArcs();
-        for (int i = 0; i < leftArcs.size(); i++) {
+        int leftArcsSize = leftArcs.size();
+        /*@ loop_invariant
+          @ 0 <= i && i <= leftArcsSize
+          @  && leftArcsSize == leftArcs.size()
+          @  && (\forall int a; 0 <= a && a < i;
+          @       ((JMEArc)leftArcs.get(a)).dim >= 0 && ((JMEArc)leftArcs.get(a)).dim <= modDim
+          @     );
+          @ assignable \nothing;
+          @ maintaining \invariant_for(graph) && \invariant_for(rule) && graph != null && rule != null
+          @  && (rule.left == graph || rule.right == graph);
+          @ decreases leftArcsSize - i;
+          @*/
+        for (int i = 0; i < leftArcsSize; i++) {
             JMEArc arc = (JMEArc) leftArcs.get(i);
-            if (arc.getDimension() > modDim || arc.getDimension() < 0) {
+            if (arc.dim > modDim || arc.dim < 0) {
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, arc);
             }
         }
