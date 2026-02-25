@@ -43,6 +43,23 @@ public class JMEArc implements JMEElement{
         return b;
     }
 
+    /*@ public normal_behavior
+      @ requires cur == a || cur == b;
+      @ ensures
+      @ (cur == a ==> \result == b)
+      @ && (cur == b ==> \result == a)
+      @ ;
+      @ assignable \strictly_nothing;
+      @*/
+    public JMENode oppositeNode(JMENode cur) {
+        if (a == cur)
+            return b;
+        else if (b == cur)
+            return a;
+        else
+            throw new IllegalArgumentException();
+    }
+
     public String toString() {
         return "("+a.toString()+"--"+dim+"--"+b.toString()+")";
     }
