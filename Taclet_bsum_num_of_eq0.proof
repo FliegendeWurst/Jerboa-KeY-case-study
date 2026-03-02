@@ -82,7 +82,7 @@
     "class" : "de.uka.ilkd.key.taclettranslation.lemma.TacletProofObligationInput",
     "definitionFile" : "unknown",
     "name" : "bsum_num_of_eq0",
-    "tacletFile" : "/home/arne/src/Jerboa-KeY-case-study/rules.key"
+    "tacletFile" : "rules.key"
  }
 
 \proof {
