@@ -28,12 +28,12 @@ public final class JMEVerifTopoClassic {
         if (error != null) {
             return error;
         }
-        error = verifHooksFullOrbit(rule); // done, re-do proof
+        error = verifHooksFullOrbit(rule); // done
         if (error != null) {
             return error;
         }
         JerboaOrbit orbitCC = JerboaOrbit.makeCC(rule.modeler.dimension + 1);
-        error = verifHooks(rule, orbitCC); // todo
+        error = verifHooks(rule, orbitCC); // done
         if (error != null) {
             return error;
         }
@@ -537,45 +537,99 @@ public final class JMEVerifTopoClassic {
      * @param rule   Rule to verify.
      * @return non-null error if check fails
      */
-    JMERuleError verifNodeOrbitSizes(JMERule rule) {
+    /*@ public normal_behavior
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ requires
+      @  \invariant_for(rule)
+      @  && rule.hasHookIfNotEmpty()
+      @  && rule.left.nodesAreUnique()
+      @ ;
+      @ ensures (\result == null) <==>
+      @  (
+      @   (\exists int s; 0 <= s;
+      @     (\forall \bigint i; 0 <= i && i < rule.left.nodes.seq.length; ((JMENode)rule.left.nodes.seq[i]).orbit.dim.length == s)
+      @     && (\forall \bigint i; 0 <= i && i < rule.right.nodes.seq.length; ((JMENode)rule.right.nodes.seq[i]).orbit.dim.length == s)
+      @   )
+      @  );
+      @ assignable \nothing;
+      @*/
+    /*@ nullable @*/ JMERuleError verifNodeOrbitSizes(JMERule rule) {
         int length;
         JMENode node = null;
-        if (rule.getHooks().isEmpty()) {
-            if (rule.right.nodes.isEmpty())
-                return null;
-            else
-                node = (JMENode) rule.right.nodes.get(0);
-        } else
-            node = (JMENode) rule.getHooks().get(0);
+        List/*<JMENode>*/ hooks = rule.getHooks();
+        /*@ return_behavior
+          @ requires
+          @  \invariant_for(hooks) && hooks != null
+          @  && \invariant_for(rule) && rule != null && rule.right != null && rule.right.nodes != null
+          @  && hooks.isEmpty()
+          @  && rule.right.nodes.isEmpty();
+          @ returns \result == null;
+          @ assignable \nothing;
+          @ also
+          @ normal_behavior
+          @ requires
+          @  \invariant_for(hooks) && hooks != null
+          @  && \invariant_for(rule) && rule != null && rule.right != null && rule.right.nodes != null
+          @  && (\forall int a; 0 <= a && a < hooks.seq.length; hooks.seq[a] instanceof JMENode && \invariant_for((JMENode)hooks.seq[a]))
+          @  && (!hooks.isEmpty() || !rule.right.nodes.isEmpty());
+          @ ensures
+          @  (\exists \bigint i; 0 <= i && i < hooks.seq.length; node == (JMENode)hooks.seq[i])
+          @  || (\exists \bigint i; 0 <= i && i < rule.right.nodes.seq.length; node == (JMENode)rule.right.nodes.seq[i]);
+          @ assignable node;
+          @*/
+        /*@ nullable @*/ {
+            if (hooks.isEmpty()) {
+                if (rule.right.nodes.isEmpty())
+                    return null;
+                else
+                    node = (JMENode) rule.right.nodes.get(0);
+            } else
+                node = (JMENode) hooks.get(0);
+        }
         length = node.orbit.size();
 
         // Left graph
         List/*<JMENode>*/ leftNodes = rule.left.nodes;
-        for (int i = 0; i < leftNodes.size(); i++) {
-            JMENode n = (JMENode) leftNodes.get(i);
-
-            // Orbit too small
-            if (n.orbit.size() < length)
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
-
-                // Orbit too large
-            else if (n.orbit.size() > length)
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
+        JMERuleError error = verifNodeOrbitSizesList(leftNodes, length, rule);
+        if (error != null) {
+            return error;
         }
         // Right graph
         List/*<JMENode>*/ rightNodes = rule.right.nodes;
-        for (int i = 0; i < rightNodes.size(); i++) {
-            JMENode n = (JMENode) rightNodes.get(i);
+        return verifNodeOrbitSizesList(rightNodes, length, rule);
+    }
 
-            // Orbit too small
-            if (n.orbit.size() < length)
-                return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
+    /*@ public normal_behavior
+      @ requires JMERuleErrorSeverity.CRITIQUE != null;
+      @ requires JMERuleErrorType.TOPOLOGIC != null;
+      @ requires
+      @  (\forall \bigint i; 0 <= i && i < nodes.seq.length; nodes.seq[i] instanceof JMENode && \invariant_for((JMENode)nodes.seq[i]))
+      @  && \invariant_for(nodes)
+      @ ;
+      @ ensures (\result != null) <==>
+      @  (\exists \bigint i; 0 <= i && i < nodes.seq.length; ((JMENode)nodes.seq[i]).orbit.dim.length != length)
+      @ ;
+      @*/
+    /*@ nullable @*/ JMERuleError verifNodeOrbitSizesList(List/*<JMENode>*/ nodes, int length, JMERule rule) {
+        int nodesSize = nodes.size();
+        /*@ loop_invariant
+          @  0 <= i && i <= nodesSize
+          @  && nodesSize == nodes.size()
+          @  && \invariant_for(nodes)
+          @  && (\forall \bigint j; 0 <= j && j < nodes.seq.length; nodes.seq[j] instanceof JMENode && \invariant_for((JMENode)nodes.seq[j]))
+          @  && (\forall \bigint j; 0 <= j && j < i; ((JMENode)nodes.seq[j]).orbit.dim.length == length)
+          @ ;
+          @ decreases nodesSize - i;
+          @ assignable \nothing;
+          @*/
+        for (int i = 0; i < nodesSize; i++) {
+            JMENode n = (JMENode) nodes.get(i);
 
-                // Orbit too large
-            else if (n.orbit.size() > length)
+            // Orbit too small or too large
+            if (n.orbit.size() != length)
                 return new JMERuleError(JMERuleErrorSeverity.CRITIQUE, JMERuleErrorType.TOPOLOGIC, rule, n);
         }
-
         return null;
     }
 
