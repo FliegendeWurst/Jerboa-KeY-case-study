@@ -253,6 +253,238 @@ public final class JMEGraph implements JMEElement {
 		return visited;
 	}
 
+    /*@ public normal_behavior
+      @ requires
+      @  \invariant_for(orbit)
+      @  && \invariant_for(stack)
+      @  && \invariant_for(visited)
+      @  && \invariant_for(this) && this.arcsAreUnique()
+      @  && visited.seq != stack.seq
+      @  && (\forall int i; 0 <= i && i < stack.seq.length; stack.seq[i] instanceof JMENode)
+      @  && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode)
+      @ ;
+      @ ensures
+      @  \fresh(\result)
+      @  && \result.seq != stack.seq
+      @  && \result.seq != visited.seq
+      @  && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode)
+      @  && (\forall \bigint i; 0 <= i && i < \old(visited).seq.length; visited.seq[i] == \old(visited).seq[i])
+      @  && (\forall int i; 0 <= i && i < stack.seq.length;
+      @      !(\exists int j; 0 <= j && j < \old(visited).seq.length; \old(visited).seq[j] == stack.seq[i])
+      @      ==> (\forall int j; 0 <= j && j < nodes.seq.length;
+      @            hasArc((JMENode)stack.seq[i], (JMENode)nodes.seq[j], orbit)
+      @            ==>
+      @            (\exists int k; 0 <= k && k < \result.seq.length; \result.seq[k] == nodes.seq[j])
+      @          )
+      @          && (\exists int j; 0 <= j && j < visited.seq.length; visited.seq[j] == stack.seq[i])
+      @     )
+      @ ;
+      @ assignable visited.seq;
+      @*/
+    private List/*<JMENode>*/ orbitIteration(List/*<JMENode>*/ stack, Set/*<JMENode>*/ visited, JerboaOrbit orbit) {
+        List/*<JMENode>*/ newStack = new ArrayList();
+        int stackSize = stack.size();
+
+        //@ ghost \seq oldVisited = visited.seq;
+
+        /*@ loop_invariant
+          @ 0 <= j && j <= stackSize
+          @ && stackSize == stack.size()
+          @ && (\forall \bigint i; 0 <= i && i < j;
+          @      (\exists \bigint k; 0 <= k && k < visited.seq.length;
+          @        visited.seq[k] == stack.seq[i]
+          @      )
+          @ )
+          @ && (\forall \bigint i; oldVisited.length <= i && i < visited.seq.length;
+          @      (\forall int k; 0 <= k && k < nodes.seq.length;
+          @        hasArc((JMENode)visited.seq[i], (JMENode)nodes.seq[k], orbit)
+          @         ==>
+          @        (\exists int l; 0 <= l && l < newStack.seq.length; newStack.seq[l] == nodes.seq[k])
+          @      )
+          @      && (\exists \bigint k; 0 <= k && k < stack.seq.length;
+          @           stack.seq[k] == visited.seq[i]
+          @      )
+          @ )
+          @ && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode)
+          @ && (\forall int i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode)
+          @ && \invariant_for(visited)
+          @ && \invariant_for(newStack)
+          @ && \invariant_for(this)
+          @ && visited.seq != newStack.seq
+          @ ;
+          @ decreases stackSize - j;
+          @ assignable visited.seq, newStack.seq;
+          @*/
+        for (int j = 0; j < stackSize; j++) {
+            JMENode cur = (JMENode) stack.get(j);
+            if (!visited.contains(cur)) {
+                visited.add(cur);
+                orbitIterationPart(cur, orbit, newStack);
+            } // for all incident arcs
+        } // if node is still not visited
+        // NEW: remove all already visited nodes from newStack
+        removeAll(newStack, visited);
+        return newStack;
+    }
+
+    /*@ public normal_behavior
+      @ requires \invariant_for(this) && this.arcsAreUnique();
+      @ requires \invariant_for(orbit);
+      @ requires \invariant_for(newStack);
+      @ ensures
+      @  \invariant_for(newStack)
+      @  && (\forall \bigint i; 0 <= i && i < \old(newStack.seq.length); newStack.seq[i] == \old(newStack.seq)[i])
+      @  && (\forall \bigint i; 0 <= i && i < nodes.seq.length;
+      @       hasArc(cur, (JMENode)nodes.seq[i], orbit)
+      @        ==>
+      @       (\exists \bigint j; 0 <= j && j < newStack.seq.length; newStack.seq[j] == nodes.seq[i])
+      @  )
+      @ ;
+      @ assignable newStack.seq;
+      @*/
+    private void orbitIterationPart(JMENode cur, JerboaOrbit orbit, List/*<JMENode>*/ newStack) {
+        //@ ghost \seq oldNewStack = newStack.seq;
+
+        List/*<JMEArc>*/ arcsIncident = getIncidentArcsFromNode(cur);
+        int arcsIncidentSize = arcsIncident.size();
+        /*@ loop_invariant
+          @ 0 <= i && i <= arcsIncidentSize
+          @ && (\forall \bigint j; 0 <= j && j < oldNewStack.length; newStack.seq[j] == oldNewStack[j])
+          @ && (\forall \bigint j; 0 <= j && j < i;
+          @      (((JMEArc)arcsIncident.seq[j]).dim >= 0 && orbit.contains(((JMEArc)arcsIncident.seq[j]).dim))
+          @       ==>
+          @      (
+          @       (
+          @        ((JMEArc)arcsIncident.seq[j]).a == cur
+          @         ==>
+          @        (\exists \bigint k; oldNewStack.length <= k && k < newStack.seq.length; newStack.seq[k] == ((JMEArc)arcsIncident.seq[j]).b)
+          @       )
+          @       && (
+          @        ((JMEArc)arcsIncident.seq[j]).b == cur
+          @         ==>
+          @        (\exists \bigint k; oldNewStack.length <= k && k < newStack.seq.length; newStack.seq[k] == ((JMEArc)arcsIncident.seq[j]).a)
+          @       )
+          @      )
+          @ )
+          @ && (\forall \bigint j; oldNewStack.length <= j && j < newStack.seq.length;
+          @      (\exists \bigint k; 0 <= k && k < arcsIncident.seq.length;
+          @        ((JMEArc)arcsIncident.seq[k]).dim >= 0
+          @        && orbit.contains(((JMEArc)arcsIncident.seq[k]).dim)
+          @        && (
+          @             (((JMEArc)arcsIncident.seq[k]).a == cur && newStack.seq[j] == ((JMEArc)arcsIncident.seq[k]).b)
+          @             || (((JMEArc)arcsIncident.seq[k]).b == cur && newStack.seq[j] == ((JMEArc)arcsIncident.seq[k]).a)
+          @           )
+          @      )
+          @ )
+          @ && arcsIncidentSize == arcsIncident.size()
+          @ && \invariant_for(newStack)
+          @ ;
+          @ decreases arcsIncidentSize - i;
+          @ assignable newStack.seq;
+          @*/
+        for (int i = 0; i < arcsIncidentSize; i++) {
+            JMEArc arc = (JMEArc) arcsIncident.get(i);
+            if (arc.dim >= 0 && orbit.contains(arc.dim)) {
+                JMENode otherNode = arc.oppositeNode(cur);
+                // removed: if (!visited.contains(otherNode))
+                newStack.add(otherNode);
+            } // end dimension ok
+        }
+    }
+
+    /**
+     * Remove all elements of <code>newStack</code> that are also
+     * present in <code>visited</code>.
+     *
+     * @param newStack list of objects
+     * @param visited elements to remove
+     */
+    /*@ public normal_behavior
+      @ requires \invariant_for(newStack)
+      @  && \invariant_for(visited)
+      @  && newStack != visited
+      @  && (\forall \bigint i; 0 <= i && i < newStack.seq.length;
+      @       newStack.seq[i] instanceof Object
+      @     )
+      @  && (\forall \bigint i; 0 <= i && i < visited.seq.length;
+      @       visited.seq[i] instanceof Object
+      @     )
+      @ ;
+      @ ensures
+      @   (\forall \bigint i; 0 <= i && i < \old(newStack.seq.length);
+      @     !(\exists \bigint j; 0 <= j && j < visited.seq.length; visited.seq[j] == \old(newStack.seq[i]))
+      @     ==>
+      @     (\exists \bigint k; 0 <= k && k < newStack.seq.length; \old(newStack.seq[i]) == newStack.seq[k])
+      @   )
+      @   && (\forall \bigint i; 0 <= i && i < newStack.seq.length;
+      @        (\exists \bigint j; 0 <= j && j < \old(newStack.seq.length); \old(newStack.seq[j]) == newStack.seq[i])
+      @        && !(\exists \bigint j; 0 <= j && j < visited.seq.length; visited.seq[j] == newStack.seq[i])
+      @      )
+      @   && newStack.seq.length <= \old(newStack.seq.length)
+      @ ;
+      @ assignable newStack.seq;
+      @*/
+    static void removeAll(List newStack, Collection visited) {
+        int newStackSize = newStack.size();
+
+        //@ ghost int originalSize;
+        //@ set originalSize = newStackSize;
+        //@ ghost int iter;
+        //@ set iter = 0;
+        //@ ghost int removed;
+        //@ set removed = 0;
+
+        /*@ loop_invariant
+          @ i >= 0
+          @ && i <= newStackSize
+          @ && iter >= 0
+          @ && iter <= originalSize
+          @ && newStackSize == newStack.size()
+          @ && newStackSize <= originalSize
+          @ && \invariant_for(newStack)
+          @ && \invariant_for(visited)
+          @ && newStack != visited
+          @ && (\forall \bigint j; 0 <= j && j < i;
+          @      !(\exists \bigint k; 0 <= k && k < visited.seq.length;
+          @         visited.seq[k] == newStack.seq[j]
+          @       )
+          @      && (\exists \bigint k; 0 <= k && k < iter;
+          @           newStack.seq[j] == \pre(newStack.seq[k])
+          @         )
+          @    )
+          @ && (\forall \bigint j; 0 <= j && j < iter;
+          @      !(\exists \bigint k; 0 <= k && k < visited.seq.length;
+          @         visited.seq[k] == \pre(newStack.seq[j])
+          @      )
+          @      ==>
+          @      (\exists \bigint k; 0 <= k && k < i;
+          @         newStack.seq[k] == \pre(newStack.seq[j])
+          @      )
+          @    )
+          @ && 0 <= removed
+          @ && removed <= originalSize
+          @ && iter - removed == i
+          @ && newStack.seq.length == \pre(newStack.seq.length) - removed
+          @ && newStack.seq[i .. newStack.seq.length] == \pre(newStack.seq)[iter .. \pre(newStack.seq.length)]
+          @ && (\forall \bigint i; 0 <= i && i < newStack.seq.length;
+          @      newStack.seq[i] instanceof Object
+          @    )
+          @ ;
+          @ decreases originalSize - iter;
+          @ assignable newStackSize,newStack.seq,iter,removed;
+          @*/
+        for (int i = 0; i < newStackSize; i++) {
+            Object node = newStack.get(i);
+            if (visited.contains(node)) {
+                newStack.remove(i);
+                newStackSize -= 1;
+                i -= 1;
+                //@ set removed = removed + 1;
+            }
+            //@ set iter = iter + 1;
+        }
+    }
+
 	/*@ public normal_behavior
 	  @ ensures \result == this.owner;
 	  @ strictly_pure
