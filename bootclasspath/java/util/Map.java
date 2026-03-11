@@ -17,6 +17,7 @@ public interface Map
     //@ public instance invariant key_seq.length == value_seq.length;
     //@ public instance invariant (\forall \bigint i; 0 <= i && i < key_seq.length; ((Object)key_seq[i]) != null);
     //@ public instance invariant (\forall \bigint i; 0 <= i && i < value_seq.length; ((Object)value_seq[i]) != null);
+    //^ is not required for most Map implementations
 
     //@ public instance invariant !(\exists \bigint a; 0 <= a && a < key_seq.length;
     //@   (\exists \bigint b; 0 < b && b < key_seq.length && a != b; key_seq[a] == key_seq[b]));
@@ -43,9 +44,10 @@ public interface Map
      @ requires !(\exists \bigint i; 0 <= i && i < key_seq.length; ((Object)key_seq[i]) == arg0);
      @ ensures key_seq == \seq_concat(\old(key_seq), \seq_singleton(arg0));
      @ ensures value_seq == \seq_concat(\old(value_seq), \seq_singleton(arg1));
+     @ ensures \result == null;
      @ assignable key_seq, value_seq;
      @*/
-   public java.lang.Object put(java.lang.Object arg0, java.lang.Object arg1);
+   /*@ nullable @*/ public java.lang.Object put(java.lang.Object arg0, java.lang.Object arg1);
    public java.lang.Object remove(java.lang.Object arg0);
    public void putAll(java.util.Map arg0);
    public void clear();
