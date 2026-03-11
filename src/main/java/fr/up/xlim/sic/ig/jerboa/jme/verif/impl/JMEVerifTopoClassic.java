@@ -1,9 +1,6 @@
 package fr.up.xlim.sic.ig.jerboa.jme.verif.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEArc;
 import fr.up.xlim.sic.ig.jerboa.jme.model.JMEGraph;
@@ -37,7 +34,7 @@ public final class JMEVerifTopoClassic {
         if (error != null) {
             return error;
         }
-        error = verifNodeOrbitSizes(rule); // todo
+        error = verifNodeOrbitSizes(rule); // done
         if (error != null) {
             return error;
         }
@@ -642,6 +639,7 @@ public final class JMEVerifTopoClassic {
 	 * @param rule Rule to verify.
 	 * @return non-null error if check fails
 	 */
+    // requires rule.left.arcsAreUnique();
     JMERuleError verifDuplicateDimension(JMERule rule) {
 
         // Left Graph

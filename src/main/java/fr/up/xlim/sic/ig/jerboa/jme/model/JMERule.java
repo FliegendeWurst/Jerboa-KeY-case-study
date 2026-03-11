@@ -6,22 +6,27 @@ import java.util.List;
 public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERule>*/ {
 
 	//@ public ghost \locset footprint;
-	//@ public invariant \subset(\singleton(footprint), footprint);
-	//@ public invariant \subset(this.left.footprint, footprint);
-	//@ public invariant \subset(this.right.footprint, footprint);
+	//@ public invariant footprint == \set_union(\singleton(footprint), this.*, this.left.footprint, this.right.footprint);
 
 	//@ public invariant \invariant_for(left) && \invariant_for(right);
 	//@ public invariant left.isleft && !right.isleft;
 	//@ public accessible \inv: footprint;
 
 	public final JMEModeler modeler;
-	protected String name;
-	protected String category;
+	protected final String name;
+	protected final String category;
 
 	public final JMEGraph left;
 	public final JMEGraph right;
 
-	protected String midprocess;
+	protected final String midprocess;
+
+	/*@ accessible left.nodes.seq;
+	  @ helper model public boolean hasHookIfNotEmpty() {
+	      return (left.nodes.seq.length > 0) ==>
+	       (\exists \bigint i; 0 <= i && i < left.nodes.seq.length; ((JMENode)left.nodes.seq[i]).kind == JMENodeKind.HOOK);
+	    }
+	  @*/
 
 	protected JMERule(JMEModeler modeler, String name) {
 		this.modeler = modeler;
@@ -68,6 +73,11 @@ public final class JMERule implements JMEElement, Cloneable, Comparable/*<JMERul
 		}
 	}
 
+	/*@ public normal_behavior
+	  @ requires left.nodesAreUnique();
+	  @ ensures \result == left.getHooks();
+	  @ assignable \nothing;
+	  @*/
 	public List/*<JMENode>*/ getHooks() {
 		if (left != null)
 			return left.getHooks();

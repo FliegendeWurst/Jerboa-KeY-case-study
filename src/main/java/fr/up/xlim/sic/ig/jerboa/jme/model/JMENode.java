@@ -66,7 +66,7 @@ public final class JMENode implements JMEElement {
 
 	/*@ public normal_behavior
 	  @ ensures (\forall int i; 0 <= i && i < \result.size(); \result.get(i) instanceof JMEArc);
-	  @ strictly_pure
+	  @ assignable \nothing;
 	  @*/
 	public List/*<JMEArc>*/ alphas() {
 		return (graph.getIncidentArcsFromNode(this));
