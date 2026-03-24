@@ -326,7 +326,7 @@ public final class JMEVerifTopoClassic {
       @ requires \invariant_for(rule)
       @  && \invariant_for(orbitCC)
       @  && rule.left.nodesAreUnique()
-      @  && rule.left.arcsAreUnique()
+      @  && (rule.left.arcsAreUnique() && rule.left.arcsAreInGraph())
       @  && rule.modeler.dimension >= 0
       @  && rule.modeler.dimension <= 2147483646
       @ ;
@@ -423,7 +423,7 @@ public final class JMEVerifTopoClassic {
       @  && \invariant_for(hooks)
       @  && \invariant_for(orbitCC)
       @  && \invariant_for(node)
-      @  && rule.left.arcsAreUnique()
+      @  && (rule.left.arcsAreUnique() && rule.left.arcsAreInGraph())
       @  && rule.left.nodesAreUnique()
       @  && (\exists \bigint i; 0 <= i && i < left.nodes.seq.length; node == (JMENode)left.nodes.seq[i])
       @  && (\forall \bigint i; 0 <= i && i < hooks.seq.length;
