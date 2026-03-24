@@ -49,6 +49,15 @@ public final class JMEGraph implements JMEElement {
       }
       @*/
 
+    /*@ accessible arcs,arcs.seq,nodes,nodes.seq;
+      @ helper model public boolean arcsAreInGraph() {
+        return (\forall \bigint a; 0 <= a && a < arcs.seq.length;
+                 (\exists int b; 0 < b && b < nodes.seq.length; ((JMEArc)arcs.seq[a]).a == nodes.seq[b])
+                 && (\exists int b; 0 < b && b < nodes.seq.length; ((JMEArc)arcs.seq[a]).b == nodes.seq[b])
+               );
+      }
+      @*/
+
 	protected JMERule owner;
 	public final List/*<JMENode>*/ nodes;
 	public final List/*<JMEArc>*/ arcs;
@@ -242,7 +251,7 @@ public final class JMEGraph implements JMEElement {
      * @return set of reachable nodes
      */
     /*@ public normal_behavior
-      @ requires \invariant_for(this) && this.arcsAreUnique();
+      @ requires \invariant_for(this) && this.arcsAreUnique() && this.arcsAreInGraph();
       @ requires \invariant_for(node);
       @ requires \invariant_for(orbit);
       @ requires (\exists \bigint i; 0 <= i && i < nodes.seq.length; nodes.seq[i] == node);
@@ -289,6 +298,7 @@ public final class JMEGraph implements JMEElement {
           @  && visited != stack
           @  && \invariant_for(visited)
           @  && stack != null
+          @  && \disjoint(this.footprint, \set_union(\singleton(visited.seq), \singleton(stack.seq)))
           @  && \invariant_for(stack)
           @  && \invariant_for(orbit)
           @  && \invariant_for(this)
@@ -347,8 +357,9 @@ public final class JMEGraph implements JMEElement {
       @  \invariant_for(orbit)
       @  && \invariant_for(stack)
       @  && \invariant_for(visited)
-      @  && \invariant_for(this) && this.arcsAreUnique()
+      @  && \invariant_for(this) && this.arcsAreUnique() && this.arcsAreInGraph()
       @  && visited != stack
+      @  && \disjoint(this.footprint, \set_union(\singleton(visited.seq), \singleton(stack.seq)))
       @  && (\forall int i; 0 <= i && i < stack.seq.length; stack.seq[i] instanceof JMENode && (JMENode)stack.seq[i] != null)
       @  && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode && (JMENode)visited.seq[i] != null)
       @  && (\forall int i; 0 <= i && i < stack.seq.length; !(\exists int j; 0 <= j && j < visited.seq.length; stack.seq[i] == visited.seq[j]))
@@ -358,18 +369,40 @@ public final class JMEGraph implements JMEElement {
       @  && (\forall int i; 0 <= i && i < \result.seq.length; \result.seq[i] instanceof JMENode && (JMENode)\result.seq[i] != null)
       @  && \result != stack
       @  && \result != visited
+      @  && \result != nodes
       @  && \invariant_for(visited)
-      @  && \invariant_for(this) && this.arcsAreUnique()
-      @  && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode)
+      @  && \invariant_for(\result)
+      @  && \invariant_for(this) && this.arcsAreUnique() && this.arcsAreInGraph()
+      @  && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode && (JMENode)visited.seq[i] != null)
       @  && (\forall \bigint i; 0 <= i && i < \old(visited.seq.length); visited.seq[i] == \old(visited.seq[i]))
       @  && (\forall int i; 0 <= i && i < stack.seq.length;
       @          (\forall int j; 0 <= j && j < nodes.seq.length;
-      @            hasArc((JMENode)stack.seq[i], (JMENode)nodes.seq[j], orbit)
+      @            (
+      @              hasArc((JMENode)stack.seq[i], (JMENode)nodes.seq[j], orbit)
+      @              && !(\exists \bigint k; 0 <= k && k < visited.seq.length; visited.seq[k] == nodes.seq[j])
+      @            )
       @            ==>
       @            (\exists int k; 0 <= k && k < \result.seq.length; \result.seq[k] == nodes.seq[j])
       @          )
       @          && (\exists int j; \old(visited.seq.length) <= j && j < visited.seq.length; visited.seq[j] == stack.seq[i])
       @     )
+      @  && (\forall \bigint j; \old(visited.seq.length) <= j && j < visited.seq.length;
+      @       (\exists \bigint i; 0 <= i && i < stack.seq.length;
+      @         visited.seq[j] == stack.seq[i]
+      @       )
+      @     )
+      @  && (\forall \bigint l; 0 <= l && l < \result.seq.length;
+      @      !(\exists \bigint i; 0 <= i && i < visited.seq.length; visited.seq[i] == \result.seq[l])
+      @      &&
+      @      (\exists int i; \old(visited.seq.length) <= i && i < visited.seq.length;
+      @        (\exists int k; 0 <= k && k < nodes.seq.length;
+      @          \result.seq[l] == nodes.seq[k]
+      @          &&
+      @          hasArc((JMENode)visited.seq[i], (JMENode)nodes.seq[k], orbit)
+      @        )
+      @      )
+      @    )
+      @  && visited.seq.length >= \old(visited.seq.length)
       @ ;
       @ assignable visited.seq;
       @*/
@@ -377,18 +410,16 @@ public final class JMEGraph implements JMEElement {
         List/*<JMENode>*/ newStack = new ArrayList();
         int stackSize = stack.size();
 
-        //@ ghost \seq oldVisited = visited.seq;
-
         /*@ loop_invariant
           @ 0 <= j && j <= stackSize
           @ && stackSize == stack.size()
           @ && (\forall \bigint i; 0 <= i && i < \pre(visited.seq.length); visited.seq[i] == \pre(visited.seq[i]))
           @ && (\forall \bigint i; 0 <= i && i < j;
-          @      (\exists \bigint k; 0 <= k && k < visited.seq.length;
+          @      (\exists \bigint k; \pre(visited.seq.length) <= k && k < visited.seq.length;
           @        visited.seq[k] == stack.seq[i]
           @      )
           @ )
-          @ && (\forall \bigint i; oldVisited.length <= i && i < visited.seq.length;
+          @ && (\forall \bigint i; \pre(visited.seq.length) <= i && i < visited.seq.length;
           @      (\forall int k; 0 <= k && k < nodes.seq.length;
           @        hasArc((JMENode)visited.seq[i], (JMENode)nodes.seq[k], orbit)
           @         ==>
@@ -398,12 +429,27 @@ public final class JMEGraph implements JMEElement {
           @           stack.seq[k] == visited.seq[i]
           @      )
           @ )
+          @ && (\forall \bigint l; 0 <= l && l < newStack.seq.length;
+          @      (\exists int i; \pre(visited.seq.length) <= i && i < visited.seq.length;
+          @        (\exists int k; 0 <= k && k < nodes.seq.length;
+          @          newStack.seq[l] == nodes.seq[k]
+          @          &&
+          @          hasArc((JMENode)visited.seq[i], (JMENode)nodes.seq[k], orbit)
+          @        )
+          @      )
+          @    )
           @ && (\forall int i; 0 <= i && i < visited.seq.length; visited.seq[i] instanceof JMENode && (JMENode)visited.seq[i] != null)
           @ && (\forall int i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode && (JMENode)newStack.seq[i] != null)
           @ && \invariant_for(visited)
           @ && \invariant_for(newStack)
           @ && \invariant_for(this)
+          @ && \invariant_for(stack)
           @ && visited != newStack
+          @ && visited != stack
+          @ && newStack != nodes
+          @ && visited != nodes
+          @ && \disjoint(this.footprint, \set_union(\singleton(stack.seq), \set_union(\singleton(visited.seq), \singleton(newStack.seq))))
+          @ && visited.seq.length >= \pre(visited.seq.length)
           @ ;
           @ decreases stackSize - j;
           @ assignable visited.seq, newStack.seq;
@@ -421,19 +467,28 @@ public final class JMEGraph implements JMEElement {
     }
 
     /*@ public normal_behavior
-      @ requires \invariant_for(this) && this.arcsAreUnique();
+      @ requires \invariant_for(this) && this.arcsAreUnique() && this.arcsAreInGraph();
       @ requires \invariant_for(orbit);
       @ requires \invariant_for(newStack);
+      @ requires \disjoint(this.footprint, \singleton(newStack.seq));
       @ requires (\forall int i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode && (JMENode)newStack.seq[i] != null);
       @ ensures
       @  \invariant_for(newStack)
-      @  && (\forall int i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode && (JMENode)newStack.seq[i] != null)
+      @  && \disjoint(this.footprint, \singleton(newStack.seq))
+      @  && (\forall \bigint i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode && (JMENode)newStack.seq[i] != null)
       @  && (\forall \bigint i; 0 <= i && i < \old(newStack.seq.length); newStack.seq[i] == \old(newStack.seq[i]))
       @  && (\forall \bigint i; 0 <= i && i < nodes.seq.length;
       @       hasArc(cur, (JMENode)nodes.seq[i], orbit)
       @        ==>
       @       (\exists \bigint j; \old(newStack.seq.length) <= j && j < newStack.seq.length; newStack.seq[j] == nodes.seq[i])
       @  )
+      @  && (\forall \bigint j; \old(newStack.seq.length) <= j && j < newStack.seq.length;
+      @       (\exists \bigint i; 0 <= i && i < nodes.seq.length;
+      @         newStack.seq[j] == nodes.seq[i]
+      @         && hasArc(cur, (JMENode)nodes.seq[i], orbit)
+      @       )
+      @     )
+      @  && newStack.seq.length >= \old(newStack.seq.length)
       @ ;
       @ assignable newStack.seq;
       @*/
@@ -444,6 +499,7 @@ public final class JMEGraph implements JMEElement {
         int arcsIncidentSize = arcsIncident.size();
         /*@ loop_invariant
           @ 0 <= i && i <= arcsIncidentSize
+          @ && \disjoint(this.footprint, \singleton(newStack.seq))
           @ && (\forall int i; 0 <= i && i < newStack.seq.length; newStack.seq[i] instanceof JMENode && (JMENode)newStack.seq[i] != null)
           @ && (\forall \bigint j; 0 <= j && j < oldNewStack.length; newStack.seq[j] == oldNewStack[j])
           @ && (\forall \bigint j; 0 <= j && j < i;
@@ -463,17 +519,14 @@ public final class JMEGraph implements JMEElement {
           @      )
           @ )
           @ && (\forall \bigint j; oldNewStack.length <= j && j < newStack.seq.length;
-          @      (\exists \bigint k; 0 <= k && k < arcs.seq.length;
-          @        ((JMEArc)arcs.seq[k]).dim >= 0
-          @        && orbit.contains(((JMEArc)arcs.seq[k]).dim)
-          @        && (
-          @             (((JMEArc)arcs.seq[k]).a == cur && newStack.seq[j] == ((JMEArc)arcs.seq[k]).b)
-          @             || (((JMEArc)arcs.seq[k]).b == cur && newStack.seq[j] == ((JMEArc)arcs.seq[k]).a)
-          @           )
-          @      )
-          @ )
+          @       (\exists \bigint i; 0 <= i && i < nodes.seq.length;
+          @         newStack.seq[j] == nodes.seq[i]
+          @         && hasArc(cur, (JMENode)nodes.seq[i], orbit)
+          @       )
+          @     )
           @ && arcsIncidentSize == arcsIncident.size()
           @ && \invariant_for(newStack)
+          @ && newStack.seq.length >= oldNewStack.length
           @ ;
           @ decreases arcsIncidentSize - i;
           @ assignable newStack.seq;
@@ -517,6 +570,7 @@ public final class JMEGraph implements JMEElement {
       @        && !(\exists \bigint j; 0 <= j && j < visited.seq.length; visited.seq[j] == newStack.seq[i])
       @      )
       @   && newStack.seq.length <= \old(newStack.seq.length)
+      @   && \invariant_for(newStack)
       @ ;
       @ assignable newStack.seq;
       @*/
