@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author Hakim Belhaouari
  *
  */
-public final class JerboaOrbit implements Iterable/*<Integer>*/ {
+public final class JerboaOrbit {
 	//@ public ghost \locset footprint;
 	//@ public accessible \inv : footprint;
 	//@ public invariant footprint == \set_union(\singleton(footprint), this.dim[*]);
@@ -219,32 +219,6 @@ public final class JerboaOrbit implements Iterable/*<Integer>*/ {
 			}
 		}
 		return false;
-	}
-
-	public Iterator/*<Integer>*/ iterator() {
-		return new JerboaOrbitIterator(dim);
-	}
-
-	class JerboaOrbitIterator implements Iterator/*<Integer>*/ {
-		private int[] dim;
-		private int pos;
-		public JerboaOrbitIterator(int[] dim) {
-			this.dim = dim;
-			pos = 0;
-		}
-
-		public boolean hasNext() {
-			return (pos < dim.length);
-		}
-
-		public Integer next() {
-			return dim[pos++];
-		}
-
-		public void remove() {
-			// not supported
-		}
-		
 	}
 }
 
