@@ -38,6 +38,8 @@ public final class JMENode implements JMEElement {
 
 		this.orbit = new JerboaOrbit(new int[0]);
 		this.kind = k;
+
+		//@ set footprint = \set_union(\singleton(footprint), orbit.footprint);
 	}
 
 	/*@ public normal_behavior
@@ -64,10 +66,6 @@ public final class JMENode implements JMEElement {
 		return graph;
 	}
 
-	/*@ public normal_behavior
-	  @ ensures (\forall int i; 0 <= i && i < \result.size(); \result.get(i) instanceof JMEArc);
-	  @ assignable \nothing;
-	  @*/
 	public List/*<JMEArc>*/ alphas() {
 		return (graph.getIncidentArcsFromNode(this));
 	}

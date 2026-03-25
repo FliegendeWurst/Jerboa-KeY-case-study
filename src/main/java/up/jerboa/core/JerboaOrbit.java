@@ -92,6 +92,7 @@ public final class JerboaOrbit {
 	 * @return the value of the ith element in the orbit
 	 */
 	/*@ public normal_behavior
+	  @ requires 0 <= i && i < dim.length;
 	  @ ensures \result == this.dim[i];
 	  @ strictly_pure
 	  @*/
