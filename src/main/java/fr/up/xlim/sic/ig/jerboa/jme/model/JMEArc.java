@@ -31,6 +31,10 @@ public class JMEArc implements JMEElement{
         //@ set footprint = \set_union(\singleton(footprint), a.footprint, b.footprint);
     }
 
+    /*@ public normal_behavior
+      @ ensures \result == dim;
+      @ strictly_pure
+      @*/
     public int getDimension() {
         return dim;
     }
